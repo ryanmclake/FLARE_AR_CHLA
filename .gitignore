@@ -2,6 +2,8 @@
 .Rhistory
 .RData
 .Ruserdata
+#a bunch of SCC files that don't need to be pushed to the repo
+/SCCData/
 FCRweir.csv
 FCRmet.csv
 stats.csv
@@ -9,3 +11,5 @@ Catwalk_cleanedEDI.csv
 Met_final_2015_2018.csv
 Catwalk.csv
 RealTimeCatwalk.csv
+note.md
+*gep_all_*.csv
