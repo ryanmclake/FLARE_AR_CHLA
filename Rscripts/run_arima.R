@@ -32,7 +32,7 @@ run_arima <- function(
   
   source(paste0(folder,"/","Rscripts/create_obs_met_input.R"))
   source(paste0(folder,"/","Rscripts/process_GEFS2GLM.R"))
-  source(paste0(folder,"/","Rscripts/create_inflow_outflow_file_old.R"))
+  source(paste0(folder,"/","Rscripts/create_inflow_outflow_file_arima.R"))
   source(paste0(folder,"/","Rscripts/archive_forecast.R"))
   source(paste0(folder,"/","Rscripts/write_forecast_netcdf.R")) 
   source(paste0(folder,"/","Rscripts/met_downscale/process_downscale_GEFS.R")) 
