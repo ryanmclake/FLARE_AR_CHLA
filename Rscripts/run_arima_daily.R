@@ -1,5 +1,4 @@
-# run_arima function to produce chl forecasts using the following arima model:
-# Chla_CTD_t  = 1.65(±0.26) + 0.45(±0.08)Chla_CTD_t_1  – 3.05(±1.39)Discharge_t – 0.0025(±)Shortwave_t  + Ɛ 
+# run_arima function to produce daily chl forecasts:
 
 run_arima <- function(
   start_day= "2019-08-22 00:00:00",
@@ -460,7 +459,7 @@ run_arima <- function(
   library(PerformanceAnalytics)
   
   setwd(folder)
-  data = read.csv('data_arima_working.csv')
+  data = read.csv('data_arima_highfrequency.csv')
   
   N <- nrow(data)
   
@@ -468,7 +467,7 @@ run_arima <- function(
   cat('model {
   for (i in 1:N) {
     chla[i] ~ dnorm(chla.hat[i], tau)
-    chla.hat[i] <- beta[1] + beta[2]*chla_lag[i] + beta[3]*discharge[i] + beta[4]*sw[i]
+    chla.hat[i] <- beta[1] + beta[2]*chla_lag[i] + beta[3]*sw[i] 
   }
   
   #Vague priors on the beta
@@ -486,8 +485,7 @@ run_arima <- function(
   jags <- jags.model('jags_model.bug',
                      data = list('chla' = data$Chla_sqrt,
                                  'chla_lag' = data$Chla_ARlag1_sqrt,
-                                 'discharge' = data$mean_flow,
-                                 'sw' = data$ShortWave_mean,
+                                 'sw' = data$ShortWave_max,
                                  'N' = N),
                      n.chains = 4,
                      n.adapt = 100)
@@ -504,7 +502,7 @@ run_arima <- function(
   
   #chart.Correlation(par_matrix)
   
-  save(samples, file = "MCMC_output_ARIMA_Whitney.Rdata")
+  save(samples, file = "MCMC_output_ARIMA_highfrequency.Rdata")
   
   
   # the first column is observed chl that is sqrt transformed (because the model is based on sqrt units) and corrected into CTD units (because it is observed in EXO units)

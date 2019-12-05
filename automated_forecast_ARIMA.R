@@ -28,7 +28,9 @@ library(tidyverse)
 
 data_location = "C:/Users/wwoel/Desktop/FLARE_AR_CHLA/SCCData"
 folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
-forecast_location <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA/FCR_forecasts"
+# set the timestep to daily or weekly to determine where the forecasts are archived
+timestep <- 'daily'
+forecast_location <- paste0("C:/Users/wwoel/Desktop/FLARE_AR_CHLA/FCR_forecasts", '/', timestep)
 
 
 restart_file <- NA
