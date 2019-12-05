@@ -1,7 +1,7 @@
 model {
   for (i in 1:N) {
     chla[i] ~ dnorm(chla.hat[i], tau)
-    chla.hat[i] <- beta[1] + beta[2]*chla_lag[i] + beta[3]*discharge[i] + beta[4]*sw[i]
+    chla.hat[i] <- beta[1] + beta[2]*chla_lag[i] + beta[3]*sw[i] 
   }
   
   #Vague priors on the beta
