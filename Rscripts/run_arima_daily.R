@@ -350,8 +350,8 @@ run_arima <- function(
   }
   
   
-  # build a loop to go through met_file_names and take daily averages of SW and a sum of rain, which is needed for the discharge forecast
-  # then select day 7 and 14
+  #go through met_file_names and take daily averages of SW and a sum of rain, which is needed for the discharge forecast
+  # then select the days needed for the forecast
   
   data<-matrix(data=NA,16,(length(met_file_names)-1))
   rain <- matrix(data = NA, 16, (length(met_file_names)-1))
@@ -500,8 +500,6 @@ run_arima <- function(
   
   par_matrix <- as.matrix(samples[1])
   
-  #chart.Correlation(par_matrix)
-  
   save(samples, file = "MCMC_output_ARIMA_highfrequency.Rdata")
   
   
@@ -578,23 +576,6 @@ run_arima <- function(
   }
   
   
-
-# calculate confidence intervals
-  
-  conf_int <- matrix(data = NA, nrow = nsteps,ncol = 2)
-  
-  for (i in 1:16) {
-    error_upper <-  qnorm(0.975, mean = mean(x[i,,]), sd =sd((x[i,,])) )
-    error_upper <- (error_upper^2)/0.55 + 0.0308
-    error_lower <- qnorm(0.025, mean = mean(x[i,,]), sd =sd((x[i,,])) )
-    error_lower <- (error_lower^2)/0.55 + 0.0308
-    
-    conf_int[i, 1] <- error_upper
-    conf_int[i, 2] <- error_lower
-  }
-  
-    
-  
   # create the output dataframe for archiving the forecast statistics (mean, sd, 95% CI, and obs chl)
   out <- data.frame("forecast_date" = as.Date(full_time[2:17]), 
                     "forecast_mean_chl" =rep(NA) , 
@@ -670,7 +651,7 @@ run_arima <- function(
   #some conditional statements to archive the forecast in a different location if doing an uncertainty analysis
   
   if(uncert_mode==1){
-  forecast_output_location <- paste0(forecast_location,  "/daily_forecasts/",
+  forecast_output_location <- paste0(forecast_location,  "/",
                                      
                                      forecast_file_name)
   }else if(uncert_mode==2){
@@ -741,7 +722,7 @@ run_arima <- function(
   if(!is.na(x[1,1,])){
     pdf(file = forecast_plot_output_location )
     x_axis <-   seq.POSIXt(forecast_start_day, week2, by = 'week')  #c(0,7,14)
-    plot(x_axis, ((x[,1,]^2)/0.55 +0.0308), type = 'o',ylim = range(c((min(out[1,8], out[2,8], na.rm = TRUE)), max(out[1,7], out[2,7], out[1,10], out[2,10], na.rm = TRUE))) # once catwalk data cleaning script is running, can change this to include: out[1,10], out[2,10]
+    plot(x_axis, ((x[,1,]^2)/0.55 +0.0308), type = 'o',ylim = range(c((min(out[,8], out[,8], na.rm = TRUE)), max(out[1,7], out[2,7], out[1,10], out[2,10], na.rm = TRUE))) # once catwalk data cleaning script is running, can change this to include: out[1,10], out[2,10]
          , xlab = "Date", ylab = "Chla (ug/L)")
     for(m in 2:length(x[1,,1])){
       points(x_axis, ((x[,m,]^2)/0.55 + 0.0308), type = 'o')  
