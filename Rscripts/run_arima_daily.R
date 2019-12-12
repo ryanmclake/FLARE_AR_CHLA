@@ -445,11 +445,11 @@ run_arima <- function(
 #########################################################################################################################
 
   # built a script to check for new data to add to the historical dataset; data gets updated weekly
-  source(paste0(folder,"/","Rscripts/data_assimilation_AR.R"))
-  data_assimilation(folder = folder, 
-                    data_location =  data_location,
-                    hist_file = paste0(folder, '/', 'data_arima_updated.csv'),
-                    forecast_start_day = forecast_start_day)
+#  source(paste0(folder,"/","Rscripts/data_assimilation_AR.R"))
+ # data_assimilation(folder = folder, 
+#                    data_location =  data_location,
+#                    hist_file = paste0(folder, '/', 'data_arima_updated.csv'),
+#                    forecast_start_day = forecast_start_day)
   
   
   # read in the jags file to pull from parameter values 
@@ -471,7 +471,7 @@ run_arima <- function(
   }
   
   #Vague priors on the beta
-  for(j in 1:4){
+  for(j in 1:3){
     beta[j] ~ dnorm(0,1/100000)
   }
 
@@ -482,13 +482,13 @@ run_arima <- function(
   )
   sink()
   
-  jags <- jags.model('jags_model.bug',
+  jags <- jags.model('jags_model.bug',  # does this file get created in this function or need to exist already? should have diff one for weekly and daily?
                      data = list('chla' = data$Chla_sqrt,
                                  'chla_lag' = data$Chla_ARlag1_sqrt,
                                  'sw' = data$ShortWave_max,
                                  'N' = N),
-                     n.chains = 4,
-                     n.adapt = 100)
+                     n.chains = 4, # why 4? what does this number mean?
+                     n.adapt = 100) # what does this number mean?
   
   #burn in, this updates the jags$state()
   update(jags,n.iter = 1000)
@@ -527,7 +527,7 @@ run_arima <- function(
   
   
   
-  npars <- 5
+  npars <- 4
   ensemble_pars <- array(NA, dim = c(nmembers, npars)) 
   
   # for loop to sample from distribution of each parameter value (propagating uncertainty)
@@ -538,22 +538,20 @@ run_arima <- function(
       ensemble_pars[j, 2] <- samples[[1]][p,2]
       ensemble_pars[j, 3] <- samples[[1]][p,3]
       ensemble_pars[j, 4] <- samples[[1]][p,4]
-      ensemble_pars[j, 5] <- samples[[1]][p,5]
     }else{
       ensemble_pars[j, 1] <- mean(samples[[1]][,1])
       ensemble_pars[j, 2] <- mean(samples[[1]][,2])
       ensemble_pars[j, 3] <- mean(samples[[1]][,3])
       ensemble_pars[j, 4] <- mean(samples[[1]][,4])
-      ensemble_pars[j, 5] <- mean(samples[[1]][,5])     
     }
   }  
   
   # the model!
-  for(i in 2:16){
+  for(i in 2:16){ # for each time step
     met_index <- 1
     for(j in 1:nmembers){   
       if(process_uncertainty == TRUE){
-        added_process_uncertainty =  rnorm(1, 0,ensemble_pars[j, 5])
+        added_process_uncertainty =  rnorm(1, 0,ensemble_pars[j, 4])
       }else{
         added_process_uncertainty = 0.0
       }
@@ -567,7 +565,7 @@ run_arima <- function(
       }else{
         curr_shortwave = sw_forecast[i]
       }
-      x[i,j,] <- ensemble_pars[j, 1] + ensemble_pars[j, 2]*x[i-1,j,] + ensemble_pars[j, 3]*curr_discharge + ensemble_pars[j, 4]*curr_shortwave + added_process_uncertainty
+      x[i,j,] <- ensemble_pars[j, 1] + ensemble_pars[j, 2]*x[i-1,j,] +  ensemble_pars[j, 3]*curr_shortwave + added_process_uncertainty
       met_index = met_index + 1
       if(met_index > n_met_members){
         met_index <- 1
@@ -712,7 +710,7 @@ run_arima <- function(
   forecast_plot_name <-  paste0(year(forecast_start_day), "_", 
                                 file_name_forecast_start_month, "_", 
                                 file_name_forecast_start_day, "_", 
-                                "chla_weekly.pdf")
+                                "chla_daily.pdf")
   forecast_plot_output_location <- paste0(forecast_location,  "/",
                                           "ensemble_plots/",
                                           forecast_plot_name) 
@@ -721,17 +719,20 @@ run_arima <- function(
   
   if(!is.na(x[1,1,])){
     pdf(file = forecast_plot_output_location )
-    x_axis <-   seq.POSIXt(forecast_start_day, week2, by = 'week')  #c(0,7,14)
-    plot(x_axis, ((x[,1,]^2)/0.55 +0.0308), type = 'o',ylim = range(c((min(out[,8], out[,8], na.rm = TRUE)), max(out[1,7], out[2,7], out[1,10], out[2,10], na.rm = TRUE))) # once catwalk data cleaning script is running, can change this to include: out[1,10], out[2,10]
+    x_axis <-   as.Date(full_time[2:17])
+    plot(x_axis, ((x[,1,]^2)/0.55 +0.0308), type = 'o',ylim = range(c((min(out[,8], out[,8], na.rm = TRUE)), max(out[,7], out[,10], na.rm = TRUE))) # once catwalk data cleaning script is running, can change this to include: out[1,10], out[2,10]
          , xlab = "Date", ylab = "Chla (ug/L)")
     for(m in 2:length(x[1,,1])){
       points(x_axis, ((x[,m,]^2)/0.55 + 0.0308), type = 'o')  
     }
-    points(week1, chla_obs[[1]][8,1], col = 'red', pch = 16, cex = 2)
-    points(week2, chla_obs[[1]][15,1], col = 'red', pch = 16, cex = 2)
-    points(forecast_start_day, chla_obs[[1]][1,1], col = 'red', pch = 16, cex = 2)
-    points(week1, out[1,2], col = 'orange', pch = 16, cex = 2)
-    points(week2, out[2,2], col = 'orange', pch = 16, cex = 2)
+    for(j in 1:nrow(out)){
+      points(out[j,1], (out[j,2]), col = 'orange', pch = 16, cex = 2)  
+    }
+    for(j in 1:nrow(out)){
+      points(out[j,1], (out[j,10]), col = 'red', pch = 16, cex = 2)  
+    }
+    
+    
     legend('topleft', c('observed chla', 'forecast ensembles', 'forecast mean'), col = c('red', 'black', 'orange'), pch = c(16, 1,16), lty = c(0,1,0), bty = 'n')
     dev.off()}
     
