@@ -518,7 +518,7 @@ run_arima <- function(
   # the first column is observed chl that is sqrt transformed (because the model is based on sqrt units) and corrected into CTD units (because it is observed in EXO units)
   if(initial_condition_uncertainty == TRUE& !is.na(chla_obs[[1]][1,1]) ){
     for(i in 1:nmembers){
-      x[1,i,] <- rnorm(1, chla_obs[[1]][1,1]*0.55 - 0.0308, 0.5) # sample from a normal distribution around the mean obs chl value
+      x[1,i,] <- rnorm(1, chla_obs[[1]][1,1]*0.55 - 0.0308, 0.5) # sample from a normal distribution around the mean obs chl value in CTD units, 0.5 is the mean residual btw comparison of CTD and EXO
       if(x[1,i,] < 0 ){x[1,i,] <- rnorm(1, chla_obs[[1]][1,1]*0.55 - 0.0308, 0.5)} # if a negative value is chosen, sample again
       if(x[1,i,] < 0 ){x[1,i,] <- rnorm(1, chla_obs[[1]][1,1]*0.55 - 0.0308, 0.5)} # if a negative value is chosen, sample again # doing this a bunch of times in case a negative comes up a second time, not sure how to quantifiably figure out what the right number of times is here
       if(x[1,i,] < 0 ){x[1,i,] <- rnorm(1, chla_obs[[1]][1,1]*0.55 - 0.0308, 0.5)} # if a negative value is chosen, sample again
