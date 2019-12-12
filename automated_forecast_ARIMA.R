@@ -56,10 +56,10 @@ n_met_members <- 21
 num_forecast_periods <- 100
 
 
-source(paste0(folder, "/", "Rscripts/run_arima.R"))
+source(paste0(folder, "/", "Rscripts/run_arima_", timestep, ".R"))
 
 sim_name <- "test1" 
-forecast_start_day <-"2019-09-28 00:00:00" #EDT5EST, which is 2019-07-08 00:04:00 GMT, but will use the NOAA forecast from 2019-07-08 00:00:00
+forecast_start_day <-"2019-07-23 00:00:00" #EDT5EST, which is 2019-07-08 00:04:00 GMT, but will use the NOAA forecast from 2019-07-08 00:00:00
 # the forecast start day is the day that the forecast is initialized, the two days of 'forecasts' are produced for 1 week and 2 weeks into 
 # the future from this day
 start_day <- forecast_start_day 
