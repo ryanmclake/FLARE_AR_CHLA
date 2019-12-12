@@ -7,25 +7,26 @@ library(Metrics)
 library(hydroGOF)
 reference_tzone <- "GMT"
 
-#set the location of the forecasts
-folder <- "C:/Users/wwoel/Desktop/FLARE/FLARE_3/FLARE_3"
-forecast_folder <- "C:/Users/wwoel/Desktop/FLARE/FLARE_3/FLARE_3"
+folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
+timestep <- 'weekly'
+forecast_folder <- paste0(folder, "/FCR_forecasts", '/', timestep)
 setwd(forecast_folder)
+
 # code to read in the individual forecast files named for the day on which the forecast is made
-myfiles <- list.files(path = "./FCR_forecasts/with_DA_and_saving_parms_Oct23_2019", pattern = "*weekly.csv")
-dataset <- read.csv(paste0("./FCR_forecasts/with_DA_and_saving_parms_Oct23_2019/", myfiles[1]))
+myfiles_forecast <- list.files(path = paste0(forecast_folder,"/with_DA_and_saving_parms_Oct23_2019/"), pattern = paste0('*', timestep, ".csv"))
+dataset_forecast <- read.csv(paste0(forecast_folder,"/with_DA_and_saving_parms_Oct23_2019/", myfiles_forecast[1]))
 
 # read in files
-for (i in 2:length(myfiles)) {
-  temp <- read.csv(paste0("./FCR_forecasts/with_DA_and_saving_parms_Oct23_2019/", myfiles[i]))
-  dataset <- rbind(dataset, temp)
+for (i in 2:length(myfiles_forecast)) {
+  temp_2 <- read.csv(paste0(forecast_folder,"/with_DA_and_saving_parms_Oct23_2019/", myfiles_forecast[i]))
+  dataset_forecast <- rbind(dataset_forecast, temp_2)
 }
 
 
-mean(dataset$forecast_variance, na.rm = TRUE)
+mean(dataset_forecast$forecast_variance, na.rm = TRUE)
 
 # some data arranging
-stuff <- dataset 
+stuff <- dataset_forecast 
 stuff$forecast_date <- as.Date(stuff$forecast_date, "%Y-%m-%d")
 stuff <- stuff[order(stuff$forecast_date),]
 stuff$week <- as.factor(stuff$week)
