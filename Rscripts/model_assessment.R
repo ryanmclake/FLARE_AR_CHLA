@@ -19,8 +19,9 @@ model_metrics <- function(sim, obs){
   coeff_determination <- x$r.squared #r2 from linear model output
   
   cor_p <- cor(sim, obs, method = 'pearson') #pearson's correlation coefficient
- 
-   return(c(RMSE = RMSE, NSE = NSE, KGE = KGE, bias = bias, bias_sd = bias_sd, R2_1_1 = R2_1_1, coeff_determination = coeff_determination, cor_p = cor_p))
+  
+  output <- data.frame(RMSE,NSE,KGE, bias, bias_sd, R2_1_1, coeff_determination, cor_p)
+  return(output)
 }
 
 test <- model_metrics(week1$forecast_mean_chl, week1$obs_chl_EXO)
