@@ -55,72 +55,39 @@ ggplot(data = stuff, aes(x = forecast_date, y = residual)) +
   geom_line() + 
   facet_wrap(~day_in_future)
 
-# week 1 and week 2 as separate vectors
+hist(stuff$residual)
+
 ggplot(data = stuff, aes(x = forecast_date)) + geom_line(aes(y = forecast_mean_chl, color = day_in_future)) + geom_line(aes(y = obs_chl_EXO))
 
-# residuals over time
-ggplot(data = stuff, aes(x = forecast_date)) + 
-  geom_line(aes(y = residual, color = week)) + 
-  geom_vline(xintercept = as.POSIXct("2019-02-28", "%Y-%m-%d")) +
-  geom_vline(xintercept = as.POSIXct("2019-03-20", "%Y-%m-%d"))
-
-hist(stuff$residual)
+ggplot(stuff, aes(day_in_future, residual)) + 
+  geom_point(aes(color = day_in_future)) +
+  scale_color_gradient(low = "blue", high = "red")
 
 
 # separate into week1 and week2 dataframes for separate analysis
-week1 <- stuff[stuff$week==1,]
-week2 <- stuff[stuff$week==2,]
-week1 <- na.omit(week1)
-week2 <- na.omit(week2)
+# separate into forecast horizon for individual analysis
+for (i in 1:16) { # change the 16 to whatever number of timesteps you have
+  temp <- stuff[stuff$day_in_future==i,]
+  write.csv(temp, paste0(forecast_folder, '/day_', i, '.csv'), row.names = FALSE)
+}
 
 
-hist(week1$residual)
-hist(week2$residual)
+day_1 <- read.csv(paste0(forecast_folder, '/day_1.csv'))
+day_1$forecast_date <- as.Date(day_1$forecast_date)
 
-plot(week1$forecast_date, week1$obs_chl_EXO)
-points(week1$forecast_date, week1$forecast_mean_chl, col = 'red', type = 'l')
-points(week1$forecast_date, week1$week_lag_chl, col = 'blue', type = 'l')
+hist(day_1$residual)
+
+plot(day_1$forecast_date, day_1$obs_chl_EXO)
+points(day_1$forecast_date, day_1$forecast_mean_chl, col = 'red', type = 'l')
+points(day_1$forecast_date, day_1$week_lag_chl, col = 'blue', type = 'l')
 plot(week1$forecast_date, week1$obs_chl_EXO, xlim = c(as.Date('2019-06-22'), as.Date('2019-09-06')))
 points(week1$forecast_date, week1$forecast_mean_chl, col = 'red')
 
 
-xrange <- seq(1, 14)
-plot(7, mean(week1$residual), xlim = c(1,14), ylim = c(-0.7, 0.9), ylab = 'Forecast - Observed (ug/L)', xlab = 'Days in future')
-points(14, mean(week2$residual))
-abline(h = 0)
-
-plot(week1$forecast_mean_chl, week1$obs_chl_EXO, xlab = 'Forecast Mean Chla (ug/L)', ylab = 'Observed Chla (ug/L)', main = 'Week 1 Forecast')
-abline(0, 1)
-summary(lm(week1$forecast_mean_chl~week1$obs_chl_EXO))
-
-plot(week2$forecast_mean_chl, week2$obs_chl_EXO, xlab = 'Forecast Mean Chla (ug/L)', ylab = 'Observed Chla (ug/L)', main = 'Week 2 Forecast')
-abline(0,1)
-summary(lm(week2$forecast_mean_chl~week2$obs_chl_EXO))
-
-#png("./Figures/ConfIntForecasts2019.png", width = 1016, height = 800)
-confrange <- range(week1$forecast_CI95_upper, week1$forecast_CI95_lower, na.rm = TRUE)
-par(mar = c(7,6,4,1)+0.1)
-plot(week1$forecast_date, week1$forecast_mean_chl, type = 'l', ylim = c(0,50), ylab = 'Chla (ug/L)', lwd = 2, xlab = 'Date', cex.axis = 3, cex.lab = 3)
-points(week1$forecast_date, week1$forecast_CI95_upper, type = 'l', lty = 2, lwd = 2)
-points(week1$forecast_date, week1$forecast_CI95_lower, type = 'l', lty = 2, lwd = 2)
-points(week1$forecast_date, week1$obs_chl_EXO, col = 'red', type = 'p', lwd = 2)
-abline(v = as.Date("2019-02-28", "%Y-%m-%d"), col = 'blue') # this is when the reservoir was dosed with copper sulfate
-abline(v = as.Date("2019-03-20", "%Y-%m-%d"), col = 'blue') # this is when the reservoir was dosed with copper sulfate
-legend('topright', c('forecast mean', '95% CI', 'observed'), lty = c(1, 2, 1), col = c('black', 'black', 'red'), cex = 2)
-#dev.off()
-
-#png("./Figures/ConfIntForecasts2019_noabline.png", width = 1016, height = 800)
-confrange <- range(week1$forecast_CI95_upper, week1$forecast_CI95_lower, na.rm = TRUE)
-par(mar = c(7,6,4,1)+0.1)
-plot(week1$forecast_date, week1$forecast_mean_chl, type = 'l', ylim = confrange, ylab = 'Chla (ug/L)', lwd = 2, xlab = 'Date', cex.axis = 3, cex.lab = 3)
-points(week1$forecast_date, week1$forecast_CI95_upper, type = 'l', lty = 2, lwd = 2)
-points(week1$forecast_date, week1$forecast_CI95_lower, type = 'l', lty = 2, lwd = 2)
-points(week1$forecast_date, week1$obs_chl_EXO, col = 'red', type = 'p', lwd = 2)
-legend('topright', c('forecast mean', '95% CI', 'observed'), lty = c(1, 2, 1), col = c('black', 'black', 'red'), cex = 2)
-#dev.off()
-
-png('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/ConfIntForecasts2019_noabline_Oct.png', width = 1100, height = 800)
-ggplot(week1, aes(forecast_date, forecast_mean_chl)) +
+  
+  
+png('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/daily_forecasts/ConfIntForecasts2019_noabline_day1.png', width = 1100, height = 800)
+ggplot(day_1, aes(forecast_date, forecast_mean_chl)) +
   geom_line(size = 2) +
   geom_point(aes(forecast_date, obs_chl_EXO), size = 4, stroke = 0, shape = 19, color = 'green4') +
   geom_ribbon(aes(ymin = forecast_CI95_lower, ymax = forecast_CI95_upper), fill = 'forestgreen', linetype = 2, alpha = 0.2) +
@@ -142,15 +109,10 @@ ggplot(week1, aes(forecast_date, forecast_mean_chl)) +
 dev.off()
 
 
-plot(week1$forecast_date, week1$obs_chl_EXO)
-abline(v = as.Date("2019-02-28", "%Y-%m-%d"), col = 'blue') # this is when the reservoir was dosed with copper sulfate
-abline(v = as.Date("2019-03-20", "%Y-%m-%d"), col = 'blue') # this is when the reservoir was dosed with copper sulfate
-points(week1$forecast_date, week1$forecast_mean_chl, col = 'red', type = 'l')
-
 # and calculate what percentage of obs data is between the conf intervals
-week1 <- week1 %>% mutate(CI95_yesno = ifelse(obs_chl_EXO<forecast_CI95_upper & obs_chl_EXO>forecast_CI95_lower, 1, 0))
-(nrow(week1[week1$CI95_yesno==0,])/nrow(week1))*100
-plot(week1$forecast_date, week1$CI95_yesno)
+day_1 <- day_1 %>% mutate(CI95_yesno = ifelse(obs_chl_EXO<forecast_CI95_upper & obs_chl_EXO>forecast_CI95_lower, 1, 0))
+(nrow(day_1[day_1$CI95_yesno==0,])/nrow(week1))*100
+plot(day_1$forecast_date, day_1$CI95_yesno)
 abline(v = as.Date("2019-02-28", "%Y-%m-%d"), col = 'blue') # this is when the reservoir was dosed with copper sulfate
 abline(v = as.Date("2019-03-20", "%Y-%m-%d"), col = 'blue') # this is when the reservoir was dosed with copper sulfate
 
@@ -160,19 +122,19 @@ abline(v = as.Date("2019-03-20", "%Y-%m-%d"), col = 'blue') # this is when the r
 
 # subset to time frame before and after the bloom
 dates <- seq(as.Date('2019-06-22'), as.Date('2019-09-06'), by = 'day')
-bloom <- week1[week1$forecast_date>'2019-06-22' & week1$forecast_date<'2019-09-06',]
+bloom <- day_1[day_1$forecast_date>'2019-06-22' & day_1$forecast_date<'2019-09-06',]
 
 # as a temporary proxy for a 'bloom', use 3x (or 4x?) the standard deviation of the historical dataset for FCR
 # this threshold is specific to FCR
 # (x[2,,]^2)/0.55) + 0.0308
-thresh <- read.csv('./data_arima_WW.csv')
+thresh <- read.csv(paste0(folder, '/data_arima_WW.csv'))
 thresh <- thresh %>% mutate(chl_EXOunits = ((Chla_sqrt^2)/0.55) + 0.0308   )
 threshold <- 3*sd(thresh$chl_EXOunits)
 plot(as.Date(thresh$Date)  ,thresh$chl_EXOunits)
 
 hist <- thresh %>% select(Date, chl_EXOunits)
 hist$Date <- as.Date(hist$Date)
-new <- week1 %>% select(forecast_date, obs_chl_EXO)
+new <- day_1 %>% select(forecast_date, obs_chl_EXO)
 colnames(new) <- c('Date', 'chl_EXOunits')
 
 chl_all <- rbind(hist, new)
@@ -188,7 +150,6 @@ plot(bloom$forecast_date, bloom$obs_chl_EXO)
   abline(h = 8.6, col = 'green') # bloom threshold 
 }
 
-hist(week1$obs_chl_EXO)
 
 # calculate a binary 'yes'=1 or 'no'=0 for the bloom threshold
 bloom <- bloom %>% mutate(forecast_bloom = ifelse(forecast_mean_chl>threshold, 1, 0)) %>% 
@@ -201,10 +162,10 @@ points(bloom$forecast_date, bloom$forecast_bloom, col = 'red')
 
 # bring in the null model to calculate the same metrics
 source(paste0(folder,"/","Rscripts/extract_EXOchl_chain_dailyavg.R")) #this is the original file modified to take a daily avg rather than the midnight reading
-data_location = "C:/Users/wwoel/Desktop/FLARE/FLARE_3/FLARE_3/SCCData"
+data_location = "C:/Users/wwoel/Desktop/FLARE_AR_CHLA/SCCData"
 temperature_location <- paste0(data_location, "/", "mia-data")
 # specify full_time as the entire time series from 08-15-2018 to -7-15-2019
-full_time <- seq(as.Date("2018-08-01"), as.Date("2019-10-15"), by = "1 day")
+full_time <- seq(as.Date("2019-01-01"), as.Date("2019-11-12"), by = "1 day")
 observed_depths_chla_fdom <- 1
 temp_obs_fname <- "Catwalk.csv"
 temp_obs_fname_wdir <- paste0(temperature_location, "/", temp_obs_fname) 
@@ -225,25 +186,36 @@ datamerge <- cbind(data, data2)
 colnames(datamerge) <- c("forecast_date", "exo_chl_ugL")
 datamerge$exo_chl_ugL[is.nan(datamerge$exo_chl_ugL)] <- NA
 # add process error
-load("C:/Users/wwoel/Desktop/FLARE/FLARE_3/FLARE_3/MCMC_output_ARIMA_Whitney.Rdata")
-added_process_uncertainty =  mean(samples[[1]][,5]) # mean process error added to all values
+load("C:/Users/wwoel/Desktop/FLARE_AR_CHLA/MCMC_output_ARIMA_highfrequency.Rdata")
+added_process_uncertainty =  mean(samples[[1]][,4]) # mean process error added to all values
 
 datamerge <- datamerge %>% mutate(exo_chl_ugL_pluserror = exo_chl_ugL + added_process_uncertainty) %>% 
-  mutate(week_lag_chl = lag(exo_chl_ugL_pluserror, 7L)) %>% mutate(week2_lag_chl = lag(exo_chl_ugL_pluserror, 14L))
-
+  mutate(day_1_lag = lag(exo_chl_ugL_pluserror, 1L)) %>% 
+  mutate(day_2_lag = lag(exo_chl_ugL_pluserror, 2L)) %>%
+  mutate(day_3_lag = lag(exo_chl_ugL_pluserror, 3L)) %>%
+  mutate(day_4_lag = lag(exo_chl_ugL_pluserror, 4L)) %>%
+  mutate(day_5_lag = lag(exo_chl_ugL_pluserror, 5L)) %>%
+  mutate(day_6_lag = lag(exo_chl_ugL_pluserror, 6L)) %>%
+  mutate(day_7_lag = lag(exo_chl_ugL_pluserror, 7L)) %>%
+  mutate(day_8_lag = lag(exo_chl_ugL_pluserror, 8L)) %>%
+  mutate(day_9_lag = lag(exo_chl_ugL_pluserror, 9L)) %>%
+  mutate(day_10_lag = lag(exo_chl_ugL_pluserror, 10L)) %>%
+  mutate(day_11_lag = lag(exo_chl_ugL_pluserror, 11L)) %>%
+  mutate(day_12_lag = lag(exo_chl_ugL_pluserror, 12L)) %>%
+  mutate(day_13_lag = lag(exo_chl_ugL_pluserror, 13L)) %>%
+  mutate(day_14_lag = lag(exo_chl_ugL_pluserror, 14L)) %>%
+  mutate(day_15_lag = lag(exo_chl_ugL_pluserror, 15L)) %>%
+  mutate(day_16_lag = lag(exo_chl_ugL_pluserror, 16L)) 
 
 # remove the days on/after copper sulfate dosing because this is outside of the ability of the model to anticipate
-week1$forecast_date <- as.Date(week1$forecast_date)
+datamerge$forecast_date <- as.Date(datamerge$forecast_date)
 
-up1 <- week1[week1$forecast_date<"2019-02-28",]
-down1 <- week1[week1$forecast_date>"2019-03-20",]
-week1 <- rbind(up1, down1)
+up1 <- datamerge[datamerge$forecast_date<"2019-02-28",]
+down1 <- datamerge[datamerge$forecast_date>"2019-03-20",]
+datamerge <- rbind(up1, down1)
+write.csv(datamerge, paste0(folder, '/daily_null.csv'), row.names = FALSE)
 
-up2 <- week2[week2$forecast_date<"2019-02-28",]
-down2 <- week2[week2$forecast_date>"2019-03-20",]
-week2 <- rbind(up2, down2)
-
-# calculate the stats on the non-bloom period
+# subset to the non-bloom period
 week1_nonbloom_up <- week1[week1$forecast_date < as.Date("2019-07-10") ,]
 week1_nonbloom_down <- week1[week1$forecast_date > as.Date("2019-08-10") ,]
 week1_nonbloom <- rbind(week1_nonbloom_up, week1_nonbloom_down)
@@ -252,23 +224,23 @@ week2_nonbloom_down <- week2[week2$forecast_date > as.Date("2019-08-10") ,]
 week2_nonbloom <- rbind(week2_nonbloom_up, week2_nonbloom_down)
 hist(week1_nonbloom$residual)
 
-# merge datamerge with week1 and week2 to align the null model with the forecast
-week1 <- left_join(week1, datamerge)
-week2 <- left_join(week2, datamerge)
-week1 <- na.omit(week1)
-week2 <- na.omit(week2)
+
 
 
 ####################################################################################################################################################################################
 ## calculate model assessment metric using function ##########################################################################################################################
 ####################################################################################################################################################################################
 
-source(paste0(folder,"/","Rscripts/model_assessment.R")) #this is the original file modified to take a daily avg rather than the midnight reading
+source(paste0(folder,"/","Rscripts/model_assessment.R")) # sim, obs
 
-metrics_week1 <- model_metrics(week1$forecast_mean_chl, week1$obs_chl_EXO)
-metrics_week1_null <- model_metrics(week1$week_lag_chl, week1$obs_chl_EXO)
-metrics_week2 <- model_metrics(week2$forecast_mean_chl, week2$obs_chl_EXO)
-metrics_week2_null <- model_metrics(week2$week2_lag_chl, week2$obs_chl_EXO)
+
+
+null_1 <- model_metrics(datamerge$day_1_lag, datamerge$exo_chl_ugL)
+forecast_1 <- model_metrics(day_1$forecast_mean_chl, day_1$obs_chl_EXO)
+
+
+null_1$RMSE
+
 
 metrics_week1_nonbloom <- model_metrics(week1_nonbloom$forecast_mean_chl, week1_nonbloom$obs_chl_EXO)
 metrics_week1_nonbloom_null <- model_metrics(week1_nonbloom$week_lag_chl, week1_nonbloom$obs_chl_EXO)
