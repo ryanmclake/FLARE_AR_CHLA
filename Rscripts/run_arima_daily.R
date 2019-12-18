@@ -429,9 +429,16 @@ run_arima <- function(
   
   observed_depths_chla_fdom <- 1
   temp_obs_fname_wdir <- paste0(temperature_location, "/", temp_obs_fname) 
+  cleaned_temp_oxy_chla_file <- paste0(working_directory, "/Catwalk_postQAQC.csv")
+  temp_oxy_chla_qaqc(temp_obs_fname_wdir[1], 
+                     paste0(data_location, '/mia-data/CAT_MaintenanceLog.txt'), 
+                     cleaned_temp_oxy_chla_file)
+  
+  new_temp_obs_fname_wdir <- temp_obs_fname_wdir
+  new_temp_obs_fname_wdir[1] <- cleaned_temp_oxy_chla_file
   
   # change the function to 'extract_chla_chain_dailyavg
-  chla_obs <- extract_chla_chain_dailyavg(fname = temp_obs_fname_wdir,
+  chla_obs <- extract_chla_chain_dailyavg(fname = new_temp_obs_fname_wdir,
                                           full_time,
                                           depths = 1.0,
                                           observed_depths_chla_fdom = observed_depths_chla_fdom,
