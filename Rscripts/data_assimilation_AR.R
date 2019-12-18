@@ -13,9 +13,8 @@ data_assimilation <- function(folder, data_location, hist_file, forecast_start_d
 library(lubridate)
 library(tidyverse)
 
-folder <- "C:/Users/wwoel/Desktop/FLARE/FLARE_3/FLARE_3"
-data_location <-  "C:/Users/wwoel/Desktop/FLARE/FLARE_3/FLARE_3/SCCData"
-#setwd(folder)
+
+setwd(folder)
 
 # read in the original training dataset from 2013-2016
 # this is the format that the end file should have so that it can read in to the jags code
