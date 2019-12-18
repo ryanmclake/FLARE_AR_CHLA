@@ -429,7 +429,7 @@ run_arima <- function(
   
   observed_depths_chla_fdom <- 1
   temp_obs_fname_wdir <- paste0(temperature_location, "/", temp_obs_fname) 
-  cleaned_temp_oxy_chla_file <- paste0(working_directory, "/Catwalk_postQAQC.csv")
+  cleaned_temp_oxy_chla_file <- paste0(working_arima, "/Catwalk_postQAQC.csv")
   temp_oxy_chla_qaqc(temp_obs_fname_wdir[1], 
                      paste0(data_location, '/mia-data/CAT_MaintenanceLog.txt'), 
                      cleaned_temp_oxy_chla_file)
