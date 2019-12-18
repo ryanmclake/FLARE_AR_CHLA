@@ -81,6 +81,7 @@ run_arima <- function(
   temperature_location <- paste0(data_location, "/", "mia-data")
   met_station_location <- paste0(data_location, "/", "carina-data")
   noaa_location <- paste0(data_location, "/", "noaa-data")
+  diana_data_location <- paste0(data_location, "/", "diana-data")
 #  if(pull_from_git){
 #    
 #    if(!file.exists(temperature_location)){
@@ -95,7 +96,10 @@ run_arima <- function(
 #      setwd(data_location)
 #      system("git clone -b noaa-data --single-branch https://github.com/CareyLabVT/SCCData.git noaa-data")
 #    }
-#  
+#     if(!file.exists(diana_data_location)){
+#     setwd(data_location)
+#     system("git clone -b diana-data --single-branch https://github.com/CareyLabVT/SCCData.git diana-data")
+#   }
     
     
 #    setwd(temperature_location)
@@ -106,6 +110,9 @@ run_arima <- function(
 #    
 #    setwd(noaa_location)
 #    system(paste0("git pull"))
+#  
+#     setwd(diana_data_location)
+#     system(paste0("git pull"))  
 #  }
   
   #download.file('https://github.com/CareyLabVT/SCCData/raw/mia-data/Catwalk.csv','./SCCData/mia-data/Catwalk.csv')
@@ -409,6 +416,20 @@ run_arima <- function(
   # source create inflwo outflow file that takes the average of the past 5 years of data
   
   source(paste0(folder,"/","Rscripts/create_inflow_outflow_file_arima.R"))
+  source(paste0(folder,"/","Rscripts/inflow_qaqc.R"))
+  
+  
+ # cleaned_inflow_file <- paste0(working_arima, "/FCRinflow_postQAQC.csv")
+#  inflow_file1 <<- c(paste0(data_location,"/diana-data/FCRweir.csv"),
+#                     paste0(folder,"/sim_files/FCR_inflow_WVWA_2013_2019.csv"),
+#                     paste0(data_location,"/manual-data/inflow_working_2019.csv"))
+#  
+#  inflow_qaqc(fname = inflow_file1,
+#              cleaned_inflow_file ,
+#              local_tzone, 
+#              input_file_tz = 'EST',
+#              working_arima)
+#  
   create_inflow_outflow_file(full_time ,
                              working_arima = working_arima, 
                              input_tz = "EST5EDT",
@@ -436,7 +457,7 @@ run_arima <- function(
   observed_depths_chla_fdom <- 1
   temp_obs_fname_wdir <- paste0(temperature_location, "/", temp_obs_fname) 
   
-  cleaned_temp_oxy_chla_file <- paste0(working_directory, "/Catwalk_postQAQC.csv")
+  cleaned_temp_oxy_chla_file <- paste0(working_arima, "/Catwalk_postQAQC.csv")
   temp_oxy_chla_qaqc(temp_obs_fname_wdir[1], 
                      paste0(data_location, '/mia-data/CAT_MaintenanceLog.txt'), 
                      cleaned_temp_oxy_chla_file)
@@ -468,6 +489,13 @@ run_arima <- function(
                     hist_file = paste0(folder, '/', 'data_arima_updated.csv'),
                     forecast_start_day = forecast_start_day)
   
+  # output from data_assimilation function is then read into a function that subsets the training dataset by a given window
+  source(paste0(folder,"/","Rscripts/moving_data_assimilation.R"))
+  moving_data_assimilation(folder = folder,
+                           data_location = data_location,
+                           data_file = 'data_arima_working.csv', 
+                           forecast_start_day = forecast_start_day,
+                           window_length = 75) # in days
   
   # read in the jags file to pull from parameter values 
   # load("C:/Users/wwoel/Desktop/FLARE/FLARE_3/FLARE_3/MCMC_output_ARIMA_Whitney.Rdata")
