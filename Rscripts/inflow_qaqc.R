@@ -35,6 +35,8 @@ inflow_qaqc <- function(fname,
                         input_file_tz,
                         working_directory){
   
+  folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
+  
   ##Step 1: Pull required data from GitHub ##
   diana_location <- fname[1]
   hist1_location <- fname[2]
@@ -44,26 +46,20 @@ inflow_qaqc <- function(fname,
   
   flownames <- c('TIMESTAMP', 'flow_cms', 'wtr_weir')
   
-  hist1 <- read_csv(hist1_location, skip=1, col_names = F)
-  hist1 <- hist1[,c(1:3)]
-  colnames(hist1) <- flownames
-  TIMESTAMP_in <- force_tz(hist1$TIMESTAMP, tzone = input_file_tz)
-  hist1$TIMESTAMP <- with_tz(TIMESTAMP_in,tz = local_tzone)
-  hist1$TIMESTAMP <- as.Date(hist1$TIMESTAMP, format = '%Y-%m-%d')
-  
-  
   hist2 <- read_csv(hist2_location, skip=1, col_names = F)
   hist2 <- hist2[,c(3,7,8)]
   colnames(hist2) <- flownames
   TIMESTAMP_in <- force_tz(hist2$TIMESTAMP, tzone = input_file_tz)
   hist2$TIMESTAMP <- with_tz(TIMESTAMP_in,tz = local_tzone)
+  hist2 <- na.omit(hist2)
   hist2 = aggregate(list(flow_cms = hist2$flow_cms, wtr_weir = hist2$wtr_weir), list(TIMESTAMP = cut(hist2$TIMESTAMP, "1 day")), mean);
   hist2$TIMESTAMP <- as.POSIXct(hist2$TIMESTAMP, format = '%Y-%m-%d')
-  hist2 = hist2[hist2$TIMESTAMP > as.POSIXct('2018-12-31') & hist2$TIMESTAMP < as.POSIXct('2019-04-22'),]
+  hist2 = hist2[ hist2$TIMESTAMP < as.POSIXct('2019-04-22'),]
   
-  hist_inflow <- rbind(hist1, hist2) #inflow from 2013-April 2019
+  hist_inflow <- hist2 #inflow from 2013-April 2019
   
   ##Step 2: Read in diana data, convert flow from PSI to CSM, calculations to account for building new weir in June 2019 (FCR Specific), and aggregate to daily mean.##
+  download.file('https://github.com/CareyLabVT/SCCData/raw/diana-data/FCRweir.csv',paste0(folder, '/SCCData/diana-data/FCRweir.csv'))
   diana <- read.csv(diana_location, skip=4, header=F)
   diana_headers <- read.csv(diana_location, skip=1, header = F, nrows= 1, as.is=T)
   colnames(diana) <- diana_headers
