@@ -29,8 +29,8 @@ library(tidyverse)
 data_location = "C:/Users/wwoel/Desktop/FLARE_AR_CHLA/SCCData"
 folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
 # set the timestep to daily or weekly to determine where the forecasts are archived
-timestep <- 'daily'
-forecast_location <- paste0("C:/Users/wwoel/Desktop/FLARE_AR_CHLA/FCR_forecasts", '/', timestep)
+timestep <- 'weekly'
+forecast_location <- paste0("C:/Users/wwoel/Desktop/FLARE_AR_CHLA/FCR_forecasts", '/', timestep, '/DA_window_30days')
 
 
 restart_file <- NA
@@ -57,9 +57,9 @@ num_forecast_periods <- 100
 
 
 source(paste0(folder, "/", "Rscripts/run_arima_", timestep, ".R"))
-
+run_function <- paste0('run_arima_' , timestep)
 sim_name <- "test1" 
-forecast_start_day <-"2019-07-23 00:00:00" #EDT5EST, which is 2019-07-08 00:04:00 GMT, but will use the NOAA forecast from 2019-07-08 00:00:00
+forecast_start_day <-"2019-04-23 00:00:00" #EDT5EST, which is 2019-07-08 00:04:00 GMT, but will use the NOAA forecast from 2019-07-08 00:00:00
 # the forecast start day is the day that the forecast is initialized, the two days of 'forecasts' are produced for 1 week and 2 weeks into 
 # the future from this day
 start_day <- forecast_start_day 
@@ -110,6 +110,7 @@ repeat{
   hist_days <- 1
   spin_up_days <- 0
 
+  
   forecast <- run_arima(
     start_day= start_day,
     sim_name = sim_name, 
@@ -128,7 +129,8 @@ repeat{
     reference_tzone = reference_tzone,
     downscaling_coeff = NA,
     DOWNSCALE_MET = FALSE,
-    FLAREversion = FLAREversion)
+    FLAREversion = FLAREversion,
+    window_length = 30)
   
   forecast_day_count <- forecast_day_count + 1
   
