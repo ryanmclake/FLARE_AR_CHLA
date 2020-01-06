@@ -19,7 +19,8 @@ run_arima <- function(
   reference_tzone,
   downscaling_coeff = NA,
   DOWNSCALE_MET = TRUE,
-  FLAREversion
+  FLAREversion,
+  window_length
 ){
   
   
@@ -34,7 +35,6 @@ run_arima <- function(
   source(paste0(folder,"/","Rscripts/process_GEFS2GLM.R"))
   source(paste0(folder,"/","Rscripts/create_inflow_outflow_file_arima.R"))
   source(paste0(folder,"/","Rscripts/archive_forecast.R"))
-  source(paste0(folder,"/","Rscripts/write_forecast_netcdf.R")) 
   source(paste0(folder,"/","Rscripts/met_downscale/process_downscale_GEFS.R")) 
   
   
@@ -82,6 +82,8 @@ run_arima <- function(
   met_station_location <- paste0(data_location, "/", "carina-data")
   noaa_location <- paste0(data_location, "/", "noaa-data")
   diana_data_location <- paste0(data_location, "/", "diana-data")
+  manual_data_location <- paste0(data_location, "/", "manual-data") 
+  
 #  if(pull_from_git){
 #    
 #    if(!file.exists(temperature_location)){
@@ -100,8 +102,11 @@ run_arima <- function(
 #     setwd(data_location)
 #     system("git clone -b diana-data --single-branch https://github.com/CareyLabVT/SCCData.git diana-data")
 #   }
-    
-    
+#    if(!file.exists(manual_data_location)){
+#    setwd(data_location)
+#    system("git clone -b manual-data --single-branch https://github.com/CareyLabVT/SCCData.git manual-data")
+#  }
+#    
 #    setwd(temperature_location)
 #    system(paste0("git pull"))
 #    
@@ -112,7 +117,10 @@ run_arima <- function(
 #    system(paste0("git pull"))
 #  
 #     setwd(diana_data_location)
-#     system(paste0("git pull"))  
+#     system(paste0("git pull"))
+
+#    setwd(manual_data_location)
+#    system(paste0("git pull"))
 #  }
   
   #download.file('https://github.com/CareyLabVT/SCCData/raw/mia-data/Catwalk.csv','./SCCData/mia-data/Catwalk.csv')
@@ -452,21 +460,22 @@ run_arima <- function(
  # source(paste0(folder,"/","Rscripts/extract_temp_chain.R"))
   source(paste0(folder,"/","Rscripts/extract_EXOchl_chain_dailyavg.R")) 
   #this is the original file modified to take a daily avg rather than the midnight reading
+  #source(paste0(folder,"/","Rscripts/temp_oxy_chla_qaqc.R")) 
   
   
   observed_depths_chla_fdom <- 1
   temp_obs_fname_wdir <- paste0(temperature_location, "/", temp_obs_fname) 
   
-  cleaned_temp_oxy_chla_file <- paste0(working_arima, "/Catwalk_postQAQC.csv")
-  temp_oxy_chla_qaqc(temp_obs_fname_wdir[1], 
-                     paste0(data_location, '/mia-data/CAT_MaintenanceLog.txt'), 
-                     cleaned_temp_oxy_chla_file)
+  #cleaned_temp_oxy_chla_file <- paste0(working_arima, "/Catwalk_postQAQC.csv")
+  #temp_oxy_chla_qaqc(temp_obs_fname_wdir[1], 
+  #                   paste0(data_location, '/mia-data/CAT_MaintenanceLog.txt'), 
+  #                   cleaned_temp_oxy_chla_file)
   
-  new_temp_obs_fname_wdir <- temp_obs_fname_wdir
-  new_temp_obs_fname_wdir[1] <- cleaned_temp_oxy_chla_file
+  #new_temp_obs_fname_wdir <- temp_obs_fname_wdir
+  #new_temp_obs_fname_wdir[1] <- cleaned_temp_oxy_chla_file
   
   # change the function to 'extract_chla_chain_dailyavg
-  chla_obs <- extract_chla_chain_dailyavg(fname = new_temp_obs_fname_wdir,
+  chla_obs <- extract_chla_chain_dailyavg(fname = temp_obs_fname_wdir,
                                           full_time,
                                           depths = 1.0,
                                           observed_depths_chla_fdom = observed_depths_chla_fdom,
@@ -495,7 +504,7 @@ run_arima <- function(
                            data_location = data_location,
                            data_file = 'data_arima_working.csv', 
                            forecast_start_day = forecast_start_day,
-                           window_length = 75) # in days
+                           window_length = window_length) # in days, this is set in the automated_forecast_ARIMA script
   
   # read in the jags file to pull from parameter values 
   # load("C:/Users/wwoel/Desktop/FLARE/FLARE_3/FLARE_3/MCMC_output_ARIMA_Whitney.Rdata")
