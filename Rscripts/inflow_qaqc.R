@@ -59,7 +59,7 @@ inflow_qaqc <- function(fname,
   hist_inflow <- hist2 #inflow from 2013-April 2019
   
   ##Step 2: Read in diana data, convert flow from PSI to CSM, calculations to account for building new weir in June 2019 (FCR Specific), and aggregate to daily mean.##
-  download.file('https://github.com/CareyLabVT/SCCData/raw/diana-data/FCRweir.csv',paste0(folder, '/SCCData/diana-data/FCRweir.csv'))
+ # download.file('https://github.com/CareyLabVT/SCCData/raw/diana-data/FCRweir.csv',paste0(folder, '/SCCData/diana-data/FCRweir.csv'))
   diana <- read.csv(diana_location, skip=4, header=F)
   diana_headers <- read.csv(diana_location, skip=1, header = F, nrows= 1, as.is=T)
   colnames(diana) <- diana_headers
