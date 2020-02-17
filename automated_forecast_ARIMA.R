@@ -30,7 +30,7 @@ data_location = "C:/Users/wwoel/Desktop/FLARE_AR_CHLA/SCCData"
 folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
 # set the timestep to daily or weekly to determine where the forecasts are archived
 timestep <- 'weekly'
-forecast_location <- paste0("C:/Users/wwoel/Desktop/FLARE_AR_CHLA/FCR_forecasts", '/', timestep, '/DA_window_30days')
+forecast_location <- paste0("C:/Users/wwoel/Desktop/FLARE_AR_CHLA/FCR_forecasts", '/', timestep, '/weekly_05Feb2020')
 
 
 restart_file <- NA
@@ -43,6 +43,8 @@ DOWNSCALE_MET <- FALSE # should this be TRUE???
 FLAREversion <- "v1.0_beta.1"
  met_ds_obs_start = as.Date("2018-04-06")
 met_ds_obs_end = Sys.Date()
+uncert_mode = 1
+null_model = TRUE
 
 #Note: this number is multiplied by 
 # 1) the number of NOAA ensembles (21)
@@ -53,13 +55,14 @@ n_ds_members <- 1
 # SET UP NUMBER OF ENSEMBLE MEMBERS
 n_met_members <- 21
 
-num_forecast_periods <- 100
+num_forecast_periods <- 300
 
-
+# source the run_*** file you want to use for the forecast
 source(paste0(folder, "/", "Rscripts/run_arima_", timestep, ".R"))
-run_function <- paste0('run_arima_' , timestep)
+#source(paste0(folder, "/", "Rscripts/run_arima_daily_relhum", ".R"))
+
 sim_name <- "test1" 
-forecast_start_day <-"2019-04-23 00:00:00" #EDT5EST, which is 2019-07-08 00:04:00 GMT, but will use the NOAA forecast from 2019-07-08 00:00:00
+forecast_start_day <-"2019-11-20 00:00:00"
 # the forecast start day is the day that the forecast is initialized, the two days of 'forecasts' are produced for 1 week and 2 weeks into 
 # the future from this day
 start_day <- forecast_start_day 
@@ -94,8 +97,8 @@ repeat{
     forecast_base_name <- paste0(year(forecast_start_time),forecast_month,forecast_day,'gep_all_00z.csv')
     
     noaa_location <- paste0(data_location,'/','noaa-data')
-    setwd(noaa_location)
-    system(paste0('git pull'))
+    #setwd(noaa_location)
+    #system(paste0('git pull'))
     
     if(!file.exists(paste0(noaa_location,'/',forecast_base_name))){
       print('Waiting for NOAA forecast')
@@ -125,12 +128,12 @@ repeat{
     data_location = data_location, 
     #nmembers = NA,
     n_ds_members = 1,
-    uncert_mode = 1,
+    uncert_mode = uncert_mode,
     reference_tzone = reference_tzone,
     downscaling_coeff = NA,
     DOWNSCALE_MET = FALSE,
     FLAREversion = FLAREversion,
-    window_length = 30)
+    null_model = TRUE)
   
   forecast_day_count <- forecast_day_count + 1
   
