@@ -8,7 +8,7 @@
 # discharge               source: EDI through 2018 or diana pressure transducer
 
 
-data_assimilation <- function(folder, data_location, hist_file, forecast_start_day){
+data_assimilation <- function(folder, data_location, hist_file, forecast_start_day, timestep, outfile, met_obs_fname){
 
 library(lubridate)
 library(tidyverse)
@@ -21,7 +21,11 @@ setwd(folder)
 data <- read.csv(hist_file)
 data$Date <- as.Date(data$Date)
 
-if(tail(data$Date, n=1)<= as.Date(forecast_start_day)-7){
+# remove dates between Apr 2018 and Aug 2018 in weekly dataset to make equal with daily training dataset
+data <- data[data$Date<"2018-04-01" | data$Date>'2018-08-13',]
+data <- data[!duplicated(data$Date),]
+
+if(tail(data$Date, n=1)<= as.Date(forecast_start_day)-timestep){
   #######################################################################################################################################################################################
   ### gather EXO data for chl response and lag driver data 
   #######################################################################################################################################################################################
@@ -38,10 +42,24 @@ if(tail(data$Date, n=1)<= as.Date(forecast_start_day)-7){
   
   observed_depths_chla_fdom <- 1
   reference_tzone <- "EST"
-  full_time = seq(tail(data$Date, n=1)+7, as.Date(forecast_start_day) , by = '7 day')
+  full_time = seq(tail(data$Date, n=1), as.Date(forecast_start_day) , by = timestep)
+  #full_time = seq(as.Date(forecast_start_day), as.Date(forecast_start_day)+16 , by = timestep)
+  
+  
+  source(paste0(folder,"/","Rscripts/temp_oxy_chla_qaqc.R")) 
+  observed_depths_chla_fdom <- 1
+  temp_obs_fname_wdir <- paste0(temperature_location, "/", temp_obs_fname) 
+  cleaned_temp_oxy_chla_file <- paste0(working_arima, "/Catwalk_postQAQC.csv")
+  temp_oxy_chla_qaqc(data_file = temp_obs_fname_wdir[1], 
+                     maintenance_file = paste0(data_location, '/mia-data/CAT_MaintenanceLog.txt'), 
+                     output_file = cleaned_temp_oxy_chla_file)
+  
+  new_temp_obs_fname_wdir <- temp_obs_fname_wdir
+  new_temp_obs_fname_wdir[1] <- cleaned_temp_oxy_chla_file
+  
   
   # gather chl data from exo sonde up to the current day
-  chl_hist <- extract_chla_chain_dailyavg(fname = temp_obs_fname_wdir,
+  chl_hist <- extract_chla_chain_dailyavg(fname = new_temp_obs_fname_wdir,
                                           full_time = full_time,
                                           depths = 1.0,
                                           observed_depths_chla_fdom = observed_depths_chla_fdom,
@@ -60,18 +78,18 @@ if(tail(data$Date, n=1)<= as.Date(forecast_start_day)-7){
   ########### gather FCR met data up to the current day  
   #######################################################################################################################################################################################
   
-  met_obs_fname <- "FCRmet.csv"
+ 
   met_station_location <- paste0(data_location, "/", "carina-data")
   met_obs_fname_wdir <-paste0(met_station_location, "/", met_obs_fname)
   working_arima <- paste0(folder, "/", "ARIMA_working")  
   met_update_outfile <- paste0(working_arima, "/", "update_met.csv")
-  #download.file('https://github.com/CareyLabVT/SCCData/raw/carina-data/FCRmet.csv','./SCCData/carina-data/FCRmet.csv')
+ # download.file('https://github.com/CareyLabVT/SCCData/raw/carina-data/FCRmet.csv','./SCCData/carina-data/FCRmet.csv')
   
   
-  full_time_hour_obs <- seq(  as.POSIXct(paste0((tail(data$Date, n=1)+7), " 00:00:00")), 
-                              as.POSIXct(forecast_start_day),
+  full_time_hour_obs <- seq(  as.POSIXct(paste0((tail(data$Date, n=1)), " 00:00:00")), 
+                              (as.POSIXct(forecast_start_day)), 
                               by = "1 hour")
-  
+
   source(paste0(folder,"/","Rscripts/create_obs_met_input_DA.R"))
   
   create_obs_met_input_DA(fname = met_obs_fname_wdir,
@@ -81,14 +99,25 @@ if(tail(data$Date, n=1)<= as.Date(forecast_start_day)-7){
                        output_tz = 'EST')
   # read in the hourly data that was created and summarize to daily mean
   setwd(folder)
-  sw_hist <- read.csv('./ARIMA_working/update_met.csv')
-  sw_hist_daily <- sw_hist %>% mutate(Date = date(time)) %>% 
+  met_hist <- read.csv('./ARIMA_working/update_met.csv')
+  met_hist_daily <- met_hist %>% mutate(Date = date(time)) %>% 
     group_by(Date) %>% 
+    mutate(RelHum_mean = mean(RelHum)) %>% 
     mutate(ShortWave_mean = mean(ShortWave)) %>% 
-    select(Date, ShortWave_mean)
-  sw_hist_daily <- sw_hist_daily[!duplicated(sw_hist_daily$Date),]
+    select(Date, RelHum_mean, ShortWave_mean)
+  met_hist_daily <- met_hist_daily[!duplicated(met_hist_daily$Date),]
   
+  if(timestep>6){ #weekly model needs SW mean as a driver
+    
+    met_hist_daily <- met_hist_daily %>% select(Date, ShortWave_mean)
+    met_hist_daily <- as.data.frame(met_hist_daily)
+  }else{  #but daily model needs RelHum as a driver
+    met_hist_daily <- met_hist_daily %>% select(Date, RelHum_mean)
+    
+    
+  }
   
+  if(timestep>6){
   #######################################################################################################################################################################################
   ####### gather discharge driver data #######################################################
   ##########################################################################################################################################################################
@@ -97,61 +126,43 @@ if(tail(data$Date, n=1)<= as.Date(forecast_start_day)-7){
   # after 2019-06-03, use diana data but convert to wvwa units
   
   
-  # download the latest diana weir file
- #download.file('https://github.com/CareyLabVT/SCCData/raw/diana-data/FCRweir.csv','./SCCData/FCRweir.csv')
-  dianaheader<-read.csv("./SCCData/FCRweir.csv", skip=1, as.is=T) #get header minus wonky Campbell rows
-  dianadata<-read.csv("./SCCData/FCRweir.csv", skip=4, header=F) #get data minus wonky Campbell rows
-  names(dianadata)<-names(dianaheader) #combine the names to deal with Campbell logger formatting
-  dianadata$TIMESTAMP <- as.POSIXct(dianadata$TIMESTAMP, format = "%Y-%m-%d %H:%M:%S")
-  colnames(dianadata)[colnames(dianadata)=="Lvl_psi"] <- "diana_psi_corr"
-  dianadata <- dianadata %>% select("TIMESTAMP", "diana_psi_corr")
-  
-  # the old weir equations are taken directly from MEL's Inlow Aggregation script
-  dianadata_pre <- dianadata[dianadata$TIMESTAMP< as.POSIXct('2019-06-06 09:30:00'),]
-  dianadata_pre <- dianadata_pre %>% mutate(diana_flow1 = (diana_psi_corr )*0.70324961490205 - 0.1603375 + 0.03048) %>% 
-    mutate(diana_flow_cfs = (0.62 * (2/3) * (1.1) * 4.43 * (diana_flow1 ^ 1.5) * 35.3147)) %>% 
-    mutate(flow_cms = diana_flow_cfs*0.028316847   )%>% 
-    select(TIMESTAMP, diana_psi_corr, flow_cms)
-  
-  # q = 2.391 * H^2.5
-  # where H = head in meters above the notch
-  # the head was 14.8 cm on June 24 at ~13:30
-  #14.8 cm is 0.148 m 
-  #14.9cm on Jun 27 at 3:49PM
-  dianadata_post <- dianadata[dianadata$TIMESTAMP > as.POSIXct('2019-06-07 00:00:00'),]
-  dianadata_post <- dianadata_post %>%  mutate(head = (0.149*diana_psi_corr)/0.293) %>% 
-    mutate(flow_cms = 2.391* (head^2.5)) %>% 
-    select(TIMESTAMP, diana_psi_corr, flow_cms)
-  
-  dianadata <- rbind(dianadata_pre, dianadata_post)                                                   
-  
-  # calculate daily values
-  discharge_diana_daily <- dianadata %>% 
-    select(TIMESTAMP, flow_cms) %>% 
-    mutate(Date = date(TIMESTAMP))%>% 
-    group_by(Date) %>% 
-    summarise_all('mean') %>% 
-    select(-TIMESTAMP)
-  
-  # convert diana into wvwa units (equation taken from 'thesis/r scripts/lm_wvwa_diana_pressuredata.R' on 10-08-2019)
-  discharge_diana_daily_wvwaunits <- discharge_diana_daily %>% 
-    mutate(flow_cms_diana_wvwaunits = (flow_cms*0.713454 + (-0.004732)))
-  
-  # throw out data 2019-06-04 through 2019-06-06 because the plug was removed from the weir in prep for replacing weir face so numbers are artificially low
-  discharge_diana_daily_wvwaunits <- discharge_diana_daily_wvwaunits[discharge_diana_daily_wvwaunits$Date!=as.Date('2019-06-04'),]
-  discharge_diana_daily_wvwaunits <- discharge_diana_daily_wvwaunits[discharge_diana_daily_wvwaunits$Date!='2019-06-05',]
-  discharge_diana_daily_wvwaunits <- discharge_diana_daily_wvwaunits[discharge_diana_daily_wvwaunits$Date!='2019-06-06',]
-  
-  discharge_diana_daily_wvwaunits <- discharge_diana_daily_wvwaunits %>% select(-flow_cms)
-  colnames(discharge_diana_daily_wvwaunits) <- c('Date', 'mean_flow')
-  
-  
-  update <- left_join(chl_update, discharge_diana_daily_wvwaunits)
-  update <- left_join(update, sw_hist_daily)
+    source(paste0(folder,"/","Rscripts/create_inflow_outflow_file_arima.R"))
+    source(paste0(folder,"/","Rscripts/inflow_qaqc.R"))
+    
+    
+    cleaned_inflow_file <- paste0(working_arima, "/FCRinflow_postQAQC.csv")
+    inflow_file1 <- c(paste0(data_location,"/diana-data/FCRweir.csv"),
+                       paste0(folder,"/sim_files/FCR_inflow_WVWA_2013_2019.csv"),
+                       paste0(data_location,"/manual-data/inflow_working_2019.csv"))
+    
+    inflow_qaqc(fname = inflow_file1,
+                cleaned_inflow_file ,
+                local_tzone, 
+                input_file_tz = 'EST',
+                working_arima)
+    
+    full_time = seq(tail(data$Date, n=1), as.Date(forecast_start_day) , by = timestep)
+    create_inflow_outflow_file(folder = folder,
+                               full_time = full_time ,
+                               working_arima = working_arima, 
+                               input_tz = "EST5EDT",
+                               output_tz = reference_tzone)
+    # read in function output as driver data
+    Discharge <- read.csv(paste0(folder,"/", "ARIMA_working/FCR_inflow.csv"))
+    Discharge$Date <- as.Date(Discharge$time)  
+    Discharge <- Discharge %>% select(Date, FLOW)  
+    colnames(Discharge) <- c('Date', 'mean_flow')
+  update <- left_join(chl_update, Discharge)
+  update <- left_join(update, met_hist_daily)
+  }else{
+    
+    update <- left_join(chl_update, met_hist_daily)
+  }
   
   # now join with the original training data
   data_assimilate <- rbind(data, update)
   data_assimilate <- data_assimilate[order(data_assimilate$Date),]
+  data_assimilate <- data_assimilate[!duplicated(data_assimilate$Date),]
   
   # create the lag for new datapoints
   data_assimilate <- data_assimilate %>% mutate(Chla_ARlag1_sqrt = ifelse(Chla_ARlag1_sqrt>0, Chla_ARlag1_sqrt, lag(Chla_sqrt, n = 1L)))
@@ -159,12 +170,18 @@ if(tail(data$Date, n=1)<= as.Date(forecast_start_day)-7){
   
   #get rid of na's
   data_assimilate <- na.omit(data_assimilate)
-  
+  #data_assimilate <- data[data$Date<forecast_start_day,]
   write.csv(data_assimilate,'data_arima_working.csv' , row.names = FALSE)
   print('newly updated')
   
 }else{
+  
+  
   data_assimilate <- data[data$Date<forecast_start_day,]
-  write.csv(data_assimilate, 'data_arima_working.csv', row.names = FALSE)
-  print('limited to forecast day range')}
+  write.csv(data_assimilate, outfile, row.names = FALSE)
+  print('limited to forecast day range')
+}
+
+
+
 }
