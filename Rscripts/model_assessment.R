@@ -24,4 +24,6 @@ model_metrics <- function(sim, obs){
   return(output)
 }
 
-test <- model_metrics(week1$forecast_mean_chl, week1$obs_chl_EXO)
+
+
+
