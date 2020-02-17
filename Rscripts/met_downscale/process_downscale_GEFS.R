@@ -40,7 +40,7 @@ process_downscale_GEFS <- function(folder,
   # 1. Load & reformat observational data
   # -----------------------------------
   
-  obs.file.path = paste(met_station_location, "/FCRmet_legacy01.csv", sep = "")
+  obs.file.path = paste(met_station_location, "/FCRmet.csv", sep = "")
   for.file.path = noaa_location
   
   obs.data <- read.csv(obs.file.path, skip = 4, header = F)
