@@ -8,17 +8,17 @@ library(hydroGOF)
 reference_tzone <- "GMT"
 
 folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
-timestep <- 'weekly'
-forecast_folder <- paste0(folder, "/FCR_forecasts", '/', timestep)
+timestep <- 'weekly' #specify the timestep
+forecast_folder <- paste0(folder, "/FCR_forecasts", '/', timestep, '/weekly_05Feb2020') #specify the folder within here
 setwd(forecast_folder)
 
 # code to read in the individual forecast files named for the day on which the forecast is made
-myfiles_forecast <- list.files(path = paste0(forecast_folder,"/with_DA_and_saving_parms_Oct23_2019/"), pattern = paste0('*', timestep, ".csv"))
-dataset_forecast <- read.csv(paste0(forecast_folder,"/with_DA_and_saving_parms_Oct23_2019/", myfiles_forecast[1]))
+myfiles_forecast <- list.files(path = paste0(forecast_folder), pattern = paste0('*', timestep, ".csv"))
+dataset_forecast <- read.csv(paste0(forecast_folder, '/', myfiles_forecast[1]))
 
 # read in files
 for (i in 2:length(myfiles_forecast)) {
-  temp_2 <- read.csv(paste0(forecast_folder,"/with_DA_and_saving_parms_Oct23_2019/", myfiles_forecast[i]))
+  temp_2 <- read.csv(paste0(forecast_folder,'/', myfiles_forecast[i]))
   dataset_forecast <- rbind(dataset_forecast, temp_2)
 }
 
@@ -31,6 +31,10 @@ stuff$forecast_date <- as.Date(stuff$forecast_date, "%Y-%m-%d")
 stuff <- stuff[order(stuff$forecast_date),]
 stuff$week <- as.factor(stuff$week)
 stuff$forecast_run_day <- as.Date(stuff$forecast_run_day, "%Y-%m-%d")
+# remove the 'spin up' period from Aug 15, 2018 - Dec 31, 2018
+stuff <- stuff[stuff$forecast_date>'2019-01-01',]
+
+
 
 # calculate a few things that will be needed for analysis
 stuff <- stuff %>% mutate(residual = forecast_mean_chl - obs_chl_EXO) %>% 
@@ -55,7 +59,6 @@ ggplot(data = stuff, aes(x = forecast_date)) +
   geom_vline(xintercept = as.POSIXct("2019-03-20", "%Y-%m-%d"))
 
 hist(stuff$residual)
-
 
 # separate into week1 and week2 dataframes for separate analysis
 week1 <- stuff[stuff$week==1,]
@@ -109,7 +112,7 @@ points(week1$forecast_date, week1$obs_chl_EXO, col = 'red', type = 'p', lwd = 2)
 legend('topright', c('forecast mean', '95% CI', 'observed'), lty = c(1, 2, 1), col = c('black', 'black', 'red'), cex = 2)
 #dev.off()
 
-png('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/ConfIntForecasts2019_noabline_Oct.png', width = 1100, height = 800)
+#png('C:/Users/wwoel/Desktop/Weekly_MayOct2019.png', width = 1100, height = 800)
 ggplot(week1, aes(forecast_date, forecast_mean_chl)) +
   geom_line(size = 2) +
   geom_point(aes(forecast_date, obs_chl_EXO), size = 4, stroke = 0, shape = 19, color = 'green4') +
@@ -129,7 +132,7 @@ ggplot(week1, aes(forecast_date, forecast_mean_chl)) +
         panel.grid.minor = element_blank())
 # panel.background = element_rect(fill = '#9DC3E6', color = '#9DC3E6'),
 #  plot.background = element_rect(fill = '#9DC3E6', color = '#9DC3E6'))
-dev.off()
+#dev.off()
 
 
 plot(week1$forecast_date, week1$obs_chl_EXO)
@@ -194,18 +197,29 @@ source(paste0(folder,"/","Rscripts/extract_EXOchl_chain_dailyavg.R")) #this is t
 data_location = "C:/Users/wwoel/Desktop/FLARE/FLARE_3/FLARE_3/SCCData"
 temperature_location <- paste0(data_location, "/", "mia-data")
 # specify full_time as the entire time series from 08-15-2018 to -7-15-2019
-full_time <- seq(as.Date("2018-08-01"), as.Date("2019-10-15"), by = "1 day")
+full_time <- seq(as.Date("2018-08-01"), as.Date("2019-11-26"), by = "1 day")
 observed_depths_chla_fdom <- 1
 temp_obs_fname <- "Catwalk.csv"
 temp_obs_fname_wdir <- paste0(temperature_location, "/", temp_obs_fname) 
-reference_tzone <- "GMT"
+working_arima <- paste0(folder, "/", "ARIMA_working")  
+cleaned_temp_oxy_chla_file <- paste0(working_arima, "/Catwalk_postQAQC.csv")
+source(paste0(folder,"/","Rscripts/temp_oxy_chla_qaqc.R")) 
+temp_oxy_chla_qaqc(temp_obs_fname_wdir[1], 
+                   paste0(data_location, '/mia-data/CAT_MaintenanceLog.txt'), 
+                   cleaned_temp_oxy_chla_file)
 
-chla_obs <- extract_chla_chain_dailyavg(fname = temp_obs_fname_wdir,
+new_temp_obs_fname_wdir <- temp_obs_fname_wdir
+new_temp_obs_fname_wdir[1] <- cleaned_temp_oxy_chla_file
+
+# change the function to 'extract_chla_chain_dailyavg
+chla_obs <- extract_chla_chain_dailyavg(fname = new_temp_obs_fname_wdir,
                                         full_time,
                                         depths = 1.0,
                                         observed_depths_chla_fdom = observed_depths_chla_fdom,
                                         input_tz = "EST5EDT", 
                                         output_tz = reference_tzone)
+
+
 
 
 
@@ -228,17 +242,20 @@ week1$forecast_date <- as.Date(week1$forecast_date)
 up1 <- week1[week1$forecast_date<"2019-02-28",]
 down1 <- week1[week1$forecast_date>"2019-03-20",]
 week1 <- rbind(up1, down1)
+week1 <- week1[week1$forecast_date<'2019-10-16',]
 
 up2 <- week2[week2$forecast_date<"2019-02-28",]
 down2 <- week2[week2$forecast_date>"2019-03-20",]
 week2 <- rbind(up2, down2)
+week2 <- week2[week2$forecast_date< '2019-10-16', ]
 
 # calculate the stats on the non-bloom period
-week1_nonbloom_up <- week1[week1$forecast_date < as.Date("2019-07-10") ,]
-week1_nonbloom_down <- week1[week1$forecast_date > as.Date("2019-08-10") ,]
+week1_nonbloom_up <- week1[week1$forecast_date < as.Date("2019-07-10"), ]
+week1_nonbloom_down <- week1[week1$forecast_date > as.Date("2019-08-10"), ]
 week1_nonbloom <- rbind(week1_nonbloom_up, week1_nonbloom_down)
+
 week2_nonbloom_up <- week2[week2$forecast_date < as.Date("2019-07-10") ,]
-week2_nonbloom_down <- week2[week2$forecast_date > as.Date("2019-08-10") ,]
+week2_nonbloom_down <- week2[week2$forecast_date > as.Date("2019-08-10"), ]
 week2_nonbloom <- rbind(week2_nonbloom_up, week2_nonbloom_down)
 hist(week1_nonbloom$residual)
 
@@ -248,7 +265,20 @@ week2 <- left_join(week2, datamerge)
 week1 <- na.omit(week1)
 week2 <- na.omit(week2)
 
+week1_nonbloom <- na.omit(week1_nonbloom)
+week2_nonbloom <- na.omit(week2_nonbloom)
 
+week1 <- week1[!duplicated(week1$forecast_run_day),]
+week2 <- week2[!duplicated(week2$forecast_run_day),]
+
+
+plot(week1$forecast_run_day, week1$obs_chl_EXO)
+points(week1$forecast_run_day, week1$forecast_mean_chl, col = 'blue', type = 'l')
+points(week1$forecast_run_day, week1$week_lag_chl, col = 'red', type = 'l')
+
+plot(week2$forecast_run_day, week2$obs_chl_EXO)
+plot(week2$forecast_run_day, week2$forecast_mean_chl, col = 'blue', type = 'l')
+points(week2$forecast_run_day, week2$week_lag_chl, col = 'red', type = 'l')
 ####################################################################################################################################################################################
 ## calculate model assessment metric using function ##########################################################################################################################
 ####################################################################################################################################################################################
@@ -264,6 +294,12 @@ metrics_week1_nonbloom <- model_metrics(week1_nonbloom$forecast_mean_chl, week1_
 metrics_week1_nonbloom_null <- model_metrics(week1_nonbloom$week_lag_chl, week1_nonbloom$obs_chl_EXO)
 metrics_week2_nonbloom <- model_metrics(week2_nonbloom$forecast_mean_chl, week2_nonbloom$obs_chl_EXO)
 metrics_week2_nonbloom_null <- model_metrics(week2_nonbloom$week2_lag_chl, week2_nonbloom$obs_chl_EXO)
+
+install.packages('DescTools')
+library(DescTools)
+auc(week1$forecast_mean_chl, week1$obs_chl_EXO)
+AUC(week1$forecast_date, week1$forecast_mean_chl)
+AUC(week1$forecast_date, week1$obs_chl_EXO)
 
 #ugh can't figure out how to format function to output metrics in an accessible way so hardcoded them into an xcel doc, read in here
 metrics <- read.csv('./model_metrics.csv')
