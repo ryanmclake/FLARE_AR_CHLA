@@ -20,7 +20,8 @@ run_arima <- function(
   downscaling_coeff = NA,
   DOWNSCALE_MET = TRUE,
   FLAREversion,
-  window_length
+  window_length,
+  null_model = FALSE
 ){
   
   
@@ -65,7 +66,7 @@ run_arima <- function(
   observed_depths_chla_fdom <- 1
   
   temp_obs_fname <- "Catwalk.csv"
-  met_obs_fname <- "FCRmet.csv" # as of 27-Nov-19, need to change this to the legacy file if running dates before 01-01-2019
+  met_obs_fname <- "FCRmet.csv" # as of 27-Nov-19, need to change this to FCRmet_lecagy01.csv if running dates before 01-01-2019
                                 # file name in process_GEFS script needs to be changed as well
   
   inflow_file1 <- "FCR_weir_inflow_2013_2017_20180716.csv"
@@ -237,14 +238,6 @@ run_arima <- function(
   
   
   x <- array(NA, dim=c(nsteps, nmembers, nstates))
-  
-  
-  #nsteps <- length(full_time)
-  #ndepths_modeled <- length(modeled_depths)
-  #num_wq_vars <- length(wq_names) 
-  #glm_output_vars <- c("temp", wq_names)
-  
-  
   
   ####################################################
   #### STEP 5: ORGANIZE FILES
@@ -427,18 +420,19 @@ run_arima <- function(
   source(paste0(folder,"/","Rscripts/inflow_qaqc.R"))
   
   
- # cleaned_inflow_file <- paste0(working_arima, "/FCRinflow_postQAQC.csv")
-#  inflow_file1 <<- c(paste0(data_location,"/diana-data/FCRweir.csv"),
-#                     paste0(folder,"/sim_files/FCR_inflow_WVWA_2013_2019.csv"),
-#                     paste0(data_location,"/manual-data/inflow_working_2019.csv"))
-#  
-#  inflow_qaqc(fname = inflow_file1,
-#              cleaned_inflow_file ,
-#              local_tzone, 
-#              input_file_tz = 'EST',
-#              working_arima)
-#  
-  create_inflow_outflow_file(full_time ,
+  cleaned_inflow_file <- paste0(working_arima, "/FCRinflow_postQAQC.csv")
+  inflow_file1 <- c(paste0(data_location,"/diana-data/FCRweir.csv"),
+                     paste0(folder,"/sim_files/FCR_inflow_WVWA_2013_2019.csv"),
+                     paste0(data_location,"/manual-data/inflow_working_2019.csv"))
+  
+  inflow_qaqc(fname = inflow_file1,
+              cleaned_inflow_file ,
+              local_tzone, 
+              input_file_tz = 'EST',
+              working_arima)
+  
+  create_inflow_outflow_file(folder = folder,
+                             full_time_day = full_time_day,
                              working_arima = working_arima, 
                              input_tz = "EST5EDT",
                              output_tz = reference_tzone)
@@ -457,30 +451,29 @@ run_arima <- function(
   ##### chla data extraction and download  ###
   ############################################
   
- # source(paste0(folder,"/","Rscripts/extract_temp_chain.R"))
   source(paste0(folder,"/","Rscripts/extract_EXOchl_chain_dailyavg.R")) 
-  #this is the original file modified to take a daily avg rather than the midnight reading
-  #source(paste0(folder,"/","Rscripts/temp_oxy_chla_qaqc.R")) 
+  #this is the original file modified by WW to take a daily avg rather than the midnight reading
+  source(paste0(folder,"/","Rscripts/temp_oxy_chla_qaqc.R")) 
   
   
   observed_depths_chla_fdom <- 1
   temp_obs_fname_wdir <- paste0(temperature_location, "/", temp_obs_fname) 
+  cleaned_temp_oxy_chla_file <- paste0(working_arima, "/Catwalk_postQAQC.csv")
+  temp_oxy_chla_qaqc(data_file = temp_obs_fname_wdir[1], 
+                     maintenance_file = paste0(data_location, '/mia-data/CAT_MaintenanceLog.txt'), 
+                     output_file = cleaned_temp_oxy_chla_file)
   
-  #cleaned_temp_oxy_chla_file <- paste0(working_arima, "/Catwalk_postQAQC.csv")
-  #temp_oxy_chla_qaqc(temp_obs_fname_wdir[1], 
-  #                   paste0(data_location, '/mia-data/CAT_MaintenanceLog.txt'), 
-  #                   cleaned_temp_oxy_chla_file)
-  
-  #new_temp_obs_fname_wdir <- temp_obs_fname_wdir
-  #new_temp_obs_fname_wdir[1] <- cleaned_temp_oxy_chla_file
+  new_temp_obs_fname_wdir <- temp_obs_fname_wdir
+  new_temp_obs_fname_wdir[1] <- cleaned_temp_oxy_chla_file
   
   # change the function to 'extract_chla_chain_dailyavg
-  chla_obs <- extract_chla_chain_dailyavg(fname = temp_obs_fname_wdir,
+  chla_obs <- extract_chla_chain_dailyavg(fname = new_temp_obs_fname_wdir,
                                           full_time,
                                           depths = 1.0,
                                           observed_depths_chla_fdom = observed_depths_chla_fdom,
                                           input_tz = "EST5EDT", 
                                           output_tz = reference_tzone)
+  
   
   
   # chla_obs is the matrix to pull from for day 1, which will be used as the AR term for day 7 and day 14
@@ -491,20 +484,24 @@ run_arima <- function(
 ###### data assimilation  ###############################################################################################
 #########################################################################################################################
 
-  # built a script to check for new data to add to the historical dataset; data gets updated weekly
+  # a script to check for new data to add to the historical dataset; data gets updated weekly
   source(paste0(folder,"/","Rscripts/data_assimilation_AR.R"))
+  outfile <- 'data_arima_working.csv'
   data_assimilation(folder = folder, 
                     data_location =  data_location,
                     hist_file = paste0(folder, '/', 'data_arima_updated.csv'),
-                    forecast_start_day = forecast_start_day)
+                    forecast_start_day = forecast_start_day,
+                    timestep = 7, 
+                    outfile = outfile,
+                    met_obs_fname = met_obs_fname)
   
   # output from data_assimilation function is then read into a function that subsets the training dataset by a given window
-  source(paste0(folder,"/","Rscripts/moving_data_assimilation.R"))
-  moving_data_assimilation(folder = folder,
-                           data_location = data_location,
-                           data_file = 'data_arima_working.csv', 
-                           forecast_start_day = forecast_start_day,
-                           window_length = window_length) # in days, this is set in the automated_forecast_ARIMA script
+  #source(paste0(folder,"/","Rscripts/moving_data_assimilation.R"))
+  #moving_data_assimilation(folder = folder,
+  #                         data_location = data_location,
+  #                         data_file = 'data_arima_working.csv', 
+  #                         forecast_start_day = forecast_start_day,
+  #                         window_length = window_length) # in days, this is set in the automated_forecast_ARIMA script
   
   # read in the jags file to pull from parameter values 
   # load("C:/Users/wwoel/Desktop/FLARE/FLARE_3/FLARE_3/MCMC_output_ARIMA_Whitney.Rdata")
@@ -513,7 +510,7 @@ run_arima <- function(
   library(PerformanceAnalytics)
   
   setwd(folder)
-  data = read.csv('data_arima_working.csv')
+  data = read.csv(outfile)
   
   N <- nrow(data)
   
@@ -558,6 +555,83 @@ run_arima <- function(
   #chart.Correlation(par_matrix)
   
   save(samples, file = "MCMC_output_ARIMA_Whitney.Rdata")
+  
+  if(null_model){
+    
+    
+    # extract process error from bayes output and write to an array
+    null_error <- array(NA, dim = c(nsteps, nmembers))
+    
+    for (i in 1:nsteps) {
+      step_index <- 1
+      
+      for(j in 1:nmembers){
+        
+        p <- sample(seq(1,length(samples[[1]][,1])), 1, replace = TRUE) #changed 0 to 1 7/16
+        null_error[i, j] <- samples[[1]][p,4]
+        step_index = step_index + 1
+        
+        if(step_index > 16){
+          step_index <- 1
+        } 
+      }
+    }
+    
+    # take the obs chl on the forecast_start_day, the day the forecast is being made, and propagate that out for every timestep
+    chla_obs[[1]][1]
+    null_error <- null_error + chla_obs[[1]][1]
+    
+    # create a csv with summary stats of the null (mean and CI)
+    null_summary <- array(NA, dim = c(nsteps,4)) # 4 = mean, upper and lower conf interval, and day of forecast
+    for (i in 1:nsteps) {
+      # take the mean of the 420 ensembles
+      temp <- mean(null_error[i,], na.rm = TRUE)
+      null_summary[i,1] <- temp
+      # calculate conf intervals and add to array
+      error_upper <-  qnorm(0.975, mean = mean(null_error[i,]), sd =sd((null_error[i,])) )
+      error_lower <- qnorm(0.025, mean =  mean(null_error[i,]), sd =sd((null_error[i,])) )
+      null_summary[i,2] <- error_upper
+      null_summary[i,3] <- error_lower
+      
+    }
+    
+    
+    null_error <- as.data.frame(null_error)
+    null_error[,421] <- c(forecast_start_day, week1, week2)
+    
+
+    # write the distribution of all 420 ensembles on each forecast day to a csv
+    if(day(forecast_start_day) < 10){
+      file_name_forecast_start_day <- paste0("0",day(forecast_start_day))
+    }else{
+      file_name_forecast_start_day <- day(forecast_start_day) 
+    }
+    
+    if(month(forecast_start_day) < 10){
+      file_name_forecast_start_month <- paste0("0",month(forecast_start_day))
+    }else{
+      file_name_forecast_start_month <- month(forecast_start_day) 
+    }
+    
+    null_file_name <- paste0(year(forecast_start_day), "_", 
+                             file_name_forecast_start_month, "_", 
+                             file_name_forecast_start_day, "_", 
+                             "null_ensembles.csv")
+    
+    write.csv(null_error, paste0(forecast_location, '/null_ensemble/', null_file_name), row.names = FALSE)
+    
+    null_summary <- as.data.frame(null_summary)
+    null_summary[,4] <- c(forecast_start_day, week1, week2)
+    colnames(null_summary) <- c('mean', 'upper_CI', 'lower_CI', 'date')
+    
+    null_summary_file_name <- paste0(year(forecast_start_day), "_", 
+                                     file_name_forecast_start_month, "_", 
+                                     file_name_forecast_start_day, "_", 
+                                     "null_summary.csv")
+    write.csv(null_summary, paste0(forecast_location, '/null_ensemble/', null_summary_file_name), row.names = FALSE)
+  }
+  
+  
   
   
   # the first column is observed chl that is sqrt transformed (because the model is based on sqrt units) and corrected into CTD units (because it is observed in EXO units)
@@ -632,6 +706,12 @@ run_arima <- function(
     }
   }
   
+  
+  forecast_ensemble_file_name <- paste0(year(forecast_start_day), "_", 
+                                        file_name_forecast_start_month, "_", 
+                                        file_name_forecast_start_day, "_", 
+                                        "chla_weekly_ensembles.csv")
+  write.csv(x, paste0(forecast_location, '/', forecast_ensemble_file_name), row.names = FALSE )
   
 #  conf1 <- quantile(x[2, , ], c(0.025, 0.975))
  # conf2 <- quantile(x[3, , ], c(0.025, 0.975))
