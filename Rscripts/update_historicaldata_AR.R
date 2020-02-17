@@ -11,8 +11,8 @@
 library(lubridate)
 library(tidyverse)
 
-folder <- "C:/Users/wwoel/Desktop/FLARE/FLARE_3/FLARE_3"
-data_location <-  "C:/Users/wwoel/Desktop/FLARE/FLARE_3/FLARE_3/SCCData"
+folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
+data_location <-  "C:/Users/wwoel/Desktop/FLARE_AR_CHLA/SCCData"
 #setwd(folder)
 
 # read in the original training dataset from 2013-2016
@@ -30,23 +30,29 @@ chl_hist_CTD <- chl_hist_CTD %>% mutate(Chla_sqrt = sqrt(Chla_ugL)) %>%
 chl_hist_CTD <- chl_hist_CTD %>%  select(-Chla_ugL, -chla_lag)
 #2019 CTD doesn't start until June--add in exo data but convert to ctd units
 
-source(paste0(folder,"/","Rscripts/extract_EXOchl_chain_dailyavg.R")) #this is the original file modified to take a daily avg rather than the midnight reading
-temperature_location <- paste0(data_location, "/", "mia-data")
-temp_obs_fname <- "Catwalk.csv"
-temp_obs_fname_wdir <- paste0(temperature_location, "/", temp_obs_fname) 
-observed_depths_chla_fdom <- 1
-reference_tzone <- "GMT"
-# extract dates from april 2019 through end of May (bc ctd data begins june 3 2019)
-full_time = seq(as.Date("2019-04-13"), as.Date('2019-05-28') , by = '1 day')
+source(paste0(folder,"/","Rscripts/extract_EXOchl_chain_dailyavg.R")) 
+#this is the original file modified by WW to take a daily avg rather than the midnight reading
+source(paste0(folder,"/","Rscripts/temp_oxy_chla_qaqc.R")) 
 
-# choosing to start 'full_time' on 2018-07-05 because this is when EXO data is first available
-# gather chl data from exo sonde up to the current day
-chl_hist <- extract_chla_chain_dailyavg(fname = temp_obs_fname_wdir,
-                                        full_time = full_time,
+
+observed_depths_chla_fdom <- 1
+temp_obs_fname_wdir <- paste0(temperature_location, "/", temp_obs_fname) 
+cleaned_temp_oxy_chla_file <- paste0(working_arima, "/Catwalk_postQAQC.csv")
+temp_oxy_chla_qaqc(data_file = temp_obs_fname_wdir[1], 
+                   maintenance_file = paste0(data_location, '/mia-data/CAT_MaintenanceLog.txt'), 
+                   output_file = cleaned_temp_oxy_chla_file)
+
+new_temp_obs_fname_wdir <- temp_obs_fname_wdir
+new_temp_obs_fname_wdir[1] <- cleaned_temp_oxy_chla_file
+
+# change the function to 'extract_chla_chain_dailyavg
+chl_hist <- extract_chla_chain_dailyavg(fname = new_temp_obs_fname_wdir,
+                                        full_time,
                                         depths = 1.0,
                                         observed_depths_chla_fdom = observed_depths_chla_fdom,
                                         input_tz = "EST5EDT", 
                                         output_tz = reference_tzone)
+
 
 date_vector <- data.frame(full_time)
 chl_hist_daily <- data.frame(cbind(date_vector, chl_hist[[1]][,1])  )
@@ -71,8 +77,8 @@ chl_hist_join <- rbind(chl_hist_CTD, chl_hist_weekly)
 met_obs_fname <- "FCRmet.csv"
 met_station_location <- paste0(data_location, "/", "carina-data")
 met_obs_fname_wdir <-paste0(met_station_location, "/", met_obs_fname)
-working_glm <- paste0(folder, "/", "GLM_working")  
-AR_obs_met_outfile <- paste0(working_glm, "/", "AR_historical_met.csv")
+working_arima <- paste0(folder, "/", "ARIMA_working")  
+AR_obs_met_outfile <- paste0(working_arima, "/", "AR_historical_met.csv")
 full_time_hour_obs <- seq(as.POSIXct('2018-04-20 00:00:00'), 
                           as.POSIXct(Sys.Date()),
                           by = "1 hour")
@@ -86,7 +92,7 @@ create_obs_met_input(fname = met_obs_fname_wdir,
                                   output_tz = reference_tzone)
 # read in the hourly data that was created and summarize to daily mean
 setwd(folder)
-sw_hist <- read.csv('./GLM_working/AR_historical_met.csv')
+sw_hist <- read.csv('./ARIMA_working/AR_historical_met.csv')
 sw_hist_daily <- sw_hist %>% mutate(Date = date(time)) %>% 
   group_by(Date) %>% 
   mutate(ShortWave_mean = mean(ShortWave)) %>% 
