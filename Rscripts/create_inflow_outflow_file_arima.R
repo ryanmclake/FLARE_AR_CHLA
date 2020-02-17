@@ -1,4 +1,4 @@
-create_inflow_outflow_file <- function(full_time_day,working_arima,input_tz = 'EST5EDT', output_tz = reference_tzone){
+create_inflow_outflow_file <- function(folder, full_time_day,working_arima,input_tz = 'EST5EDT', output_tz = reference_tzone){
   
   full_time_day_2017 <- as.POSIXct(full_time_day,
                                    tz = reference_tzone) - 365*24*60*60
@@ -11,9 +11,9 @@ create_inflow_outflow_file <- function(full_time_day,working_arima,input_tz = 'E
   full_time_day_2015 <- as.POSIXct(full_time_day, 
                                    tz = reference_tzone) - 5*365*24*60*60
   
-  inflow = read.csv(paste0(working_arima,'/',
+  inflow = read.csv(paste0(folder,'/sim_files/',
                            'FCR_weir_inflow_2013_2017_20180716.csv'))
-  spillway = read.csv(paste0(working_arima,'/',
+  spillway = read.csv(paste0(folder,'/sim_files/',
                              'FCR_spillway_outflow_2013_2017_20180716.csv'))
   
   inflow_time_local <- as.POSIXct(inflow$time, tz = reference_tzone)
