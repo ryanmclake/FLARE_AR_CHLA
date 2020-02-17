@@ -9,6 +9,12 @@ create_obs_met_input_DA <- function(fname,
   
   d <- d[-85572, ]
   
+  c <- read.csv('C:/Users/wwoel/Desktop/FLARE_AR_CHLA/SCCData/carina-data/FCRmet_legacy01.csv', skip = 3)
+  c_names <- read.csv('C:/Users/wwoel/Desktop/FLARE_AR_CHLA/SCCData/carina-data/FCRmet_legacy01.csv', skip = 1)
+  names(c) <- names(c_names)
+  
+  d <- rbind(c,d)
+  
   ShortWave <- rep(NA, length(full_time_hour_obs) - 1)
   LongWave <- rep(NA, length(full_time_hour_obs) - 1)
   AirTemp <- rep(NA, length(full_time_hour_obs) - 1)
