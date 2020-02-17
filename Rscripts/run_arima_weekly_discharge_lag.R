@@ -65,7 +65,7 @@ run_arima <- function(
   observed_depths_chla_fdom <- 1
   
   temp_obs_fname <- "Catwalk.csv"
-  met_obs_fname <- "FCRmet.csv" # as of 27-Nov-19, need to change this to the legacy file if running dates before 01-01-2019
+  met_obs_fname <- "FCRmet_legacy01.csv" # as of 27-Nov-19, need to change this to the legacy file if running dates before 01-01-2019
                                 # file name in process_downscale_GEFS script needs to be changed as well
                                 # file 'FCRmet.csv' is data from 01-Jan-2019 and ahead, use legacy file for dates before 2019
   
