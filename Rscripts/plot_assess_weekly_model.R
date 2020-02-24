@@ -70,16 +70,16 @@ temp <- read.csv(paste0(forecast_folder, '/day_', i, '.csv'))
 temp$forecast_date <- as.Date(temp$forecast_date)
 
 #create and save figure with forecast mean, confidence intervals, and obs chl
-#png(paste0(forecast_folder, '/Forecast_day_', i, '.png'), width = 1100, height = 800)
+png(paste0(forecast_folder, '/Forecast_day_', i, '.png'), width = 1100, height = 800)
 print(ggplot(temp, aes(forecast_date, forecast_mean_chl)) +
         geom_line(size = 2) +
         geom_point(aes(forecast_date, obs_chl_EXO), size = 4, stroke = 0, shape = 19, color = 'green4') +
         geom_ribbon(aes(ymin = forecast_CI95_lower, ymax = forecast_CI95_upper), fill = 'forestgreen', linetype = 2, alpha = 0.2) +
         xlab('Date') +
         ylab('Chlorophyll a (μg/L)') +
-        #geom_vline(xintercept = as.numeric(as.Date("2019-02-28", "%Y-%m-%d")), color = 'blue', size = 1.5) +
-        #geom_vline(xintercept = as.numeric(as.Date("2019-03-20", "%Y-%m-%d")), color = 'blue', size = 1.5) +
-        theme(axis.text.x = element_text(size = 35),
+        geom_vline(xintercept = as.numeric(as.Date("2019-07-10", "%Y-%m-%d")), color = 'black', size = 1.5, linetype = 'dashed') +
+        geom_vline(xintercept = as.numeric(as.Date("2019-08-15", "%Y-%m-%d")), color = 'black', size = 1.5, linetype = 'dashed') +
+        theme(axis.text.x = element_text(size = 21),
               axis.text.y = element_text(size = 50),
               axis.title.x = element_text(size =45),
               axis.title.y = element_text(size = 45),
@@ -88,16 +88,17 @@ print(ggplot(temp, aes(forecast_date, forecast_mean_chl)) +
               panel.grid.major = element_blank(),
               legend.position = 'right',
               panel.grid.minor = element_blank()))
-#dev.off()
+dev.off()
 }
 
-metrics <- array(NA, dim = c(8, 4))
+metrics <- array(NA, dim = c(8, 6))
 row.names(metrics) <- c('RMSE', "NSE", 'KGE', 'bias', 'bias_sd', 'R2_1_1', 'coefficient of determination', 'corr_p')
-colnames(metrics) <- c('forecast', 'null', 'forecast_nonbloom', 'null_nonbloom')
+colnames(metrics) <- c('forecast', 'null', 'forecast_nonbloom', 'null_nonbloom', 'forecast_bloom', 'null_bloom')
 
-metrics_overtime <- array(NA, dim = c(2,9))
+metrics_overtime <- array(NA, dim = c(2,13))
 colnames(metrics_overtime) <- c('week_in_future','RMSE_null', 'RMSE_forecast',"RMSE_null_nonbloom", 'RMSE_forecast_nonbloom', 
-                                'R2_null', 'R2_forecast',"R2_null_nonbloom", 'R2_forecast_nonbloom')
+                                'R2_null', 'R2_forecast',"R2_null_nonbloom", 'R2_forecast_nonbloom', 
+                                'RMSE_null_bloom', 'RMSE_forecast_bloom', 'R2_null_bloom', 'R2_forecasT_bloom')
 for (i in 1:2) {
   # read in csv of each forecast horizon
   temp <- read.csv(paste0(forecast_folder, '/day_', i, '.csv'))
@@ -134,7 +135,7 @@ for (i in 1:2) {
   metrics_overtime[i,6] <- null$coeff_determination
   metrics_overtime[i,1] <- i
   
-  non_bloom <- temp[temp$forecast_date< as.Date("2019-07-10") | temp$forecast_date > as.Date("2019-08-10"), ]
+  non_bloom <- temp[temp$forecast_date< as.Date("2019-07-10") | temp$forecast_date > as.Date("2019-08-15"), ]
   non_bloom_forecast <- model_metrics(non_bloom$forecast_mean_chl, non_bloom$obs_chl_EXO)
   metrics[1,3] <- non_bloom_forecast$RMSE
   metrics[2,3] <- non_bloom_forecast$NSE
@@ -148,7 +149,7 @@ for (i in 1:2) {
   metrics_overtime[i,9] <- non_bloom_forecast$coeff_determination
   
   
-  datamerge_nonbloom <- temp_null[temp_null$date< as.Date("2019-07-10") | temp_null$date > as.Date("2019-08-10"), ]
+  datamerge_nonbloom <- temp_null[temp_null$date< as.Date("2019-07-10") | temp_null$date > as.Date("2019-08-15"), ]
   non_bloom_null <- model_metrics(datamerge_nonbloom$mean, non_bloom$obs_chl_EXO)
   metrics[1,4] <- non_bloom_null$RMSE
   metrics[2,4] <- non_bloom_null$NSE
@@ -161,6 +162,34 @@ for (i in 1:2) {
   metrics_overtime[i,4] <- non_bloom_null$RMSE
   metrics_overtime[i,8] <- non_bloom_null$coeff_determination
   
+  bloom <- temp[temp$forecast_date> as.Date("2019-07-10") , ]
+  bloom <- bloom[bloom$forecast_date  < as.Date("2019-08-15"),]
+  bloom_forecast <- model_metrics(bloom$forecast_mean_chl, bloom$obs_chl_EXO)
+  metrics[1,5] <- bloom_forecast$RMSE
+  metrics[2,5] <- bloom_forecast$NSE
+  metrics[3,5] <- bloom_forecast$KGE
+  metrics[4,5] <- bloom_forecast$bias
+  metrics[5,5] <- bloom_forecast$bias_sd
+  metrics[6,5] <- bloom_forecast$R2_1_1
+  metrics[7,5] <- bloom_forecast$coeff_determination
+  metrics[8,5] <- bloom_forecast$cor_p
+  metrics_overtime[i,11] <- bloom_forecast$RMSE
+  metrics_overtime[i, 13] <- bloom_forecast$coeff_determination
+
+  
+  datamerge_bloom <- temp_null[temp_null$date > as.Date("2019-07-10") , ]
+  datamerge_bloom <- datamerge_bloom[datamerge_bloom$date < as.Date('2019-08-15'),]
+  bloom_null <- model_metrics(datamerge_bloom$mean, bloom$obs_chl_EXO)
+  metrics[1,6] <- bloom_null$RMSE
+  metrics[2,6] <- bloom_null$NSE
+  metrics[3,6] <- bloom_null$KGE
+  metrics[4,6] <- bloom_null$bias
+  metrics[5,6] <- bloom_null$bias_sd
+  metrics[6,6] <- bloom_null$R2_1_1
+  metrics[7,6] <- bloom_null$coeff_determination
+  metrics[8,6] <- bloom_null$cor_p
+  metrics_overtime[i,10] <- bloom_null$RMSE
+  metrics_overtime[i,12] <- bloom_null$coeff_determination
   
   print(paste0('metrics on day ', i))
   print(metrics)
