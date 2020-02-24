@@ -15,6 +15,7 @@ library(tidyverse)
 
 
 setwd(folder)
+working_arima <- paste0(folder, "/", "ARIMA_working")
 
 # read in the original training dataset from 2013-2016
 # this is the format that the end file should have so that it can read in to the jags code
