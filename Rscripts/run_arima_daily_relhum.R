@@ -442,7 +442,8 @@ outfile <- 'data_arima_working_highfrequency.csv'
                     hist_file = train_data,
                     forecast_start_day = forecast_start_day,
                     timestep = 1, #a numeric value for this script (so either '1' or '7')
-                    outfile = outfile)
+                    outfile = outfile,
+                    met_obs_fname = met_obs_fname)
   
   
   # read in the jags file to pull from parameter values 
@@ -634,7 +635,9 @@ outfile <- 'data_arima_working_highfrequency.csv'
   
   # write 'x' to csv, the forecast array where nrow = 16 for each day of the forecast and ncol = 420 for each forecast ensemble
   # some rearranging to create the name of the file
-  if(day(forecast_start_day) < 10){
+ if(uncert_mode==1){
+  
+   if(day(forecast_start_day) < 10){
     file_name_forecast_start_day <- paste0("0",day(forecast_start_day))
   }else{
     file_name_forecast_start_day <- day(forecast_start_day) 
@@ -651,6 +654,7 @@ outfile <- 'data_arima_working_highfrequency.csv'
                                file_name_forecast_start_day, "_", 
                                "chla_daily_ensembles.csv")
   write.csv(x, paste0(forecast_location, '/', forecast_ensemble_file_name), row.names = FALSE)
+ }
   
 #################################################################################################################################################################
 ############ calculate summary statistics and save output ###################################################################################################
