@@ -43,8 +43,8 @@ DOWNSCALE_MET <- FALSE # should this be TRUE???
 FLAREversion <- "v1.0_beta.1"
  met_ds_obs_start = as.Date("2018-04-06")
 met_ds_obs_end = Sys.Date()
-uncert_mode = 1
-null_model = TRUE
+uncert_mode = 6
+null_model = FALSE
 
 #Note: this number is multiplied by 
 # 1) the number of NOAA ensembles (21)
@@ -55,7 +55,7 @@ n_ds_members <- 1
 # SET UP NUMBER OF ENSEMBLE MEMBERS
 n_met_members <- 21
 
-num_forecast_periods <- 300
+num_forecast_periods <- 500
 
 # source the run_*** file you want to use for the forecast
 source(paste0(folder, "/", "Rscripts/run_arima_", timestep, ".R"))
