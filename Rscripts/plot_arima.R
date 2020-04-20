@@ -158,6 +158,7 @@ bloom <- week1[week1$forecast_date>'2019-06-22' & week1$forecast_date<'2019-09-0
 # as a temporary proxy for a 'bloom', use 3x (or 4x?) the standard deviation of the historical dataset for FCR
 # this threshold is specific to FCR
 # (x[2,,]^2)/0.55) + 0.0308
+setwd(folder)
 thresh <- read.csv('./data_arima_WW.csv')
 thresh <- thresh %>% mutate(chl_EXOunits = ((Chla_sqrt^2)/0.55) + 0.0308   )
 threshold <- 3*sd(thresh$chl_EXOunits)
@@ -178,10 +179,12 @@ plot(bloom$forecast_date, bloom$obs_chl_EXO)
   points(bloom$forecast_date[i], bloom$forecast_CI95_lower[i], col = 'grey69', pch = 20)
   points(bloom$forecast_date[i], bloom$forecast_CI95_upper[i], col = 'grey69', pch = 20)
   abline(v = bloom$forecast_run_day[i])
-  abline(h = 8.6, col = 'green') # bloom threshold 
+  abline(h = threshold, col = 'green') # bloom threshold 
 }
 
 hist(week1$obs_chl_EXO)
+plot(stuff$forecast_date, stuff$obs_chl_EXO)
+abline(h = threshold, col = 'green') # bloom threshold 
 
 # calculate a binary 'yes'=1 or 'no'=0 for the bloom threshold
 bloom <- bloom %>% mutate(forecast_bloom = ifelse(forecast_mean_chl>threshold, 1, 0)) %>% 
