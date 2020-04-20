@@ -6,16 +6,18 @@ library(Metrics)
 reference_tzone <- "GMT"
 
 #set the location of the forecasts
-forecast_folder <- "C:/Users/wwoel/Desktop/FLARE/FLARE_3/FLARE_3"
+#set the location of the forecasts
+forecast_folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
 setwd(forecast_folder)
+sim_folder <- paste0(forecast_folder, '/FCR_forecasts/weekly/weekly_05Feb2020')
 
 # the year's forecasts with all uncertainties 'on' in the forecast output
-myfiles <- list.files(path = "./FCR_forecasts/with_DA_and_saving_parms_Oct23_2019", pattern = "*weekly.csv")
-dataset <- read.csv(paste0("./FCR_forecasts/with_DA_and_saving_parms_Oct23_2019/", myfiles[1]))
+myfiles <- list.files(path = sim_folder, pattern = "*weekly.csv")
+dataset <- read.csv(paste0(sim_folder, "/", myfiles[1]))
 
 # read in files
 for (i in 2:length(myfiles)) {
-  temp <- read.csv(paste0("./FCR_forecasts/with_DA_and_saving_parms_Oct23_2019/", myfiles[i]))
+  temp <- read.csv(paste0(sim_folder, "/", myfiles[i]))
   dataset <- rbind(dataset, temp)
 }
 
@@ -23,47 +25,47 @@ for (i in 2:length(myfiles)) {
 
 # read in each batch on uncertainty files
 ################ uncertainty 2 = process uncertainty
-myfiles_2 <- list.files(path = "./FCR_forecasts/with_DA_and_saving_parms_Oct23_2019/uncertainty_2_process/", pattern = "*weekly.csv")
-dataset_2 <- read.csv(paste0("./FCR_forecasts/with_DA_and_saving_parms_Oct23_2019/uncertainty_2_process/", myfiles_2[1]))
+myfiles_2 <- list.files(path = paste0(sim_folder, "/uncertainty_2_process/"), pattern = "*weekly.csv")
+dataset_2 <- read.csv(paste0(sim_folder, "/uncertainty_2_process/", myfiles_2[1]))
 # read in files
 for (i in 2:length(myfiles_2)) {
-  temp <- read.csv(paste0("./FCR_forecasts/with_DA_and_saving_parms_Oct23_2019/uncertainty_2_process/", myfiles_2[i]))
+  temp <- read.csv(paste0(sim_folder, "/uncertainty_2_process/", myfiles_2[i]))
   dataset_2 <- rbind(dataset_2, temp)
 }
 
 ############### uncertainty 3 = weather uncertainty
-myfiles_3 <- list.files(path = "./FCR_forecasts/with_DA_and_saving_parms_Oct23_2019/uncertainty_3_weather", pattern = "*weekly.csv")
-dataset_3 <- read.csv(paste0("./FCR_forecasts/with_DA_and_saving_parms_Oct23_2019/uncertainty_3_weather/", myfiles_3[1]))
+myfiles_3 <- list.files(path = paste0(sim_folder, "/uncertainty_3_weather"), pattern = "*weekly.csv")
+dataset_3 <- read.csv(paste0(sim_folder, "/uncertainty_3_weather/", myfiles_3[1]))
 # read in files
 for (i in 2:length(myfiles_3)) {
-  temp <- read.csv(paste0("./FCR_forecasts/with_DA_and_saving_parms_Oct23_2019/uncertainty_3_weather/", myfiles_3[i]))
+  temp <- read.csv(paste0(sim_folder, "/uncertainty_3_weather/", myfiles_3[i]))
   dataset_3 <- rbind(dataset_3, temp)
 }
 
 ############### uncertainty 4 = initial condition uncertainty
-myfiles_4 <- list.files(path = "./FCR_forecasts/with_DA_and_saving_parms_Oct23_2019/uncertainty_4_initial_condition", pattern = "*weekly.csv")
-dataset_4 <- read.csv(paste0("./FCR_forecasts/with_DA_and_saving_parms_Oct23_2019/uncertainty_4_initial_condition/", myfiles_4[1]))
+myfiles_4 <- list.files(path = paste0(sim_folder, "/uncertainty_4_initial_condition"), pattern = "*weekly.csv")
+dataset_4 <- read.csv(paste0(sim_folder, "/uncertainty_4_initial_condition/", myfiles_4[1]))
 # read in files
 for (i in 2:length(myfiles_4)) {
-  temp <- read.csv(paste0("./FCR_forecasts/with_DA_and_saving_parms_Oct23_2019/uncertainty_4_initial_condition/", myfiles_4[i]))
+  temp <- read.csv(paste0(sim_folder, "/uncertainty_4_initial_condition/", myfiles_4[i]))
   dataset_4 <- rbind(dataset_4, temp)
 }
 
 ############### uncertainty 5 = parameter uncertainty
-myfiles_5 <- list.files(path = "./FCR_forecasts/with_DA_and_saving_parms_Oct23_2019/uncertainty_5_parameter", pattern = "*weekly.csv")
-dataset_5 <- read.csv(paste0("./FCR_forecasts/with_DA_and_saving_parms_Oct23_2019/uncertainty_5_parameter/", myfiles_5[1]))
+myfiles_5 <- list.files(path = paste0(sim_folder, "/uncertainty_5_parameter"), pattern = "*weekly.csv")
+dataset_5 <- read.csv(paste0(sim_folder, "/uncertainty_5_parameter/", myfiles_5[1]))
 # read in files
 for (i in 2:length(myfiles_5)) {
-  temp <- read.csv(paste0("./FCR_forecasts/with_DA_and_saving_parms_Oct23_2019/uncertainty_5_parameter/", myfiles_5[i]))
+  temp <- read.csv(paste0(sim_folder, "/uncertainty_5_parameter/", myfiles_5[i]))
   dataset_5 <- rbind(dataset_5, temp)
 }
 
 ############### uncertainty 6 = discharge uncertainty
-myfiles_6 <- list.files(path = "./FCR_forecasts/with_DA_and_saving_parms_Oct23_2019/uncertainty_6_discharge", pattern = "*weekly.csv")
-dataset_6 <- read.csv(paste0("./FCR_forecasts/with_DA_and_saving_parms_Oct23_2019/uncertainty_6_discharge/", myfiles_6[1]))
+myfiles_6 <- list.files(path = paste0(sim_folder, "/uncertainty_6_discharge"), pattern = "*weekly.csv")
+dataset_6 <- read.csv(paste0(sim_folder, "/uncertainty_6_discharge/", myfiles_6[1]))
 # read in files
 for (i in 2:length(myfiles_6)) {
-  temp <- read.csv(paste0("./FCR_forecasts/with_DA_and_saving_parms_Oct23_2019/uncertainty_6_discharge/", myfiles_6[i]))
+  temp <- read.csv(paste0(sim_folder, "/uncertainty_6_discharge/", myfiles_6[i]))
   dataset_6 <- rbind(dataset_6, temp)
 }
 
