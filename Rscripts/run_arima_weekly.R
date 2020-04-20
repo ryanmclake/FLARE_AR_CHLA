@@ -67,7 +67,7 @@ run_arima <- function(
   
   temp_obs_fname <- "Catwalk.csv"
   met_obs_fname <- "FCRmet.csv" # as of 27-Nov-19, need to change this to FCRmet_lecagy01.csv if running dates before 01-01-2019
-                                # file name in process_GEFS script needs to be changed as well
+                                # file name in process_downscale_GEFS script needs to be changed as well
   
   inflow_file1 <- "FCR_weir_inflow_2013_2017_20180716.csv"
   outflow_file1 <- "FCR_spillway_outflow_2013_2017_20180716.csv" 
