@@ -8,7 +8,7 @@ reference_tzone <- "GMT"
 
 folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
 timestep <- 'weekly' #specify the timestep
-forecast_folder <- paste0(folder, "/FCR_forecasts", '/', timestep, '/weekly_05Feb2020') #specify the folder within here
+forecast_folder <- paste0(folder, "/FCR_forecasts", '/', timestep, '/weekly_dischargeforecast_Apr2020') #specify the folder within here
 setwd(forecast_folder)
 
 # code to read in the individual forecast files named for the day on which the forecast is made
@@ -176,7 +176,7 @@ for (i in 1:2) {
   metrics_overtime[i,6] <- null$coeff_determination
   metrics_overtime[i,1] <- i
   
-  non_bloom <- temp[temp$forecast_date< as.Date("2019-07-15") | temp$forecast_date > as.Date("2019-08-06"), ]
+  non_bloom <- temp[temp$forecast_date< as.Date("2019-07-17") | temp$forecast_date > as.Date("2019-08-05"), ] # these dates correspond to bloom threshold of 4*sd(historical chla)
   non_bloom_forecast <- model_metrics(non_bloom$forecast_mean_chl, non_bloom$obs_chl_EXO)
   metrics[1,3] <- non_bloom_forecast$RMSE
   metrics[2,3] <- non_bloom_forecast$NSE
@@ -190,7 +190,7 @@ for (i in 1:2) {
   metrics_overtime[i,9] <- non_bloom_forecast$coeff_determination
   
   
-  datamerge_nonbloom <- temp_null[temp_null$date< as.Date("2019-07-15") | temp_null$date > as.Date("2019-08-06"), ]
+  datamerge_nonbloom <- temp_null[temp_null$date< as.Date("2019-07-17") | temp_null$date > as.Date("2019-08-05"), ]
   non_bloom_null <- model_metrics(datamerge_nonbloom$mean, non_bloom$obs_chl_EXO)
   metrics[1,4] <- non_bloom_null$RMSE
   metrics[2,4] <- non_bloom_null$NSE
@@ -203,8 +203,8 @@ for (i in 1:2) {
   metrics_overtime[i,4] <- non_bloom_null$RMSE
   metrics_overtime[i,8] <- non_bloom_null$coeff_determination
   
-  bloom <- temp[temp$forecast_date> as.Date("2019-07-15") , ]
-  bloom <- bloom[bloom$forecast_date  < as.Date("2019-08-06"),]
+  bloom <- temp[temp$forecast_date> as.Date("2019-07-17") , ]
+  bloom <- bloom[bloom$forecast_date  < as.Date("2019-08-05"),]
   bloom_forecast <- model_metrics(bloom$forecast_mean_chl, bloom$obs_chl_EXO)
   metrics[1,5] <- bloom_forecast$RMSE
   metrics[2,5] <- bloom_forecast$NSE
@@ -218,8 +218,8 @@ for (i in 1:2) {
   metrics_overtime[i, 13] <- bloom_forecast$coeff_determination
 
   
-  datamerge_bloom <- temp_null[temp_null$date > as.Date("2019-07-15") , ]
-  datamerge_bloom <- datamerge_bloom[datamerge_bloom$date < as.Date('2019-08-06'),]
+  datamerge_bloom <- temp_null[temp_null$date > as.Date("2019-07-17") , ]
+  datamerge_bloom <- datamerge_bloom[datamerge_bloom$date < as.Date('2019-08-05'),]
   bloom_null <- model_metrics(datamerge_bloom$mean, bloom$obs_chl_EXO)
   metrics[1,6] <- bloom_null$RMSE
   metrics[2,6] <- bloom_null$NSE
