@@ -228,7 +228,7 @@ for (i in 1:16) {
 
 metrics_overtime <- as.data.frame(metrics_overtime)
 # read in the csv with the weekly metrics saved
-weekly <- read.csv(paste0(folder, '/FCR_forecasts/weekly/weekly_05Feb2020/ForecastMetrics_Weekly.csv'))
+weekly <- read.csv(paste0(folder, '/FCR_forecasts/weekly/weekly_dischargeforecast_Apr2020/ForecastMetrics_Weekly.csv'))
 weekly <- weekly[,-1]
 
 metrics_overtime[7,10] <- weekly[1,2] #week1 forecast rmse
@@ -274,21 +274,21 @@ legend('topleft', c('null', 'forecast', 'null nonbloom', 'forecast nonbloom'), c
 # multi-panel figure
 png(paste0(forecast_folder, '/RMSE_all_conditions.png'), width = 1100, height = 800)
 par(mar = c(5,5,4,2), mfrow = c(2,2))
-plot(metrics_overtime$day_in_future, metrics_overtime$RMSE_null, col = 'red', ylim = c(0,11), main = 'Full-Year', cex.axis = 2, cex.main = 3, cex.lab = 2, cex = 3, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
+plot(metrics_overtime$day_in_future, metrics_overtime$RMSE_null, col = 'red', xlim = c(0,14), ylim = c(0,11), main = 'Full-Year', cex.axis = 2, cex.main = 3, cex.lab = 2, cex = 3, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
 points(metrics_overtime$day_in_future, metrics_overtime$RMSE_forecast, col = 'blue', cex = 3)
 points(metrics_overtime$day_in_future, metrics_overtime$RMSE_forecast_weekly,  col = 'blue', pch = 15, cex = 3)
 points(metrics_overtime$day_in_future, metrics_overtime$RMSE_null_weekly, col = 'red', pch = 15, cex = 3)
 legend('topleft', c('daily null', 'daily forecast', 'weekly null', 'weekly forecast'), cex = 1.6, col = c('red', 'blue', 'red', 'blue'), pch = c(1, 1,  15, 15), bty = 'n')
 
 par(mar = c(5,5,4,2))
-plot(metrics_overtime$day_in_future, metrics_overtime$RMSE_null_nonbloom, col = 'red', ylim = c(0,11), main = 'Non-Bloom', cex.main = 3, cex.axis = 2, cex.lab = 2, cex = 3, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
+plot(metrics_overtime$day_in_future, metrics_overtime$RMSE_null_nonbloom, col = 'red', ylim = c(0,11), xlim = c(0,14), main = 'Non-Bloom', cex.main = 3, cex.axis = 2, cex.lab = 2, cex = 3, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
 points(metrics_overtime$day_in_future, metrics_overtime$RMSE_forecast_nonbloom, col = 'blue', cex = 3)
 points(metrics_overtime$day_in_future, metrics_overtime$RMSE_forecast_weekly_nonbloom,  col = 'blue', pch = 15, cex = 3)
 points(metrics_overtime$day_in_future, metrics_overtime$RMSE_null_weekly_nonbloom, col = 'red', pch = 15, cex = 3)
 
 
 par(mar = c(5,5,4,2))
-plot(metrics_overtime$day_in_future, metrics_overtime$RMSE_null_daily_bloom, col = 'red', ylim = c(0,33), main = 'Bloom', cex.main = 3, cex.axis = 2, cex.lab = 2, cex = 3, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
+plot(metrics_overtime$day_in_future, metrics_overtime$RMSE_null_daily_bloom, col = 'red', ylim = c(0,35), xlim = c(0,14), main = 'Bloom', cex.main = 3, cex.axis = 2, cex.lab = 2, cex = 3, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
 points(metrics_overtime$day_in_future, metrics_overtime$RMSE_forecast_daily_bloom, col = 'blue', cex = 3)
 points(metrics_overtime$day_in_future, metrics_overtime$RMSE_forecast_weekly_bloom,  col = 'blue', pch = 15, cex = 3)
 points(metrics_overtime$day_in_future, metrics_overtime$RMSE_null_weekly_bloom, col = 'red', pch = 15, cex = 3)
