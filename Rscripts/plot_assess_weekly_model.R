@@ -112,7 +112,7 @@ dev.off()
           xlab('Date') +
            ylim(0,150)+
           ylab('Chlorophyll a (μg/L)') +
-          ggtitle('Weekly Model, Day 7') +
+          ggtitle('Weekly Forecast, Day 7') +
           #geom_vline(xintercept = as.numeric(as.Date("2019-07-10", "%Y-%m-%d")), color = 'black', size = 1.5, linetype = 'dashed') +
           #geom_vline(xintercept = as.numeric(as.Date("2019-08-15", "%Y-%m-%d")), color = 'black', size = 1.5, linetype = 'dashed') +
           theme(axis.text.x = element_text(size = 30),
@@ -140,7 +140,7 @@ dev.off()
           xlab('Date') +
           ylim(0,150)+
           ylab('Chlorophyll a (μg/L)') +
-          ggtitle('Weekly Model, Day 14') +
+          ggtitle('Weekly Forecast, Day 14') +
           #geom_vline(xintercept = as.numeric(as.Date("2019-07-10", "%Y-%m-%d")), color = 'black', size = 1.5, linetype = 'dashed') +
           #geom_vline(xintercept = as.numeric(as.Date("2019-08-15", "%Y-%m-%d")), color = 'black', size = 1.5, linetype = 'dashed') +
           theme(axis.text.x = element_text(size = 30),
