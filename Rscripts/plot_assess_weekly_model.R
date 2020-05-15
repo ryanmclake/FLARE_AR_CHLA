@@ -80,7 +80,7 @@ print(ggplot(temp, aes(forecast_date, forecast_mean_chl)) +
         xlab('Date') +
        # ylim(0,150)+
         ylab('Chlorophyll a (μg/L)') +
-        ggtitle(paste0('Week ', i, ' Forecast')) +
+        ggtitle(paste0('Weekly ', i, ' Forecast')) +
         #geom_vline(xintercept = as.numeric(as.Date("2019-07-10", "%Y-%m-%d")), color = 'black', size = 1.5, linetype = 'dashed') +
         #geom_vline(xintercept = as.numeric(as.Date("2019-08-15", "%Y-%m-%d")), color = 'black', size = 1.5, linetype = 'dashed') +
         theme(axis.text.x = element_text(size = 30),
@@ -98,14 +98,13 @@ dev.off()
 
 # loop to make figures at each time step
 # SET Y AXIS
-for(i in 1:2){
-  
-  # read in csv of each forecast horizon
-  temp <- read.csv(paste0(forecast_folder, '/day_', i, '.csv'))
+
+# first day 1 aka week 1
+  temp <- read.csv(paste0(forecast_folder, '/day_', 1, '.csv'))
   temp$forecast_date <- as.Date(temp$forecast_date)
   
   #create and save figure with forecast mean, confidence intervals, and obs chl
-  png(paste0(forecast_folder, '/Forecast_day_', i, '.png'), width = 1100, height = 800)
+  png(paste0(forecast_folder, '/Forecast_day_', 1, '.png'), width = 1100, height = 800)
   print(ggplot(temp, aes(forecast_date, forecast_mean_chl)) +
           geom_line(size = 2) +
           geom_point(aes(forecast_date, obs_chl_EXO), size = 4, stroke = 0, shape = 19, color = 'green4') +
@@ -113,7 +112,7 @@ for(i in 1:2){
           xlab('Date') +
            ylim(0,150)+
           ylab('Chlorophyll a (μg/L)') +
-          ggtitle(paste0('Week ', i, ' Forecast')) +
+          ggtitle('Weekly Model, Day 7') +
           #geom_vline(xintercept = as.numeric(as.Date("2019-07-10", "%Y-%m-%d")), color = 'black', size = 1.5, linetype = 'dashed') +
           #geom_vline(xintercept = as.numeric(as.Date("2019-08-15", "%Y-%m-%d")), color = 'black', size = 1.5, linetype = 'dashed') +
           theme(axis.text.x = element_text(size = 30),
@@ -127,7 +126,35 @@ for(i in 1:2){
                 panel.grid.minor = element_blank(),
                 plot.title = element_text(size = 40)))
   dev.off()
-}
+
+# now day 2 aka week 2
+  temp <- read.csv(paste0(forecast_folder, '/day_', 2, '.csv'))
+  temp$forecast_date <- as.Date(temp$forecast_date)
+  
+  #create and save figure with forecast mean, confidence intervals, and obs chl
+  png(paste0(forecast_folder, '/Forecast_day_', 2, '.png'), width = 1100, height = 800)
+  print(ggplot(temp, aes(forecast_date, forecast_mean_chl)) +
+          geom_line(size = 2) +
+          geom_point(aes(forecast_date, obs_chl_EXO), size = 4, stroke = 0, shape = 19, color = 'green4') +
+          geom_ribbon(aes(ymin = forecast_CI95_lower, ymax = forecast_CI95_upper), fill = 'grey1', linetype = 2, alpha = 0.2) +
+          xlab('Date') +
+          ylim(0,150)+
+          ylab('Chlorophyll a (μg/L)') +
+          ggtitle('Weekly Model, Day 14') +
+          #geom_vline(xintercept = as.numeric(as.Date("2019-07-10", "%Y-%m-%d")), color = 'black', size = 1.5, linetype = 'dashed') +
+          #geom_vline(xintercept = as.numeric(as.Date("2019-08-15", "%Y-%m-%d")), color = 'black', size = 1.5, linetype = 'dashed') +
+          theme(axis.text.x = element_text(size = 30),
+                axis.text.y = element_text(size = 50),
+                axis.title.x = element_text(size =45),
+                axis.title.y = element_text(size = 45),
+                legend.title = element_text(size = 35),
+                legend.text = element_text(size = 30),
+                panel.grid.major = element_blank(),
+                legend.position = 'right',
+                panel.grid.minor = element_blank(),
+                plot.title = element_text(size = 40)))
+  dev.off()
+  
 
 ######################################################################################################################################################################
 ## aaand calculate metrics
