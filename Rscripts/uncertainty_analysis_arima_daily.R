@@ -187,7 +187,7 @@ p <- p + geom_area(data = temp, aes(x = forecast_date, y = measurement, fill = v
         panel.grid.minor = element_blank(),
         plot.title = element_text(size = 40))
 p <- p + geom_line(data = var, aes(x = forecast_date, y = measurement), lwd = 1.5) +
-  scale_y_continuous(sec.axis = sec_axis(~., name = 'Total Variance (μg/L)^2' )) 
+  scale_y_continuous(sec.axis = sec_axis(~., name = expression (paste("Total Variance (",~μg/L^2,")"  )))) 
 png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/Daily_Day',7, '_Uncertainty_Variance_TimeSeries.png'), width = 1200, height = 785)
 p
 dev.off()
@@ -199,8 +199,8 @@ temp <- temp[!temp$variable=='total_var',]
 
 p <- ggplot() 
 p <- p + geom_area(data = temp, aes(x = forecast_date, y = measurement, fill = variable))
-p <- p + geom_line(data = var, aes(x = forecast_date, y = measurement/1.5), lwd = 1.5) +
-  scale_y_continuous(sec.axis = sec_axis(~.*1.5, name = 'Total Variance (μg/L)^2' )) 
+p <- p + geom_line(data = var, aes(x = forecast_date, y = measurement/1.7), lwd = 1.5) +
+  scale_y_continuous(sec.axis = sec_axis(~.*1.7, name = expression (paste("Total Variance (",~μg/L^2,")"  ))))
 p <- p + xlab('Date') +
   ylab('Proportion of Variance') +
   scale_fill_manual(breaks = c('IC', 'parameter', 'process', 'weather'),
