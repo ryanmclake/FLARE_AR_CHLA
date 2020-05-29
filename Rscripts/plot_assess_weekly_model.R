@@ -72,7 +72,7 @@ temp <- read.csv(paste0(forecast_folder, '/day_', i, '.csv'))
 temp$forecast_date <- as.Date(temp$forecast_date)
 
 #create and save figure with forecast mean, confidence intervals, and obs chl
-png(paste0(forecast_folder, '/Forecast_day_', i, 'moving_y_axis.png'), width = 1100, height = 800)
+png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/Fig3_forecast_timeseries/Weekly_Forecast_Week', i, 'moving_y_axis.png'), width = 1100, height = 800)
 print(ggplot(temp, aes(forecast_date, forecast_mean_chl)) +
         geom_line(size = 2) +
         geom_point(aes(forecast_date, obs_chl_EXO), size = 4, stroke = 0, shape = 19, color = 'green4') +
@@ -80,10 +80,11 @@ print(ggplot(temp, aes(forecast_date, forecast_mean_chl)) +
         xlab('Date') +
        # ylim(0,150)+
         ylab('Chlorophyll a (μg/L)') +
-        ggtitle(paste0('Weekly ', i, ' Forecast')) +
+        ggtitle(paste0('Week ', i, ' Forecast')) +
+        scale_x_date(labels = date_format('%b')) +
         #geom_vline(xintercept = as.numeric(as.Date("2019-07-10", "%Y-%m-%d")), color = 'black', size = 1.5, linetype = 'dashed') +
         #geom_vline(xintercept = as.numeric(as.Date("2019-08-15", "%Y-%m-%d")), color = 'black', size = 1.5, linetype = 'dashed') +
-        theme(axis.text.x = element_text(size = 30),
+        theme(axis.text.x = element_text(size = 45),
               axis.text.y = element_text(size = 50),
               axis.title.x = element_text(size =45),
               axis.title.y = element_text(size = 45),
@@ -104,7 +105,7 @@ dev.off()
   temp$forecast_date <- as.Date(temp$forecast_date)
   
   #create and save figure with forecast mean, confidence intervals, and obs chl
-  png(paste0(forecast_folder, '/Forecast_day_', 1, '.png'), width = 1100, height = 800)
+  png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/Fig3_forecast_timeseries/Weekly_Forecast_Week', 1, '.png'), width = 1100, height = 800)
   print(ggplot(temp, aes(forecast_date, forecast_mean_chl)) +
           geom_line(size = 2) +
           geom_point(aes(forecast_date, obs_chl_EXO), size = 4, stroke = 0, shape = 19, color = 'green4') +
@@ -113,9 +114,10 @@ dev.off()
            ylim(0,150)+
           ylab('Chlorophyll a (μg/L)') +
           ggtitle('Weekly Forecast, Day 7') +
+          scale_x_date(labels = date_format('%b')) +
           #geom_vline(xintercept = as.numeric(as.Date("2019-07-10", "%Y-%m-%d")), color = 'black', size = 1.5, linetype = 'dashed') +
           #geom_vline(xintercept = as.numeric(as.Date("2019-08-15", "%Y-%m-%d")), color = 'black', size = 1.5, linetype = 'dashed') +
-          theme(axis.text.x = element_text(size = 30),
+          theme(axis.text.x = element_text(size = 45),
                 axis.text.y = element_text(size = 50),
                 axis.title.x = element_text(size =45),
                 axis.title.y = element_text(size = 45),
@@ -132,7 +134,7 @@ dev.off()
   temp$forecast_date <- as.Date(temp$forecast_date)
   
   #create and save figure with forecast mean, confidence intervals, and obs chl
-  png(paste0(forecast_folder, '/Forecast_day_', 2, '.png'), width = 1100, height = 800)
+  png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/Fig3_forecast_timeseries/Weekly_Forecast_Week', 2, '.png'), width = 1100, height = 800)
   print(ggplot(temp, aes(forecast_date, forecast_mean_chl)) +
           geom_line(size = 2) +
           geom_point(aes(forecast_date, obs_chl_EXO), size = 4, stroke = 0, shape = 19, color = 'green4') +
@@ -141,9 +143,10 @@ dev.off()
           ylim(0,150)+
           ylab('Chlorophyll a (μg/L)') +
           ggtitle('Weekly Forecast, Day 14') +
+          scale_x_date(labels = date_format('%b')) +
           #geom_vline(xintercept = as.numeric(as.Date("2019-07-10", "%Y-%m-%d")), color = 'black', size = 1.5, linetype = 'dashed') +
           #geom_vline(xintercept = as.numeric(as.Date("2019-08-15", "%Y-%m-%d")), color = 'black', size = 1.5, linetype = 'dashed') +
-          theme(axis.text.x = element_text(size = 30),
+          theme(axis.text.x = element_text(size = 45),
                 axis.text.y = element_text(size = 50),
                 axis.title.x = element_text(size =45),
                 axis.title.y = element_text(size = 45),
