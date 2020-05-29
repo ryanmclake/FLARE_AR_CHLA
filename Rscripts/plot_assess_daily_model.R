@@ -75,8 +75,8 @@ for(i in 1:16){
   temp$forecast_date <- as.Date(temp$forecast_date)
 
   #create and save figure with forecast mean, confidence intervals, and obs chl
- png(paste0(forecast_folder, '/Forecast_day_', i, 'moving_y_axis.png'), width = 1100, height = 800)
-    print(ggplot(temp, aes(forecast_date, forecast_mean_chl)) +
+  png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/Fig3_forecast_timeseries/Forecast_day', i, 'moving_y_axis.png'), width = 1100, height = 800)
+  print(ggplot(temp, aes(forecast_date, forecast_mean_chl)) +
     #ylim(0,150) +
     geom_line(size = 2) +
     geom_point(aes(forecast_date, obs_chl_EXO), size = 4, stroke = 0, shape = 19, color = 'dodgerblue4') +
@@ -84,9 +84,10 @@ for(i in 1:16){
     xlab('Date') +
     ylab('Chlorophyll a (μg/L)') +
     ggtitle(paste0('Daily Forecast, Day ', i)) +
+    scale_x_date(labels = date_format('%b')) +
     #geom_vline(xintercept = as.numeric(as.Date("2019-02-28", "%Y-%m-%d")), color = 'blue', size = 1.5) +
     #geom_vline(xintercept = as.numeric(as.Date("2019-03-20", "%Y-%m-%d")), color = 'blue', size = 1.5) +
-    theme(axis.text.x = element_text(size = 35),
+    theme(axis.text.x = element_text(size = 45),
           axis.text.y = element_text(size = 50),
           axis.title.x = element_text(size =45),
           axis.title.y = element_text(size = 45),
@@ -108,7 +109,7 @@ for(i in 1:16){
   temp$forecast_date <- as.Date(temp$forecast_date)
   
   #create and save figure with forecast mean, confidence intervals, and obs chl
-  png(paste0(forecast_folder, '/Forecast_day_', i, '.png'), width = 1100, height = 800)
+  png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/Fig3_forecast_timeseries/Forecast_day', i, '.png'), width = 1100, height = 800)
   print(ggplot(temp, aes(forecast_date, forecast_mean_chl)) +
           ylim(0,150) +
           geom_line(size = 2) +
@@ -117,9 +118,10 @@ for(i in 1:16){
           xlab('Date') +
           ylab('Chlorophyll a (μg/L)') +
           ggtitle(paste0('Daily Forecast, Day ', i)) +
+          scale_x_date(labels = date_format('%b')) +
           #geom_vline(xintercept = as.numeric(as.Date("2019-02-28", "%Y-%m-%d")), color = 'blue', size = 1.5) +
           #geom_vline(xintercept = as.numeric(as.Date("2019-03-20", "%Y-%m-%d")), color = 'blue', size = 1.5) +
-          theme(axis.text.x = element_text(size = 20),
+          theme(axis.text.x = element_text(size = 45),
                 axis.text.y = element_text(size = 50),
                 axis.title.x = element_text(size =45),
                 axis.title.y = element_text(size = 45),
@@ -128,7 +130,7 @@ for(i in 1:16){
                 panel.grid.major = element_blank(),
                 legend.position = 'right',
                 panel.grid.minor = element_blank(),
-                plot.title = element_text(size = 40)))
+                plot.title = element_text(size = 50)))
   dev.off()
 }
 
@@ -335,7 +337,8 @@ legend('topright', c('null', 'forecast', 'null nonbloom', 'forecast nonbloom'), 
 
 
 
-metrics_RMSE <- metrics_overtime[,c(1,2,3,4,5,10,12,14,16,18,19,20,21)]
+metrics_RMSE <- metrics_overtime[,c(1,3,2, 5, 4, 20,21,10,14,12,16,18,19)] #select the values wanted for manuscript figure in the right order
+metrics_RMSE <- metrics_RMSE[1:14,]
 write.csv(metrics_RMSE, paste0(folder, '/FCR_forecasts/metrics_RMSE.csv'), row.names = FALSE)
 ################################################################################################################################################################
 #### calculate ensemble metrics ########################################################################################################################################
