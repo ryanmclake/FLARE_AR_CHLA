@@ -75,7 +75,7 @@ for(i in 1:16){
   temp$forecast_date <- as.Date(temp$forecast_date)
 
   #create and save figure with forecast mean, confidence intervals, and obs chl
-  png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/Fig3_forecast_timeseries/Forecast_day', i, 'moving_y_axis.png'), width = 1100, height = 800)
+  png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/Fig3_forecast_timeseries/Daily_Forecast_Day', i, 'moving_y_axis.png'), width = 1100, height = 800)
   print(ggplot(temp, aes(forecast_date, forecast_mean_chl)) +
     #ylim(0,150) +
     geom_line(size = 2) +
@@ -109,7 +109,7 @@ for(i in 1:16){
   temp$forecast_date <- as.Date(temp$forecast_date)
   
   #create and save figure with forecast mean, confidence intervals, and obs chl
-  png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/Fig3_forecast_timeseries/Forecast_day', i, '.png'), width = 1100, height = 800)
+  png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/Fig3_forecast_timeseries/Daily_Forecast_Day', i, '.png'), width = 1100, height = 800)
   print(ggplot(temp, aes(forecast_date, forecast_mean_chl)) +
           ylim(0,150) +
           geom_line(size = 2) +
