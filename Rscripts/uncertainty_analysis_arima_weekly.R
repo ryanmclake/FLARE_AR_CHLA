@@ -9,7 +9,7 @@ reference_tzone <- "GMT"
 #set the location of the forecasts
 forecast_folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
 setwd(forecast_folder)
-sim_folder <- paste0(forecast_folder, '/FCR_forecasts/weekly/weekly_05Feb2020')
+sim_folder <- paste0(forecast_folder, '/FCR_forecasts/weekly/weekly_dischargeforecast_Apr2020')
 
 # the year's forecasts with all uncertainties 'on' in the forecast output
 myfiles <- list.files(path = sim_folder, pattern = "*weekly.csv")
@@ -112,25 +112,28 @@ dataset_6$forecast_date <- as.Date(dataset_6$forecast_date)
 dataset_6$forecast_run_day <- as.Date(dataset_6$forecast_run_day)
 
 #############
-uncert <- left_join(dataset_4, dataset_2, by = c('forecast_date', 'forecast_run_day', 'week'))
+uncert <- left_join(dataset_6, dataset_2, by = c('forecast_date', 'forecast_run_day', 'week'))
 uncert <- left_join(uncert, dataset_3)
+uncert <- left_join(uncert, dataset_4)
 uncert <- left_join(uncert, dataset_5)
-uncert <- left_join(uncert, dataset_6)
 
 # calculate the proportion of variance for all of the uncertainties
 uncert <- uncert %>% mutate(process_prop = process_variance/(process_variance + weather_variance + IC_variance + parameter_variance + discharge_variance)) %>% 
   mutate(weather_prop = weather_variance/(process_variance + weather_variance + IC_variance + parameter_variance + discharge_variance)) %>% 
   mutate(IC_prop = IC_variance/(process_variance + weather_variance + IC_variance + parameter_variance + discharge_variance)) %>% 
   mutate(parameter_prop = parameter_variance/(process_variance + weather_variance + IC_variance + parameter_variance + discharge_variance))%>% 
-  mutate(discharge_prop = discharge_variance/(process_variance + weather_variance + IC_variance + parameter_variance + discharge_variance))
+  mutate(discharge_prop = discharge_variance/(process_variance + weather_variance + IC_variance + parameter_variance + discharge_variance)) %>% 
+  mutate(total_var = discharge_variance + process_variance + weather_variance + IC_variance + parameter_variance)
 
 
 # dataframe with just proportions
-uncert_prop <- uncert %>% select(forecast_date, forecast_run_day, week, process_prop, weather_prop, IC_prop, parameter_prop, discharge_prop)
-
+uncert_prop <- uncert %>% select(forecast_date, forecast_run_day, week, process_prop, weather_prop, IC_prop, parameter_prop, discharge_prop, total_var)
+plot(uncert_prop$forecast_date, uncert_prop$discharge_prop)
 ## put into long format for easy plotting
 uncert_proportion_long <- uncert_prop  %>% 
-  gather(variable, measurement, process_prop:discharge_prop)
+  gather(variable, measurement, process_prop:total_var)
+
+
 
 # subset to after Dec 31, 2018 to get rid of spin up period
 uncert_proportion_long <- uncert_proportion_long[uncert_proportion_long$forecast_run_day > as.Date('2018-12-31'),]
@@ -153,7 +156,30 @@ for (i in 1:2) { # change the 16 to whatever number of timesteps you have
 for (i in 1:2) {
   png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/Weekly_Week',i, '_Uncertainty_TimeSeries.png'), width = 1200, height = 785)
   temp <- uncert_proportion_long[uncert_proportion_long$week==i,]
-  print(ggplot(temp, aes(x = forecast_date, y = measurement, fill = variable)) +geom_area() + ylim(0,1.1) +
+  temp <- temp[!temp$variable=='total_var',]
+  #### THERE IS ONE STUPID DUPLICATED DATE THAT IS STACKING ON TOP AND CREATING A WHITE LINE BELOW
+  #### BRUTE FORCE REMOVING IT FROM EACH UNCERTAINTY SOURCE
+  process_prop <- temp[temp$variable=='process_prop',]
+  process_prop <- process_prop[!duplicated(process_prop$forecast_date),]
+  
+  weather_prop <- temp[temp$variable=='weather_prop',]
+  weather_prop <- weather_prop[!duplicated(weather_prop$forecast_date),]
+  
+  discharge_prop <- temp[temp$variable=='discharge_prop',]
+  discharge_prop <- discharge_prop[!duplicated(discharge_prop$forecast_date),]
+  
+  IC_prop <- temp[temp$variable=='IC_prop',]
+  IC_prop <- IC_prop[!duplicated(IC_prop$forecast_date),]
+  
+  parameter_prop <- temp[temp$variable=='parameter_prop',]
+  parameter_prop <- parameter_prop[!duplicated(parameter_prop$forecast_date),]
+  
+  temp <- rbind(process_prop, weather_prop)
+  temp <- rbind(temp, discharge_prop)
+  temp <- rbind(temp, IC_prop)
+  temp <- rbind(temp, parameter_prop)
+  
+  print(ggplot(temp, aes(x = forecast_date, y = measurement, fill = variable)) +geom_area(position = 'stack') + #ylim(0,1.1) +
           xlab('Date') +
           ylab('Proportion of Variance') +
           scale_fill_manual(breaks = c('discharge', 'IC', 'parameter', 'process', 'weather') ,
@@ -175,53 +201,116 @@ for (i in 1:2) {
 }
 
 
-## make each plot individually to change some title details
+### and create plots with the total variance plotted on top
+##################################
 # week 1 aka day 7
-  png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/Weekly_Week',1, '_Uncertainty_TimeSeries.png'), width = 1200, height = 785)
-  temp <- uncert_proportion_long[uncert_proportion_long$week==1,]
-  print(ggplot(temp, aes(x = forecast_date, y = measurement, fill = variable)) +geom_area() + ylim(0,1.1) +
-          xlab('Date') +
-          ylab('Proportion of Variance') +
-          scale_fill_manual(breaks = c('discharge', 'IC', 'parameter', 'process', 'weather') ,
-                            values = c('#4472C4', '#92D050', '#660066', '#C55A11', '#FFC000'),
-                            name = "Uncertainty Type") +
-          ggtitle(paste0('Day ', 7, ' Weekly Forecast')) +
-          scale_x_date(labels = date_format('%b %Y')) +
-          theme(axis.text.x = element_text(size = 20),
-                axis.text.y = element_text(size = 40),
-                axis.title.x = element_text(size =45),
-                axis.title.y = element_text(size = 45),
-                legend.title = element_text(size = 35),
-                legend.text = element_text(size = 30),
-                #panel.grid.major = element_blank(),
-                panel.grid.minor = element_blank(),
-                plot.title = element_text(size = 40))
-  )
-  dev.off() 
-# Week 2 aka Day 14
-  png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/Weekly_Week',2, '_Uncertainty_TimeSeries.png'), width = 1200, height = 785)
-  temp <- uncert_proportion_long[uncert_proportion_long$week==2,]
-  print(ggplot(temp, aes(x = forecast_date, y = measurement, fill = variable)) +geom_area() + ylim(0,1.1) +
-          xlab('Date') +
-          ylab('Proportion of Variance') +
-          scale_fill_manual(breaks = c('discharge', 'IC', 'parameter', 'process', 'weather') ,
-                            values = c('#4472C4', '#92D050', '#660066', '#C55A11', '#FFC000'),
-                            name = "Uncertainty Type") +
-          ggtitle(paste0('Day ', 14, ' Weekly Forecast')) +
-          scale_x_date(labels = date_format('%b %Y')) +
-          theme(axis.text.x = element_text(size = 25),
-                axis.text.y = element_text(size = 40),
-                axis.title.x = element_text(size =45),
-                axis.title.y = element_text(size = 45),
-                legend.title = element_text(size = 35),
-                legend.text = element_text(size = 30),
-                #panel.grid.major = element_blank(),
-                panel.grid.minor = element_blank(),
-                plot.title = element_text(size = 40))
-  )
-  dev.off() 
-  
-  
+
+temp <- uncert_proportion_long[uncert_proportion_long$week==1,]
+var <- temp[temp$variable=='total_var',]
+temp <- temp[!temp$variable=='total_var',]
+#### THERE IS ONE STUPID DUPLICATED DATE THAT IS STACKING ON TOP AND CREATING A WHITE LINE BELOW
+#### BRUTE FORCE REMOVING IT FROM EACH UNCERTAINTY SOURCE
+process_prop <- temp[temp$variable=='process_prop',]
+process_prop <- process_prop[!duplicated(process_prop$forecast_date),]
+
+weather_prop <- temp[temp$variable=='weather_prop',]
+weather_prop <- weather_prop[!duplicated(weather_prop$forecast_date),]
+
+discharge_prop <- temp[temp$variable=='discharge_prop',]
+discharge_prop <- discharge_prop[!duplicated(discharge_prop$forecast_date),]
+
+IC_prop <- temp[temp$variable=='IC_prop',]
+IC_prop <- IC_prop[!duplicated(IC_prop$forecast_date),]
+
+parameter_prop <- temp[temp$variable=='parameter_prop',]
+parameter_prop <- parameter_prop[!duplicated(parameter_prop$forecast_date),]
+
+temp <- rbind(process_prop, weather_prop)
+temp <- rbind(temp, discharge_prop)
+temp <- rbind(temp, IC_prop)
+temp <- rbind(temp, parameter_prop)
+
+
+p <- ggplot() 
+p <- p + geom_area(data = temp, aes(x = forecast_date, y = measurement, fill = variable)) + 
+  xlab('Date') +
+  ylab('Proportion of Variance') +
+  scale_fill_manual(breaks = c('discharge', 'IC', 'parameter', 'process', 'weather') ,
+                    values = c('#4472C4', '#92D050', '#660066', '#C55A11', '#FFC000'),
+                    name = "Uncertainty Type") +
+  ggtitle(paste0('Weekly Forecast, Day 7')) +
+  scale_x_date(labels = date_format('%b')) +
+  theme(axis.text.x = element_text(size = 35),
+        axis.text.y = element_text(size = 35),
+        axis.title.x = element_text(size =35),
+        axis.title.y = element_text(size = 35),
+        legend.title = element_text(size = 35),
+        legend.text = element_text(size = 30),
+        #panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        plot.title = element_text(size = 40))
+p <- p + geom_line(data = var, aes(x = forecast_date, y = measurement), lwd = 1.5) +
+  scale_y_continuous(sec.axis = sec_axis(~., name = expression (paste("Total Variance (",~μg/L^2,")"  )))) 
+
+png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/Weekly_Week',1, '_Uncertainty_Variance_TimeSeries.png'), width = 1200, height = 785)
+p
+dev.off()
+
+#####################################
+# week 2 aka day 14
+
+temp <- uncert_proportion_long[uncert_proportion_long$week==2,]
+var <- temp[temp$variable=='total_var',]
+temp <- temp[!temp$variable=='total_var',]
+#### THERE IS ONE STUPID DUPLICATED DATE THAT IS STACKING ON TOP AND CREATING A WHITE LINE BELOW
+#### BRUTE FORCE REMOVING IT FROM EACH UNCERTAINTY SOURCE
+process_prop <- temp[temp$variable=='process_prop',]
+process_prop <- process_prop[!duplicated(process_prop$forecast_date),]
+
+weather_prop <- temp[temp$variable=='weather_prop',]
+weather_prop <- weather_prop[!duplicated(weather_prop$forecast_date),]
+
+discharge_prop <- temp[temp$variable=='discharge_prop',]
+discharge_prop <- discharge_prop[!duplicated(discharge_prop$forecast_date),]
+
+IC_prop <- temp[temp$variable=='IC_prop',]
+IC_prop <- IC_prop[!duplicated(IC_prop$forecast_date),]
+
+parameter_prop <- temp[temp$variable=='parameter_prop',]
+parameter_prop <- parameter_prop[!duplicated(parameter_prop$forecast_date),]
+
+temp <- rbind(process_prop, weather_prop)
+temp <- rbind(temp, discharge_prop)
+temp <- rbind(temp, IC_prop)
+temp <- rbind(temp, parameter_prop)
+
+
+p <- ggplot() 
+p <- p + geom_area(data = temp, aes(x = forecast_date, y = measurement, fill = variable)) + 
+  xlab('Date') +
+  ylab('Proportion of Variance') +
+  scale_fill_manual(breaks = c('discharge', 'IC', 'parameter', 'process', 'weather') ,
+                    values = c('#4472C4', '#92D050', '#660066', '#C55A11', '#FFC000'),
+                    name = "Uncertainty Type") +
+  ggtitle(paste0('Weekly Forecast, Day 14')) +
+  scale_x_date(labels = date_format('%b')) +
+  theme(axis.text.x = element_text(size = 35),
+        axis.text.y = element_text(size = 35),
+        axis.title.x = element_text(size =35),
+        axis.title.y = element_text(size = 35),
+        legend.title = element_text(size = 35),
+        legend.text = element_text(size = 30),
+        #panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        plot.title = element_text(size = 40))
+p <- p + geom_line(data = var, aes(x = forecast_date, y = measurement), lwd = 1.5) +
+  scale_y_continuous(sec.axis = sec_axis(~., name = expression (paste("Total Variance (",~μg/L^2,")"  )) )) 
+
+png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/Weekly_Week',2, '_Uncertainty_Variance_TimeSeries.png'), width = 1200, height = 785)
+p
+dev.off()
+
+
 ############################################################################################################################################################  
 # stacked bar plots of proportion variance for each forecast horizon
 # create dataframe to write into inside the loop
@@ -238,6 +327,12 @@ for (i in 1:2) {
   mean_prop[i, 6] = mean(temp$discharge_prop, na.rm = TRUE)
 }
 
+# standard deviation of the proportion over time
+for (i in 1:2) {
+  temp <- uncert_prop[uncert_prop$week==i,]
+  sd_discharge <- sd(temp$discharge_prop, na.rm = TRUE)
+  print(paste0(sd_discharge, i))
+}
 
 mean_prop <- as.data.frame(mean_prop)
 mean_prop <- mean_prop %>% mutate(day_in_future = ifelse(horizon == 1, 7, 14))
@@ -273,10 +368,10 @@ dev.off()
 
 
 
-scale_fill_manual(breaks = c('discharge', 'IC', 'parameter', 'process', 'weather'),
-                  labels = c('driver: discharge', 'IC', 'parameter', 'process', 'driver: weather'),
-                  values = c('darkgreen', 'black', 'red', 'lightblue', 'green'),
-                  name = "Uncertainty Type") +
+#scale_fill_manual(breaks = c('discharge', 'IC', 'parameter', 'process', 'weather'),
+#                  labels = c('driver: discharge', 'IC', 'parameter', 'process', 'driver: weather'),
+#                  values = c('darkgreen', 'black', 'red', 'lightblue', 'green'),
+#                  name = "Uncertainty Type") +
   
   # separate into forecast horizon for individual analysis
   #for (i in 1:16) { # change the 16 to whatever number of timesteps you have
