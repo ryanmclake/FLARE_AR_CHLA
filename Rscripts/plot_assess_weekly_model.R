@@ -4,6 +4,7 @@ library(tidyverse)
 library(lubridate)
 library(Metrics)
 library(hydroGOF)
+library(scales)
 reference_tzone <- "GMT"
 
 folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
@@ -84,7 +85,8 @@ print(ggplot(temp, aes(forecast_date, forecast_mean_chl)) +
         scale_x_date(labels = date_format('%b')) +
         #geom_vline(xintercept = as.numeric(as.Date("2019-07-10", "%Y-%m-%d")), color = 'black', size = 1.5, linetype = 'dashed') +
         #geom_vline(xintercept = as.numeric(as.Date("2019-08-15", "%Y-%m-%d")), color = 'black', size = 1.5, linetype = 'dashed') +
-        theme(axis.text.x = element_text(size = 45),
+       theme_bw() +
+         theme(axis.text.x = element_text(size = 45),
               axis.text.y = element_text(size = 50),
               axis.title.x = element_text(size =45),
               axis.title.y = element_text(size = 45),
@@ -93,7 +95,7 @@ print(ggplot(temp, aes(forecast_date, forecast_mean_chl)) +
               panel.grid.major = element_blank(),
               legend.position = 'right',
               panel.grid.minor = element_blank(),
-              plot.title = element_text(size = 40)))
+              plot.title = element_text(size = 50)))
 dev.off()
 }
 
@@ -117,6 +119,7 @@ dev.off()
           scale_x_date(labels = date_format('%b')) +
           #geom_vline(xintercept = as.numeric(as.Date("2019-07-10", "%Y-%m-%d")), color = 'black', size = 1.5, linetype = 'dashed') +
           #geom_vline(xintercept = as.numeric(as.Date("2019-08-15", "%Y-%m-%d")), color = 'black', size = 1.5, linetype = 'dashed') +
+          theme_bw() +
           theme(axis.text.x = element_text(size = 45),
                 axis.text.y = element_text(size = 50),
                 axis.title.x = element_text(size =45),
@@ -126,7 +129,7 @@ dev.off()
                 panel.grid.major = element_blank(),
                 legend.position = 'right',
                 panel.grid.minor = element_blank(),
-                plot.title = element_text(size = 40)))
+                plot.title = element_text(size = 50)))
   dev.off()
 
 # now day 2 aka week 2
@@ -146,6 +149,7 @@ dev.off()
           scale_x_date(labels = date_format('%b')) +
           #geom_vline(xintercept = as.numeric(as.Date("2019-07-10", "%Y-%m-%d")), color = 'black', size = 1.5, linetype = 'dashed') +
           #geom_vline(xintercept = as.numeric(as.Date("2019-08-15", "%Y-%m-%d")), color = 'black', size = 1.5, linetype = 'dashed') +
+          theme_bw() +
           theme(axis.text.x = element_text(size = 45),
                 axis.text.y = element_text(size = 50),
                 axis.title.x = element_text(size =45),
@@ -155,7 +159,7 @@ dev.off()
                 panel.grid.major = element_blank(),
                 legend.position = 'right',
                 panel.grid.minor = element_blank(),
-                plot.title = element_text(size = 40)))
+                plot.title = element_text(size = 50)))
   dev.off()
   
 
