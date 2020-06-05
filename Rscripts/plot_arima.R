@@ -161,7 +161,10 @@ bloom <- week1[week1$forecast_date>'2019-06-22' & week1$forecast_date<'2019-09-0
 setwd(folder)
 thresh <- read.csv('./data_arima_WW.csv')
 thresh <- thresh %>% mutate(chl_EXOunits = ((Chla_sqrt^2)/0.55) + 0.0308   )
-threshold <- 3*sd(thresh$chl_EXOunits)
+threshold_3 <- 3*sd(thresh$chl_EXOunits)
+threshold_4 <- 4*sd(thresh$chl_EXOunits)
+threshold_5 <- 5*sd(thresh$chl_EXOunits)
+
 plot(as.Date(thresh$Date)  ,thresh$chl_EXOunits)
 
 hist <- thresh %>% select(Date, chl_EXOunits)
@@ -179,8 +182,18 @@ plot(bloom$forecast_date, bloom$obs_chl_EXO)
   points(bloom$forecast_date[i], bloom$forecast_CI95_lower[i], col = 'grey69', pch = 20)
   points(bloom$forecast_date[i], bloom$forecast_CI95_upper[i], col = 'grey69', pch = 20)
   abline(v = bloom$forecast_run_day[i])
-  abline(h = threshold, col = 'green') # bloom threshold 
+  abline(h = threshold_3, col = 'green') # bloom threshold 
 }
+
+for (i in 1:nrow(bloom)) {
+  plot(bloom$forecast_date, bloom$obs_chl_EXO)
+  points(bloom$forecast_date[i], bloom$forecast_mean_chl[i], col = 'red', pch = 19)
+  points(bloom$forecast_date[i], bloom$forecast_CI95_lower[i], col = 'grey69', pch = 20)
+  points(bloom$forecast_date[i], bloom$forecast_CI95_upper[i], col = 'grey69', pch = 20)
+  abline(v = bloom$forecast_run_day[i])
+  abline(h = threshold_4, col = 'green') # bloom threshold 
+}
+
 
 hist(week1$obs_chl_EXO)
 plot(stuff$forecast_date, stuff$obs_chl_EXO)
