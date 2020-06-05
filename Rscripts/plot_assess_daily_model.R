@@ -1,6 +1,7 @@
 
 library(ggplot2)
 library(patchwork)
+library(scales)
 
 folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
 timestep <- 'daily'
@@ -8,7 +9,7 @@ forecast_folder <- paste0(folder, "/FCR_forecasts", '/', timestep, '/relhum_trai
 
 setwd(forecast_folder)
 
-# code to read in the individual forecast files named for the day on which the forecast is made
+# read in the individual forecast files named for the day on which the forecast is made
 myfiles_forecast <- list.files(path = forecast_folder, pattern = paste0('*', timestep, ".csv"))
 dataset_forecast <- read.csv(paste0(forecast_folder, "/", myfiles_forecast[1]))
 
@@ -77,7 +78,6 @@ for(i in 1:16){
   #create and save figure with forecast mean, confidence intervals, and obs chl
   png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/Fig3_forecast_timeseries/Daily_Forecast_Day', i, 'moving_y_axis.png'), width = 1100, height = 800)
   print(ggplot(temp, aes(forecast_date, forecast_mean_chl)) +
-    #ylim(0,150) +
     geom_line(size = 2) +
     geom_point(aes(forecast_date, obs_chl_EXO), size = 4, stroke = 0, shape = 19, color = 'dodgerblue4') +
     geom_ribbon(aes(ymin = forecast_CI95_lower, ymax = forecast_CI95_upper), fill = 'grey1', linetype = 2, alpha = 0.2) +
@@ -85,8 +85,7 @@ for(i in 1:16){
     ylab('Chlorophyll a (μg/L)') +
     ggtitle(paste0('Daily Forecast, Day ', i)) +
     scale_x_date(labels = date_format('%b')) +
-    #geom_vline(xintercept = as.numeric(as.Date("2019-02-28", "%Y-%m-%d")), color = 'blue', size = 1.5) +
-    #geom_vline(xintercept = as.numeric(as.Date("2019-03-20", "%Y-%m-%d")), color = 'blue', size = 1.5) +
+    theme_bw() +
     theme(axis.text.x = element_text(size = 45),
           axis.text.y = element_text(size = 50),
           axis.title.x = element_text(size =45),
@@ -119,8 +118,7 @@ for(i in 1:16){
           ylab('Chlorophyll a (μg/L)') +
           ggtitle(paste0('Daily Forecast, Day ', i)) +
           scale_x_date(labels = date_format('%b')) +
-          #geom_vline(xintercept = as.numeric(as.Date("2019-02-28", "%Y-%m-%d")), color = 'blue', size = 1.5) +
-          #geom_vline(xintercept = as.numeric(as.Date("2019-03-20", "%Y-%m-%d")), color = 'blue', size = 1.5) +
+          theme_bw() +
           theme(axis.text.x = element_text(size = 45),
                 axis.text.y = element_text(size = 50),
                 axis.title.x = element_text(size =45),
