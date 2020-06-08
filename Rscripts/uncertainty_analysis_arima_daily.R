@@ -133,6 +133,8 @@ for (i in 1:16) { # change the 16 to whatever number of timesteps you have
 
 # pretty time series with geom_area()
 for (i in 1:16) {
+  temp <- uncert_proportion_long[uncert_proportion_long$day_in_future==i,]
+  temp <- temp[!temp$variable=='total_var',]
   png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/Daily_Day',i, '_Uncertainty_TimeSeries.png'), width = 1200, height = 785)
   print(ggplot(temp, aes(x = forecast_date, y = measurement, fill = variable)) +geom_area() + ylim(0,1.1) +
           xlab('Date') +
@@ -141,11 +143,9 @@ for (i in 1:16) {
                             values = c('#92D050', '#660066', '#C55A11', '#FFC000'),
                             name = "Uncertainty Type") +
           ggtitle(paste0('Day ', i, ' Daily Forecast')) +
-          scale_x_date(labels = date_format('%b')) +
-           # colors thaat match dietze
-          #  scale_fill_manual(labels = c('driver: discharge', 'parameter', 'process', 'driver: weather', 'initial conditions'),
-          #                   values = c('darkgreen',  'red', 'lightblue', 'green', 'black'),
-          #                   name = "Uncertainty Type") +
+          scale_x_date(labels = date_format('%b'), expand = c(0,0)) +
+          scale_y_continuous(expand = c(0,0))+
+          theme_bw() + 
           theme(axis.text.x = element_text(size = 40),
                 axis.text.y = element_text(size = 40),
                 axis.title.x = element_text(size =45),
@@ -176,18 +176,19 @@ p <- p + geom_area(data = temp, aes(x = forecast_date, y = measurement, fill = v
                     values = c('#92D050', '#660066', '#C55A11', '#FFC000'),
                     name = "Uncertainty Type") +
   ggtitle(paste0('Daily Forecast, Day 7')) +
-  scale_x_date(labels = date_format('%b')) +
+  scale_x_date(labels = date_format('%b'), expand = c(0,0)) +
+  theme_bw() +
   theme(axis.text.x = element_text(size = 35),
         axis.text.y = element_text(size = 35),
         axis.title.x = element_text(size =35),
         axis.title.y = element_text(size = 35),
         legend.title = element_text(size = 35),
         legend.text = element_text(size = 30),
-        #panel.grid.major = element_blank(),
+        panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         plot.title = element_text(size = 40))
 p <- p + geom_line(data = var, aes(x = forecast_date, y = measurement), lwd = 1.5) +
-  scale_y_continuous(sec.axis = sec_axis(~., name = expression (paste("Total Variance (",~μg/L^2,")"  )))) 
+  scale_y_continuous(expand = c(0,0), sec.axis = sec_axis(~., name = expression (paste("Total Variance (",~μg/L^2,")"  )))) 
 png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/Daily_Day',7, '_Uncertainty_Variance_TimeSeries.png'), width = 1200, height = 785)
 p
 dev.off()
@@ -200,14 +201,15 @@ temp <- temp[!temp$variable=='total_var',]
 p <- ggplot() 
 p <- p + geom_area(data = temp, aes(x = forecast_date, y = measurement, fill = variable))
 p <- p + geom_line(data = var, aes(x = forecast_date, y = measurement/1.7), lwd = 1.5) +
-  scale_y_continuous(sec.axis = sec_axis(~.*1.7, name = expression (paste("Total Variance (",~μg/L^2,")"  ))))
+  scale_y_continuous(expand = c(0,0), sec.axis = sec_axis(~.*1.7, name = expression (paste("Total Variance (",~μg/L^2,")"  ))))
 p <- p + xlab('Date') +
   ylab('Proportion of Variance') +
   scale_fill_manual(breaks = c('IC', 'parameter', 'process', 'weather'),
                     values = c('#92D050', '#660066', '#C55A11', '#FFC000'),
                     name = "Uncertainty Type") +
   ggtitle(paste0('Daily Forecast, Day 14')) +
-  scale_x_date(labels = date_format('%b')) +
+  scale_x_date(labels = date_format('%b'), expand = c(0,0)) +
+  theme_bw() +
   theme(axis.text.x = element_text(size = 35),
         axis.text.y = element_text(size = 35),
         axis.title.x = element_text(size =35),
@@ -260,7 +262,9 @@ ggplot(mean_prop_long, aes(x = horizon, y = measurement, fill = variable)) +
                     name = 'Uncertainty Type') +
   xlab('Forecast Horizon (days)') +
   ylab('Proportion of Variance') +
-  scale_x_continuous('Forecast Horizon (days)', breaks = c(0,7,14))+
+  scale_x_continuous(expand = c(0,0), 'Forecast Horizon (days)', breaks = c(0,7,14))+
+  scale_y_continuous(expand = c(0,0)) +
+  theme_bw() +
   theme(axis.text.x = element_text(size = 30),
         axis.text.y = element_text(size = 40),
         axis.title.x = element_text(size =45),
@@ -272,10 +276,10 @@ ggplot(mean_prop_long, aes(x = horizon, y = measurement, fill = variable)) +
 dev.off()
 
 
-
-scale_fill_manual(breaks = c('discharge', 'IC', 'parameter', 'process', 'weather'),
-                  labels = c('driver: discharge', 'IC', 'parameter', 'process', 'driver: weather'),
-                  values = c('darkgreen', 'black', 'red', 'lightblue', 'green'),
-                  name = "Uncertainty Type") 
+#  old MDietze colors
+#scale_fill_manual(breaks = c('discharge', 'IC', 'parameter', 'process', 'weather'),
+#                  labels = c('driver: discharge', 'IC', 'parameter', 'process', 'driver: weather'),
+#                  values = c('darkgreen', 'black', 'red', 'lightblue', 'green'),
+#                  name = "Uncertainty Type") 
 
 
