@@ -64,7 +64,7 @@ sim[,3] <- c(NA, 6, 19.2, 24.2)
 sim[,4] <- c(NA, 6, 2.2, 8.9)
 sim[,5] <- c(NA, 6, max(together[1,]), max(together[2,]) )
 sim[,6] <- c(NA, 6, 0, min(together[,2]))
-sim[,1] <- c(as.Date('2019-03-06'), as.Date('2019-03-09', origin = "1970-01-01"), as.Date('2019-03-16', origin = "1970-01-01"), as.Date('2019-03-23', origin = "1970-01-01"))
+sim[,1] <- c(as.Date('2019-05-03'), as.Date('2019-05-06', origin = "1970-01-01"), as.Date('2019-05-13', origin = "1970-01-01"), as.Date('2019-05-20', origin = "1970-01-01"))
 sim <- as.data.frame(sim)
 
 plot(as.Date(sim[,1], , origin = "1970-01-01"), sim[,2], type = 'l', ylim = c(0, 25), xlab = "Date", ylab = "Chla (ug/L)")
@@ -102,7 +102,7 @@ ggplot(sim, aes(x = as.Date(sim$date, origin = "1970-01-01"), y = sim$mean)) +
   geom_line(size = 2) +
   geom_point(aes(x = as.Date(sim$date, origin = "1970-01-01"), y = sim$mean), size = 10, stroke = 0, shape = 19, color = 'green4') +
   geom_ribbon(aes(ymin = min, ymax = max), fill = 'forestgreen', linetype = 2, alpha = 0.2) +
-  geom_vline(xintercept = as.numeric(as.Date("2019-03-09", "%Y-%m-%d")), size = 1.5) +
+  geom_vline(xintercept = as.numeric(as.Date("2019-05-06", "%Y-%m-%d")), size = 1.5) +
   xlab('Date') +
   ylab('Chlorophyll a (μg/L)') +
   scale_x_date(date_labels = '%b-%d', breaks = as.Date(sim$date, origin = "1970-01-01"))+
