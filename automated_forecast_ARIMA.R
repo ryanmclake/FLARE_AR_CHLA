@@ -16,13 +16,14 @@ if (!"tidyverse" %in% installed.packages()) install.packages("tidyverse")
 
 
 library(mvtnorm)
-library(glmtools)
-library(ncdf4)
 library(lubridate)
 library(RCurl)
 library(testit)
 library(imputeTS)
 library(tidyverse)
+library(modelr)
+library(RcppRoll)
+
 
 
 
@@ -30,7 +31,7 @@ data_location = "C:/Users/wwoel/Desktop/FLARE_AR_CHLA/SCCData"
 folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
 # set the timestep to daily or weekly to determine where the forecasts are archived
 timestep <- 'weekly'
-forecast_location <- paste0("C:/Users/wwoel/Desktop/FLARE_AR_CHLA/FCR_forecasts", '/', timestep, '/weekly_05Feb2020')
+forecast_location <- paste0("C:/Users/wwoel/Desktop/FLARE_AR_CHLA/FCR_forecasts", '/', timestep, '/weekly_dischargeforecast_Apr2020')
 
 
 restart_file <- NA
@@ -41,10 +42,10 @@ reference_tzone <- "GMT"
 forecast_days <-16
 DOWNSCALE_MET <- FALSE # should this be TRUE???
 FLAREversion <- "v1.0_beta.1"
- met_ds_obs_start = as.Date("2018-04-06")
+met_ds_obs_start = as.Date("2018-04-06")
 met_ds_obs_end = Sys.Date()
-uncert_mode = 6
-null_model = FALSE
+uncert_mode = 1
+null_model = TRUE
 
 #Note: this number is multiplied by 
 # 1) the number of NOAA ensembles (21)
@@ -55,22 +56,27 @@ n_ds_members <- 1
 # SET UP NUMBER OF ENSEMBLE MEMBERS
 n_met_members <- 21
 
-num_forecast_periods <- 500
+num_forecast_periods <- 365
 
 # source the run_*** file you want to use for the forecast
-source(paste0(folder, "/", "Rscripts/run_arima_", timestep, ".R"))
+#source(paste0(folder, "/", "Rscripts/run_arima_", timestep, ".R"))
 #source(paste0(folder, "/", "Rscripts/run_arima_daily_relhum", ".R"))
+source(paste0(folder, "/", "Rscripts/run_arima_weekly_dischargeforecast.R"))
+
 
 sim_name <- "test1" 
-forecast_start_day <-"2019-11-20 00:00:00"
+forecast_start_day <-"2019-11-14 00:00:00"
 # the forecast start day is the day that the forecast is initialized, the two days of 'forecasts' are produced for 1 week and 2 weeks into 
 # the future from this day
 start_day <- forecast_start_day 
 start_day <- as.POSIXct(start_day, format = "%Y-%m-%d %H:%M:%S")
-hist_days <- as.numeric(difftime(as.POSIXct(forecast_start_day, tz = reference_tzone),
-                                 as.POSIXct(start_day, tz = reference_tzone)))
-local_tzone <- "EST5EDT"
+#hist_days <- as.numeric(difftime(as.POSIXct(forecast_start_day, tz = reference_tzone),
+#                                 as.POSIXct(start_day, tz = reference_tzone)))
+hist_days <- 1
 
+local_tzone <- "EST5EDT"
+include_wq <<- FALSE
+use_future_inflow <<- TRUE
 
 
 forecast_day_count <- 1
