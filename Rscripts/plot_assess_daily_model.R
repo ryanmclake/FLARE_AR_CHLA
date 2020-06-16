@@ -76,7 +76,8 @@ for(i in 1:16){
   temp$forecast_date <- as.Date(temp$forecast_date)
 
   #create and save figure with forecast mean, confidence intervals, and obs chl
-  png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/Fig3_forecast_timeseries/Daily_Forecast_Day', i, 'moving_y_axis.png'), width = 1100, height = 800)
+  #png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/Fig3_forecast_timeseries/Daily_Forecast_Day', i, 'moving_y_axis.png'), width = 1100, height = 800)
+  png(paste0(forecast_folder, '/Daily_Forecast_Day', i, 'moving_y_axis.png'), width = 1100, height = 800)
   print(ggplot(temp, aes(forecast_date, forecast_mean_chl)) +
     geom_line(size = 2) +
     geom_point(aes(forecast_date, obs_chl_EXO), size = 4, stroke = 0, shape = 19, color = 'dodgerblue4') +
@@ -108,7 +109,8 @@ for(i in 1:16){
   temp$forecast_date <- as.Date(temp$forecast_date)
   
   #create and save figure with forecast mean, confidence intervals, and obs chl
-  png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/Fig3_forecast_timeseries/Daily_Forecast_Day', i, '.png'), width = 1100, height = 800)
+  #png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/Fig3_forecast_timeseries/Daily_Forecast_Day', i, '.png'), width = 1100, height = 800)
+  png(paste0(forecast_folder, '/Daily_Forecast_Day', i, '.png'), width = 1100, height = 800)
   print(ggplot(temp, aes(forecast_date, forecast_mean_chl)) +
           ylim(0,150) +
           geom_line(size = 2) +
@@ -151,9 +153,12 @@ for (i in 1:16) {
   # read in csv of each forecast horizon
   temp <- read.csv(paste0(forecast_folder, '/day_', i, '.csv'))
   temp$forecast_date <- as.Date(temp$forecast_date)
+  temp$forecast_run_day <- as.Date(temp$forecast_run_day)
 
   temp_null <- read.csv(paste0(forecast_folder, '/day_', i, '_null.csv'))
   temp_null$forecast_run_day <- as.Date(temp_null$forecast_run_day)
+  
+  temp <- temp[temp$forecast_run_day<=max(temp_null$forecast_run_day),]
 
   # calculate forecast metrics
   source(paste0(folder,"/","Rscripts/model_assessment.R")) # sim, obs
@@ -257,6 +262,10 @@ metrics_overtime[14,18] <- weekly[2,10] #week2 forecast bloom weekly RMSE
 metrics_overtime[7,19] <- weekly[1,9] #week1 null bloom weekly RMSE
 metrics_overtime[14,19] <- weekly[2,9] #week2 null bloom weekly RMSE
 
+# write this dataframe to csv 
+write.csv(metrics_overtime, paste0(forecast_folder, '/dailyforecast_relhum_metrics.csv'))
+
+
 # and the bloom statistics
 # a messy plot with different conditions on one plot
 plot(metrics_overtime$day_in_future, metrics_overtime$RMSE_null, col = 'red', ylim = c(0,11), xlab = 'forecast horizon', ylab = 'RMSE')
@@ -274,21 +283,22 @@ legend('topleft', c('null', 'forecast', 'null nonbloom', 'forecast nonbloom'), c
 # multi-panel figure
 png(paste0(forecast_folder, '/RMSE_all_conditions.png'), width = 1100, height = 800)
 par(mar = c(5,5,4,2), mfrow = c(2,2))
-plot(metrics_overtime$day_in_future, metrics_overtime$RMSE_null, col = 'red', xlim = c(0,14), ylim = c(0,11), main = 'Full-Year', cex.axis = 2, cex.main = 3, cex.lab = 2, cex = 3, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
+plot(metrics_overtime$day_in_future, metrics_overtime$RMSE_null, col = 'red', xlim = c(0,14), ylim = c(0,11), main = 'Full-Year',  cex.axis = 2, cex.main = 2, cex.lab = 2, cex = 3, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
 points(metrics_overtime$day_in_future, metrics_overtime$RMSE_forecast, col = 'blue', cex = 3)
 points(metrics_overtime$day_in_future, metrics_overtime$RMSE_forecast_weekly,  col = 'blue', pch = 15, cex = 3)
 points(metrics_overtime$day_in_future, metrics_overtime$RMSE_null_weekly, col = 'red', pch = 15, cex = 3)
 legend('topleft', c('daily null', 'daily forecast', 'weekly null', 'weekly forecast'), cex = 1.6, col = c('red', 'blue', 'red', 'blue'), pch = c(1, 1,  15, 15), bty = 'n')
+mtext('Daily Model with Weekly Covariates', outer = TRUE, line = -1.5, cex = 1.8)
 
 par(mar = c(5,5,4,2))
-plot(metrics_overtime$day_in_future, metrics_overtime$RMSE_null_nonbloom, col = 'red', ylim = c(0,11), xlim = c(0,14), main = 'Non-Bloom', cex.main = 3, cex.axis = 2, cex.lab = 2, cex = 3, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
+plot(metrics_overtime$day_in_future, metrics_overtime$RMSE_null_nonbloom, col = 'red', ylim = c(0,11), xlim = c(0,14), main = 'Non-Bloom', cex.main = 2, cex.axis = 2, cex.lab = 2, cex = 3, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
 points(metrics_overtime$day_in_future, metrics_overtime$RMSE_forecast_nonbloom, col = 'blue', cex = 3)
 points(metrics_overtime$day_in_future, metrics_overtime$RMSE_forecast_weekly_nonbloom,  col = 'blue', pch = 15, cex = 3)
 points(metrics_overtime$day_in_future, metrics_overtime$RMSE_null_weekly_nonbloom, col = 'red', pch = 15, cex = 3)
 
 
 par(mar = c(5,5,4,2))
-plot(metrics_overtime$day_in_future, metrics_overtime$RMSE_null_daily_bloom, col = 'red', ylim = c(0,35), xlim = c(0,14), main = 'Bloom', cex.main = 3, cex.axis = 2, cex.lab = 2, cex = 3, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
+plot(metrics_overtime$day_in_future, metrics_overtime$RMSE_null_daily_bloom, col = 'red', ylim = c(0,35), xlim = c(0,14), main = 'Bloom', cex.main = 2, cex.axis = 2, cex.lab = 2, cex = 3, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
 points(metrics_overtime$day_in_future, metrics_overtime$RMSE_forecast_daily_bloom, col = 'blue', cex = 3)
 points(metrics_overtime$day_in_future, metrics_overtime$RMSE_forecast_weekly_bloom,  col = 'blue', pch = 15, cex = 3)
 points(metrics_overtime$day_in_future, metrics_overtime$RMSE_null_weekly_bloom, col = 'red', pch = 15, cex = 3)
