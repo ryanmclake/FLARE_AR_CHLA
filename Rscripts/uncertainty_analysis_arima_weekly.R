@@ -136,7 +136,7 @@ uncert_proportion_long <- uncert_prop  %>%
 
 
 # subset to after Dec 31, 2018 to get rid of spin up period
-uncert_proportion_long <- uncert_proportion_long[uncert_proportion_long$forecast_run_day > as.Date('2018-12-31'),]
+uncert_proportion_long <- uncert_proportion_long[uncert_proportion_long$forecast_run_day > as.Date('2018-12-16'),]
 
 ##########################################################################################################################################################################
 ##### make some figures
@@ -186,7 +186,9 @@ for (i in 1:2) {
                             values = c('#4472C4', '#92D050', '#660066', '#C55A11', '#FFC000'),
                             name = "Uncertainty Type") +
           ggtitle(paste0('Week ', i, ' Forecast')) +
-          scale_x_date(labels = date_format('%b %Y')) +
+          scale_y_continuous(expand = c(0,0)) +
+          scale_x_date(expand = c(0,0), labels = date_format('%b %Y')) +
+          theme_bw() +
           theme(axis.text.x = element_text(size = 30),
                 axis.text.y = element_text(size = 40),
                 axis.title.x = element_text(size =45),
@@ -239,18 +241,19 @@ p <- p + geom_area(data = temp, aes(x = forecast_date, y = measurement, fill = v
                     values = c('#4472C4', '#92D050', '#660066', '#C55A11', '#FFC000'),
                     name = "Uncertainty Type") +
   ggtitle(paste0('Weekly Forecast, Day 7')) +
-  scale_x_date(labels = date_format('%b')) +
+  scale_x_date( expand = c(0,0),labels = date_format('%b')) +
+  theme_bw() +
   theme(axis.text.x = element_text(size = 35),
         axis.text.y = element_text(size = 35),
         axis.title.x = element_text(size =35),
         axis.title.y = element_text(size = 35),
         legend.title = element_text(size = 35),
         legend.text = element_text(size = 30),
-        #panel.grid.major = element_blank(),
+        panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         plot.title = element_text(size = 40))
 p <- p + geom_line(data = var, aes(x = forecast_date, y = measurement), lwd = 1.5) +
-  scale_y_continuous(sec.axis = sec_axis(~., name = expression (paste("Total Variance (",~μg/L^2,")"  )))) 
+  scale_y_continuous(expand = c(0,0), sec.axis = sec_axis(~., name = expression (paste("Total Variance (",~μg/L^2,")"  )))) 
 
 png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/Weekly_Week',1, '_Uncertainty_Variance_TimeSeries.png'), width = 1200, height = 785)
 p
@@ -293,7 +296,8 @@ p <- p + geom_area(data = temp, aes(x = forecast_date, y = measurement, fill = v
                     values = c('#4472C4', '#92D050', '#660066', '#C55A11', '#FFC000'),
                     name = "Uncertainty Type") +
   ggtitle(paste0('Weekly Forecast, Day 14')) +
-  scale_x_date(labels = date_format('%b')) +
+  scale_x_date(expand = c(0,0),labels = date_format('%b')) +
+  theme_bw() +
   theme(axis.text.x = element_text(size = 35),
         axis.text.y = element_text(size = 35),
         axis.title.x = element_text(size =35),
@@ -304,7 +308,7 @@ p <- p + geom_area(data = temp, aes(x = forecast_date, y = measurement, fill = v
         panel.grid.minor = element_blank(),
         plot.title = element_text(size = 40))
 p <- p + geom_line(data = var, aes(x = forecast_date, y = measurement), lwd = 1.5) +
-  scale_y_continuous(sec.axis = sec_axis(~., name = expression (paste("Total Variance (",~μg/L^2,")"  )) )) 
+  scale_y_continuous(expand = c(0,0),sec.axis = sec_axis(~., name = expression (paste("Total Variance (",~μg/L^2,")"  )) )) 
 
 png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/Weekly_Week',2, '_Uncertainty_Variance_TimeSeries.png'), width = 1200, height = 785)
 p
@@ -356,14 +360,16 @@ ggplot(mean_prop_long, aes(x = day_in_future, y = measurement, fill = variable )
   ylab('Proportion of Variance') +
   scale_x_discrete(breaks = c(7,14),
                    labels = c('7','14')) +
+  theme_bw() +
   theme(axis.text.x = element_text(size = 40),
         axis.text.y = element_text(size = 40),
         axis.title.x = element_text(size =45),
         axis.title.y = element_text(size = 45),
         legend.title = element_text(size = 35),
         legend.text = element_text(size = 30),
-        # panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank()) 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank()) 
 dev.off()
 
 
