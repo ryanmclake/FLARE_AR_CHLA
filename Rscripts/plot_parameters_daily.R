@@ -9,8 +9,7 @@ reference_tzone <- "GMT"
 #set the location of the forecasts
 folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
 timestep <- 'daily'
-forecast_folder <- paste0(folder, "/FCR_forecasts", '/', timestep)
-setwd(forecast_folder)
+forecast_folder <- paste0(folder, "/FCR_forecasts", '/', timestep, '/relhum_training_spinup_Feb0420')
 
 # code to read in the individual forecast files named for the day on which the forecast is made
 myfiles <- list.files(path = forecast_folder, pattern = "*ensemble_parameters.csv")
@@ -23,12 +22,12 @@ for (i in 2:length(myfiles)) {
 }
 
 # must change these based on the model you are using
-colnames(dataset) <- c('intercept', 'chl_parm',  'sw_parm', 'error_term')
+colnames(dataset) <- c('intercept', 'chl_parm',  'rh_parm', 'error_term')
 
 # these plots are of all the ensemble members and aren't really that useful
 plot(dataset$intercept)
 plot(dataset$chl_parm)
-plot(dataset$sw_parm)
+plot(dataset$rh_parm)
 plot(dataset$discharge_parm)
 plot(dataset$error_term)
 
@@ -71,22 +70,22 @@ xseq<-seq.Date(xmin,xmax,by='1 month')
 
 png('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/daily_parameter_timeseries.png', width = 1100, height = 800)
 par(mfrow = c(2,2), mar=c(9,7,4,1)+.1)
-plot(parms$forecast_date, parms$par1, xlab = '', ylab = 'intercept parm', type = 'l', axes = F, cex.lab = 3)
+plot(parms$forecast_date, parms$par1, xlab = '', ylab = 'Intercept par', type = 'l', axes = F, cex.lab = 3)
 axis(2, cex.axis = 3, cex.lab = 5)
 axis.Date(side=1,at=xseq,format='%y-%b',labels=T,las=3, cex.axis = 3)
 abline(v = as.Date("2019-07-15", "%Y-%m-%d"), col = 'blue')
 abline(v = as.Date("2019-08-15", "%Y-%m-%d"), col = 'blue')
-plot(parms$forecast_date, parms$par2, xlab = '', type = 'l', ylab = 'chlorophyll parm', axes = F,cex.lab = 2, cex.lab = 3)
+plot(parms$forecast_date, parms$par2, xlab = '', type = 'l', ylab = 'Chlorophyll par', axes = F,cex.lab = 2, cex.lab = 3)
 axis(2, cex.axis = 3, cex.lab = 5)
 axis.Date(side=1,at=xseq,format='%y-%b',labels=T,las=3, cex.axis = 3)
 abline(v = as.Date("2019-07-15", "%Y-%m-%d"), col = 'blue')
 abline(v = as.Date("2019-08-15", "%Y-%m-%d"), col = 'blue')
-plot(parms$forecast_date, parms$par3, xlab = '', ylab = 'sw parm', type = 'l', cex.lab = 2, axes = F,cex.lab = 3)
+plot(parms$forecast_date, parms$par3, xlab = '', ylab = 'Relative Humidity par', type = 'l', cex.lab = 2, axes = F,cex.lab = 3)
 axis(2, cex.axis = 3, cex.lab = 5)
 axis.Date(side=1,at=xseq,format='%y-%b',labels=T,las=3, cex.axis = 3)
 abline(v = as.Date("2019-07-15", "%Y-%m-%d"), col = 'blue')
 abline(v = as.Date("2019-08-15", "%Y-%m-%d"), col = 'blue')
-plot(parms$forecast_date, parms$par4,  xlab = '', type = 'l', ylab = 'error term',  cex.lab = 2, axes = F, cex.lab = 3)
+plot(parms$forecast_date, parms$par4,  xlab = '', type = 'l', ylab = 'Error term',  cex.lab = 2, axes = F, cex.lab = 3)
 axis(2, cex.axis = 3, cex.lab = 5)
 axis.Date(side=1,at=xseq,format='%y-%b',labels=T,las=3, cex.axis = 3)
 abline(v = as.Date("2019-07-15", "%Y-%m-%d"), col = 'blue')
