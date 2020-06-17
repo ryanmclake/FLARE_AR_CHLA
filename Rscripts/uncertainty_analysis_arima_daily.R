@@ -262,8 +262,8 @@ ggplot(mean_prop_long, aes(x = horizon, y = measurement, fill = variable)) +
                     name = 'Uncertainty Type') +
   xlab('Forecast Horizon (days)') +
   ylab('Proportion of Variance') +
-  scale_x_continuous(expand = c(0,0), 'Forecast Horizon (days)', breaks = c(0,7,14))+
-  scale_y_continuous(expand = c(0,0)) +
+  scale_x_continuous( 'Forecast Horizon (days)', breaks = c(0,7,14))+
+  #scale_y_continuous(expand = c(0,0)) +
   theme_bw() +
   theme(axis.text.x = element_text(size = 30),
         axis.text.y = element_text(size = 40),
@@ -271,8 +271,9 @@ ggplot(mean_prop_long, aes(x = horizon, y = measurement, fill = variable)) +
         axis.title.y = element_text(size = 45),
         legend.title = element_text(size = 35),
         legend.text = element_text(size = 30),
-        # panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank()) 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank()) 
 dev.off()
 
 
