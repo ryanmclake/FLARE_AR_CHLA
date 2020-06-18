@@ -30,8 +30,8 @@ library(RcppRoll)
 data_location = "C:/Users/wwoel/Desktop/FLARE_AR_CHLA/SCCData"
 folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
 # set the timestep to daily or weekly to determine where the forecasts are archived
-timestep <- 'weekly'
-forecast_location <- paste0("C:/Users/wwoel/Desktop/FLARE_AR_CHLA/FCR_forecasts", '/', timestep, '/weekly_dischargeforecast_Apr2020')
+timestep <- 'daily'
+forecast_location <- paste0("C:/Users/wwoel/Desktop/FLARE_AR_CHLA/FCR_forecasts", '/', timestep, '/daily_SW_discharge')
 
 
 restart_file <- NA
@@ -61,11 +61,12 @@ num_forecast_periods <- 365
 # source the run_*** file you want to use for the forecast
 #source(paste0(folder, "/", "Rscripts/run_arima_", timestep, ".R"))
 #source(paste0(folder, "/", "Rscripts/run_arima_daily_relhum", ".R"))
-source(paste0(folder, "/", "Rscripts/run_arima_weekly_dischargeforecast.R"))
+#source(paste0(folder, "/", "Rscripts/run_arima_weekly_dischargeforecast.R"))
+source(paste0(folder, "/", "Rscripts/run_arima_daily_SW_discharge.R"))
 
 
 sim_name <- "test1" 
-forecast_start_day <-"2019-11-14 00:00:00"
+forecast_start_day <-"2019-11-20 00:00:00"
 # the forecast start day is the day that the forecast is initialized, the two days of 'forecasts' are produced for 1 week and 2 weeks into 
 # the future from this day
 start_day <- forecast_start_day 
