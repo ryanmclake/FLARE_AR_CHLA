@@ -172,7 +172,7 @@ if(tail(data$Date, n=1)<= as.Date(forecast_start_day)-timestep){
   #get rid of na's
   data_assimilate <- na.omit(data_assimilate)
   #data_assimilate <- data[data$Date<forecast_start_day,]
-  write.csv(data_assimilate,'data_arima_working.csv' , row.names = FALSE)
+  write.csv(data_assimilate,outfile , row.names = FALSE)
   print('newly updated')
   
 }else{
