@@ -9,7 +9,7 @@ reference_tzone <- "GMT"
 
 folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
 timestep <- 'weekly' #specify the timestep
-forecast_folder <- paste0(folder, "/FCR_forecasts", '/', timestep, '/weekly_dischargeforecast_Apr2020') #specify the folder within here
+forecast_folder <- paste0(folder, "/FCR_forecasts", '/', timestep, '/no_DA') #specify the folder within here
 setwd(forecast_folder)
 
 # code to read in the individual forecast files named for the day on which the forecast is made
@@ -73,7 +73,7 @@ temp <- read.csv(paste0(forecast_folder, '/day_', i, '.csv'))
 temp$forecast_date <- as.Date(temp$forecast_date)
 
 #create and save figure with forecast mean, confidence intervals, and obs chl
-png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/Fig3_forecast_timeseries/Weekly_Forecast_Week', i, 'moving_y_axis.png'), width = 1100, height = 800)
+png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/no_DA_figs/', i, 'moving_y_axis.png'), width = 1100, height = 800)
 print(ggplot(temp, aes(forecast_date, forecast_mean_chl)) +
         geom_line(size = 2) +
         geom_point(aes(forecast_date, obs_chl_EXO), size = 4, stroke = 0, shape = 19, color = 'green4') +
@@ -107,7 +107,7 @@ dev.off()
   temp$forecast_date <- as.Date(temp$forecast_date)
   
   #create and save figure with forecast mean, confidence intervals, and obs chl
-  png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/Fig3_forecast_timeseries/Weekly_Forecast_Week', 1, '.png'), width = 1100, height = 800)
+  png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/no_DA_figs/Weekly_Forecast_Week', 1, '.png'), width = 1100, height = 800)
   print(ggplot(temp, aes(forecast_date, forecast_mean_chl)) +
           geom_line(size = 2) +
           geom_point(aes(forecast_date, obs_chl_EXO), size = 4, stroke = 0, shape = 19, color = 'green4') +
@@ -137,7 +137,7 @@ dev.off()
   temp$forecast_date <- as.Date(temp$forecast_date)
   
   #create and save figure with forecast mean, confidence intervals, and obs chl
-  png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/Fig3_forecast_timeseries/Weekly_Forecast_Week', 2, '.png'), width = 1100, height = 800)
+  png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/no_DA_figs/Weekly_Forecast_Week', 2, '.png'), width = 1100, height = 800)
   print(ggplot(temp, aes(forecast_date, forecast_mean_chl)) +
           geom_line(size = 2) +
           geom_point(aes(forecast_date, obs_chl_EXO), size = 4, stroke = 0, shape = 19, color = 'green4') +
@@ -277,7 +277,7 @@ metrics <- as.data.frame(metrics)
 
 write.csv(metrics_overtime_weekly, paste0(forecast_folder, '/ForecastMetrics_Weekly.csv'), row.names = FALSE)
 
-png('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/Weekly_RMSE_over_time.png', width = 1100, height = 800)
+png('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/no_DA_figs/Weekly_RMSE_over_time.png', width = 1100, height = 800)
 ggplot(data = metrics_overtime_weekly, aes(x = week_in_future,y = RMSE_null)) + 
   geom_point(aes(week_in_future, RMSE_null), col = 'red', size = 15) +
   geom_point(aes(week_in_future, RMSE_forecast), col = 'blue', size = 15)+
@@ -295,7 +295,7 @@ ggplot(data = metrics_overtime_weekly, aes(x = week_in_future,y = RMSE_null)) +
   scale_x_discrete(limits = c('1','2')) 
 dev.off()  
 
-png('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/Weekly_RMSE_different_conditions.png', width = 1100, height = 800)
+png('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/no_DA_figs/Weekly_RMSE_different_conditions.png', width = 1100, height = 800)
 ggplot(data = metrics_overtime_weekly, aes(x = week_in_future,y = RMSE_null)) + 
   geom_point(aes(week_in_future, RMSE_forecast_nonbloom), col = 'orange', size = 15) +
   geom_point(aes(week_in_future, RMSE_forecast_bloom), col = 'red', size = 15) +
