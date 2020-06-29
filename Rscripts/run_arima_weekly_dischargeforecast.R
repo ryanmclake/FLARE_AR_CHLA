@@ -21,7 +21,8 @@ run_arima <- function(
   DOWNSCALE_MET = TRUE,
   FLAREversion,
   window_length,
-  null_model = FALSE
+  null_model = FALSE,
+  data_assimilation = TRUE
 ){
   
   
@@ -364,9 +365,9 @@ run_arima <- function(
   for(j in 2:length(met_file_names)){
     temp<-read.csv(met_file_names[j])
     temp$date <- date(temp$time)
-    for(i in 2:(length(unique(temp$date))-1)){  # use this line for the Dec 2018 and Nov 2019 forecasts which are in GMT
+   # for(i in 2:(length(unique(temp$date))-1)){  # use this line for the Dec 2018 and Nov 2019 forecasts which are in GMT
       
-  #   for(i in 1:(length(unique(temp$date)))){
+    for(i in 1:(length(unique(temp$date)))){
       temp1<-subset(temp, temp$date==unique(temp$date)[i])
       temp2 <- temp1 %>% mutate(SW = mean(temp1$ShortWave))  %>% 
         mutate(rain_sum = sum(temp1$Rain))
@@ -494,6 +495,8 @@ run_arima <- function(
 ###### data assimilation  ###############################################################################################
 #########################################################################################################################
 
+  if(data_assimilation){
+  
   # a script to check for new data to add to the historical dataset; data gets updated weekly
   source(paste0(folder,"/","Rscripts/data_assimilation_AR.R"))
   outfile <- 'data_arima_working.csv'
@@ -505,17 +508,10 @@ run_arima <- function(
                     outfile = outfile,
                     met_obs_fname = met_obs_fname)
   
-  # output from data_assimilation function is then read into a function that subsets the training dataset by a given window
-  #source(paste0(folder,"/","Rscripts/moving_data_assimilation.R"))
-  #moving_data_assimilation(folder = folder,
-  #                         data_location = data_location,
-  #                         data_file = 'data_arima_working.csv', 
-  #                         forecast_start_day = forecast_start_day,
-  #                         window_length = window_length) # in days, this is set in the automated_forecast_ARIMA script
-  
-  # read in the jags file to pull from parameter values 
-  # load("C:/Users/wwoel/Desktop/FLARE/FLARE_3/FLARE_3/MCMC_output_ARIMA_Whitney.Rdata")
-  # find a way to update the jags file without entering the whole code right here?
+  }else{
+    
+    outfile <- 'data_arima_WW.csv'
+  }
   library(rjags)
   library(PerformanceAnalytics)
   
