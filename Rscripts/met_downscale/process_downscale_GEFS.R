@@ -23,7 +23,8 @@ process_downscale_GEFS <- function(folder,
                                    downscaling_coeff,
                                    full_time_local,
                                    first_obs_date,
-                                   last_obs_date){
+                                   last_obs_date,
+                                   met_obs_fname){
   # -----------------------------------
   # 0. Source necessary files
   # -----------------------------------
@@ -40,7 +41,7 @@ process_downscale_GEFS <- function(folder,
   # 1. Load & reformat observational data
   # -----------------------------------
   
-  obs.file.path = paste(met_station_location, "/FCRmet_legacy01.csv", sep = "")
+  obs.file.path = paste(met_station_location,'/', met_obs_fname, sep = "")
   for.file.path = noaa_location
   
   obs.data <- read.csv(obs.file.path, skip = 4, header = F)
