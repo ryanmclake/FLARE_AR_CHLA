@@ -30,8 +30,9 @@ library(RcppRoll)
 data_location = "C:/Users/wwoel/Desktop/FLARE_AR_CHLA/SCCData"
 folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
 # set the timestep to daily or weekly to determine where the forecasts are archived
-timestep <- 'weekly'
-forecast_location <- paste0("C:/Users/wwoel/Desktop/FLARE_AR_CHLA/FCR_forecasts", '/', timestep, '/no_DA')
+timestep <- '4days'
+sim_name <- '4day_timestep_4day_lag'
+forecast_location <- paste0("C:/Users/wwoel/Desktop/FLARE_AR_CHLA/FCR_forecasts", '/', timestep, '/', sim_name)
 
 
 restart_file <- NA
@@ -46,7 +47,7 @@ met_ds_obs_start = as.Date("2018-04-06")
 met_ds_obs_end = Sys.Date()
 uncert_mode = 1
 null_model = TRUE
-data_assimilation = FALSE
+data_assimilation = TRUE
 
 #Note: this number is multiplied by 
 # 1) the number of NOAA ensembles (21)
@@ -59,15 +60,16 @@ n_met_members <- 21
 
 num_forecast_periods <- 365
 
-# source the run_*** file you want to use for the forecast
+############# source the run_*** file you want to use for the forecast ##################
 #source(paste0(folder, "/", "Rscripts/run_arima_", timestep, ".R"))
 #source(paste0(folder, "/", "Rscripts/run_arima_daily_relhum", ".R"))
-source(paste0(folder, "/", "Rscripts/run_arima_weekly_dischargeforecast.R"))
+#source(paste0(folder, "/", "Rscripts/run_arima_weekly_dischargeforecast.R"))
 #source(paste0(folder, "/", "Rscripts/run_arima_daily_SW_discharge.R"))
+#source(paste0(folder, "/", "Rscripts/run_arima_fortnightly.R"))
+source(paste0(folder, "/", "Rscripts/run_arima_4days.R"))
 
 
-sim_name <- "test1" 
-forecast_start_day <-"2019-06-19 00:00:00"
+forecast_start_day <-"2019-11-14 00:00:00"
 # the forecast start day is the day that the forecast is initialized, the two days of 'forecasts' are produced for 1 week and 2 weeks into 
 # the future from this day
 start_day <- forecast_start_day 
