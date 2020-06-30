@@ -377,8 +377,8 @@ run_arima <- function(
     }
   }
   
-  # extract all ensemble members for forecasts on day 14, which is the 15th entry because we are pulling from the forecast made at midnight on the present day
-  sw_forecast <- data[c(1,15),]  
+  # extract all ensemble members for forecasts on day 14
+  sw_forecast <- data[c(14),]  
   
 
   ####################################################
