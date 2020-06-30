@@ -8,9 +8,9 @@ library(scales)
 reference_tzone <- "GMT"
 
 folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
-timestep <- 'weekly' #specify the timestep
-forecast_folder <- paste0(folder, "/FCR_forecasts", '/', timestep, '/no_DA') #specify the folder within here
-setwd(forecast_folder)
+timestep <- 'fortnightly' #specify the timestep
+forecast_folder <- paste0(folder, "/FCR_forecasts", '/', timestep, '/26Jun2020') #specify the folder within here
+#setwd(forecast_folder)
 
 # code to read in the individual forecast files named for the day on which the forecast is made
 myfiles_forecast <- list.files(path = paste0(forecast_folder), pattern = paste0('*', timestep, ".csv"))
@@ -40,41 +40,32 @@ myfiles_null <- list.files(path = paste0(forecast_folder, '/null_ensemble'), pat
 dataset_null <- read.csv(paste0(paste0(forecast_folder, '/null_ensemble'), "/", myfiles_null[1]))
 # shit I forgot to archive the forecast run day within the null model file
 # make up a vector of the dates
-dataset_null$week_in_future <- NA
+dataset_null$week_in_future <- c(0,2)
 
 # read in files
 for (i in 2:length(myfiles_null)) {
   temp <- read.csv(paste0(forecast_folder, '/null_ensemble',"/", myfiles_null[i]))
-  temp$week_in_future <- seq(0,2)
+  temp$week_in_future <- c(0,2)
   dataset_null <- rbind(dataset_null, temp)
 }
-dataset_null[1:3,5] <- c(0,1,2)
 dataset_null$date <- as.Date(dataset_null$date)
 dataset_null <- dataset_null[dataset_null$date>'2018-12-31',]
 
 # separate into forecast horizon for individual analysis
-for (i in 1:2) { # change the 16 to whatever number of timesteps you have
-  temp <- stuff[stuff$week==i,]
-  write.csv(temp, paste0(forecast_folder, '/day_', i, '.csv'), row.names = FALSE)
-}
 
-for (i in 1:2) { # change the 16 to whatever number of timesteps you have
+i=2
   temp <- dataset_null[dataset_null$week_in_future==i,]
   write.csv(temp, paste0(forecast_folder, '/day_', i, '_null.csv'), row.names = FALSE)
-}
+
 
 
 # loop to make figures at each time step
 # MOVING Y AXIS
-for(i in 1:2){
-
 # read in csv of each forecast horizon
-temp <- read.csv(paste0(forecast_folder, '/day_', i, '.csv'))
-temp$forecast_date <- as.Date(temp$forecast_date)
 
 #create and save figure with forecast mean, confidence intervals, and obs chl
-png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/no_DA_figs/', i, 'moving_y_axis.png'), width = 1100, height = 800)
-print(ggplot(temp, aes(forecast_date, forecast_mean_chl)) +
+png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/fortnight_forecasts/', 'timeseries_moving_y_axis.png'), width = 1100, height = 800)
+print(ggplot(stuff, aes(forecast_date, forecast_mean_chl)) +
         geom_line(size = 2) +
         geom_point(aes(forecast_date, obs_chl_EXO), size = 4, stroke = 0, shape = 19, color = 'green4') +
         geom_ribbon(aes(ymin = forecast_CI95_lower, ymax = forecast_CI95_upper), fill = 'grey1', linetype = 2, alpha = 0.2) +
@@ -97,48 +88,15 @@ print(ggplot(temp, aes(forecast_date, forecast_mean_chl)) +
               panel.grid.minor = element_blank(),
               plot.title = element_text(size = 50)))
 dev.off()
-}
 
 # loop to make figures at each time step
 # SET Y AXIS
 
-# first day 1 aka week 1
-  temp <- read.csv(paste0(forecast_folder, '/day_', 1, '.csv'))
-  temp$forecast_date <- as.Date(temp$forecast_date)
+# week 2
   
   #create and save figure with forecast mean, confidence intervals, and obs chl
-  png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/no_DA_figs/Weekly_Forecast_Week', 1, '.png'), width = 1100, height = 800)
-  print(ggplot(temp, aes(forecast_date, forecast_mean_chl)) +
-          geom_line(size = 2) +
-          geom_point(aes(forecast_date, obs_chl_EXO), size = 4, stroke = 0, shape = 19, color = 'green4') +
-          geom_ribbon(aes(ymin = forecast_CI95_lower, ymax = forecast_CI95_upper), fill = 'grey1', linetype = 2, alpha = 0.2) +
-          xlab('Date') +
-           ylim(0,150)+
-          ylab('Chlorophyll a (μg/L)') +
-          ggtitle('Weekly Forecast, Day 7') +
-          scale_x_date(labels = date_format('%b')) +
-          #geom_vline(xintercept = as.numeric(as.Date("2019-07-10", "%Y-%m-%d")), color = 'black', size = 1.5, linetype = 'dashed') +
-          #geom_vline(xintercept = as.numeric(as.Date("2019-08-15", "%Y-%m-%d")), color = 'black', size = 1.5, linetype = 'dashed') +
-          theme_bw() +
-          theme(axis.text.x = element_text(size = 45),
-                axis.text.y = element_text(size = 50),
-                axis.title.x = element_text(size =45),
-                axis.title.y = element_text(size = 45),
-                legend.title = element_text(size = 35),
-                legend.text = element_text(size = 30),
-                panel.grid.major = element_blank(),
-                legend.position = 'right',
-                panel.grid.minor = element_blank(),
-                plot.title = element_text(size = 50)))
-  dev.off()
-
-# now day 2 aka week 2
-  temp <- read.csv(paste0(forecast_folder, '/day_', 2, '.csv'))
-  temp$forecast_date <- as.Date(temp$forecast_date)
-  
-  #create and save figure with forecast mean, confidence intervals, and obs chl
-  png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/no_DA_figs/Weekly_Forecast_Week', 2, '.png'), width = 1100, height = 800)
-  print(ggplot(temp, aes(forecast_date, forecast_mean_chl)) +
+  png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/fortnight_forecasts/', 'timeseries_setyaxis.png'), width = 1100, height = 800)
+  print(ggplot(stuff, aes(forecast_date, forecast_mean_chl)) +
           geom_line(size = 2) +
           geom_point(aes(forecast_date, obs_chl_EXO), size = 4, stroke = 0, shape = 19, color = 'green4') +
           geom_ribbon(aes(ymin = forecast_CI95_lower, ymax = forecast_CI95_upper), fill = 'grey1', linetype = 2, alpha = 0.2) +
@@ -174,13 +132,19 @@ metrics_overtime <- array(NA, dim = c(2,13))
 colnames(metrics_overtime) <- c('week_in_future','RMSE_null', 'RMSE_forecast',"RMSE_null_nonbloom", 'RMSE_forecast_nonbloom', 
                                 'R2_null', 'R2_forecast',"R2_null_nonbloom", 'R2_forecast_nonbloom', 
                                 'RMSE_null_bloom', 'RMSE_forecast_bloom', 'R2_null_bloom', 'R2_forecasT_bloom')
-for (i in 1:2) {
+
+i <- 2
   # read in csv of each forecast horizon
-  temp <- read.csv(paste0(forecast_folder, '/day_', i, '.csv'))
+  temp <- stuff
   temp$forecast_date <- as.Date(temp$forecast_date)
   
   temp_null <- read.csv(paste0(forecast_folder, '/day_', i, '_null.csv'))
   temp_null$date <- as.Date(temp_null$date)
+  temp_null <- temp_null[,-c(2,3,5)]
+  colnames(temp_null) <- c('mean_null', 'forecast_run_day')
+  
+  temp <- left_join(temp, temp_null)
+  temp <- na.omit(temp)
   
   # calculate forecast metrics
   source(paste0(folder,"/","Rscripts/model_assessment.R")) # sim, obs
@@ -197,7 +161,7 @@ for (i in 1:2) {
   metrics_overtime[i,3] <- forecast$RMSE
   metrics_overtime[i,7] <- forecast$coeff_determination
   
-  null <- model_metrics(temp_null$mean, temp$obs_chl_EXO)
+  null <- model_metrics(temp$mean_null, temp$obs_chl_EXO)
   metrics[1,2] <- null$RMSE
   metrics[2,2] <- null$NSE
   metrics[3,2] <- null$KGE
@@ -224,8 +188,8 @@ for (i in 1:2) {
   metrics_overtime[i,9] <- non_bloom_forecast$coeff_determination
   
   
-  datamerge_nonbloom <- temp_null[temp_null$date< as.Date("2019-07-17") | temp_null$date > as.Date("2019-08-05"), ]
-  non_bloom_null <- model_metrics(datamerge_nonbloom$mean, non_bloom$obs_chl_EXO)
+#  datamerge_nonbloom <- temp_null[temp_null$date< as.Date("2019-07-17") | temp_null$date > as.Date("2019-08-05"), ]
+  non_bloom_null <- model_metrics(non_bloom$mean_null, non_bloom$obs_chl_EXO)
   metrics[1,4] <- non_bloom_null$RMSE
   metrics[2,4] <- non_bloom_null$NSE
   metrics[3,4] <- non_bloom_null$KGE
@@ -252,9 +216,7 @@ for (i in 1:2) {
   metrics_overtime[i, 13] <- bloom_forecast$coeff_determination
 
   
-  datamerge_bloom <- temp_null[temp_null$date > as.Date("2019-07-17") , ]
-  datamerge_bloom <- datamerge_bloom[datamerge_bloom$date < as.Date('2019-08-05'),]
-  bloom_null <- model_metrics(datamerge_bloom$mean, bloom$obs_chl_EXO)
+  bloom_null <- model_metrics(bloom$mean_null, bloom$obs_chl_EXO)
   metrics[1,6] <- bloom_null$RMSE
   metrics[2,6] <- bloom_null$NSE
   metrics[3,6] <- bloom_null$KGE
@@ -266,18 +228,16 @@ for (i in 1:2) {
   metrics_overtime[i,10] <- bloom_null$RMSE
   metrics_overtime[i,12] <- bloom_null$coeff_determination
   
-  print(paste0('metrics on week ', i))
   print(metrics)
   #write.csv(metrics, paste0(forecast_folder, '/ForecastMetrics_day_', i, '.csv'))
   
-}
+
 
 metrics_overtime_weekly <- as.data.frame(metrics_overtime) 
 metrics <- as.data.frame(metrics)
 
-write.csv(metrics_overtime_weekly, paste0(forecast_folder, '/ForecastMetrics_Weekly.csv'), row.names = FALSE)
+write.csv(metrics_overtime_weekly, paste0(forecast_folder, '/ForecastMetrics_', timestep, '.csv'), row.names = FALSE)
 
-png('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/no_DA_figs/Weekly_RMSE_over_time.png', width = 1100, height = 800)
 ggplot(data = metrics_overtime_weekly, aes(x = week_in_future,y = RMSE_null)) + 
   geom_point(aes(week_in_future, RMSE_null), col = 'red', size = 15) +
   geom_point(aes(week_in_future, RMSE_forecast), col = 'blue', size = 15)+
@@ -293,9 +253,8 @@ ggplot(data = metrics_overtime_weekly, aes(x = week_in_future,y = RMSE_null)) +
         panel.grid.minor = element_blank(),
         legend.position = 'right') +
   scale_x_discrete(limits = c('1','2')) 
-dev.off()  
 
-png('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/no_DA_figs/Weekly_RMSE_different_conditions.png', width = 1100, height = 800)
+
 ggplot(data = metrics_overtime_weekly, aes(x = week_in_future,y = RMSE_null)) + 
   geom_point(aes(week_in_future, RMSE_forecast_nonbloom), col = 'orange', size = 15) +
   geom_point(aes(week_in_future, RMSE_forecast_bloom), col = 'red', size = 15) +
@@ -315,7 +274,6 @@ ggplot(data = metrics_overtime_weekly, aes(x = week_in_future,y = RMSE_null)) +
   scale_color_manual(labels = c('Total', 'bloom', 'nonbloom'), 
                      breaks = c('blue', 'red', 'orange'),
                      values = c('blue', 'red', 'orange'))
-dev.off()
 
 # this output now gets read in to 'plot_assess_daily_model.R' in order to compare weekly and daily forecasts
 
