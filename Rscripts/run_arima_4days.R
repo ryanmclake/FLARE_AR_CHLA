@@ -370,12 +370,12 @@ run_arima <- function(
   for(j in 2:length(met_file_names)){
     temp<-read.csv(met_file_names[j])
     temp$date <- date(temp$time)
-    for(i in 2:(length(unique(temp$date))-1)){  # use this line for the Dec 2018 and Nov 2019 forecasts which are in GMT
+  #  for(i in 2:(length(unique(temp$date))-1)){  # use this line for the Dec 2018 and Nov 2019 forecasts which are in GMT
       
-  # for(i in 1:(length(unique(temp$date)))){
+   for(i in 1:(length(unique(temp$date)))){
       temp1<-subset(temp, temp$date==unique(temp$date)[i])
       temp2 <- temp1 %>% mutate(SW = mean(temp1$ShortWave)) 
-      data[i-1,j-1]=temp2[1,10] #'j-1' because you start at 2 in the loop above
+      data[i,j-1]=temp2[1,10] #'j-1' because you start at 2 in the loop above
 
     }
   }
@@ -713,7 +713,7 @@ run_arima <- function(
   forecast_ensemble_file_name <- paste0(year(forecast_start_day), "_", 
                                         file_name_forecast_start_month, "_", 
                                         file_name_forecast_start_day, "_", 
-                                        "chla_fortnightly_ensembles.csv")
+                                        "chla_", timestep, "_ensembles.csv")
   
   # create the output dataframe for archiving the forecast statistics (mean, sd, 95% CI, and obs chl)
   out <- data.frame("forecast_date" = forecast_sequence[2:4], 
@@ -851,7 +851,7 @@ run_arima <- function(
     forecast_plot_name <-  paste0(year(forecast_start_day), "_", 
                                   file_name_forecast_start_month, "_", 
                                   file_name_forecast_start_day, "_", 
-                                  "chla_daily.pdf")
+                                  "chla_", timestep, ".pdf")
     forecast_plot_output_location <- paste0(forecast_location,  "/",
                                             "ensemble_plots/",
                                             forecast_plot_name) 

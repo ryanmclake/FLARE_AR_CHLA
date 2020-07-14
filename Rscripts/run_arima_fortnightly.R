@@ -853,7 +853,7 @@ run_arima <- function(
   forecast_plot_name <-  paste0(year(forecast_start_day), "_", 
                                 file_name_forecast_start_month, "_", 
                                 file_name_forecast_start_day, "_", 
-                                "chla_weekly.pdf")
+                                "chla_", timestep, ".pdf")
   forecast_plot_output_location <- paste0(forecast_location,  "/",
                                           "ensemble_plots/",
                                           forecast_plot_name) 
