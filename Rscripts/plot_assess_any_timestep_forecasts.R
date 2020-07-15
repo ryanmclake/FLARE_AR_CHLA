@@ -6,12 +6,12 @@ library(scales)
 folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
 
 # define specs for the timestep and simulation
-timestep <- 'fortnightly' # character definition of the timestep
-timestep_numeric <- 14 # maybe timestep_numeric and timestep_interval are actually the same thing and not both needed -_-
-timestep_interval <- 14 # the interval in between timesteps, e.g. 4day would be 4; daily would be 1; weekly would be 7
-max_timestep <- 1 #maximum number of timesteps that can be propagated to the max time horizon
-max_horizon <- 14 # maximum number of days that are propagated in this forecast (e.g. daily timestep has max_horizon = 16)
-sim_name <- '07Jul2020'
+timestep <- '6day' # character definition of the timestep
+timestep_numeric <- 6 # maybe timestep_numeric and timestep_interval are actually the same thing and not both needed -_-
+timestep_interval <- 6 # the interval in between timesteps, e.g. 4day would be 4; daily would be 1; weekly would be 7
+max_timestep <- 2 #maximum number of timesteps that can be propagated to the max time horizon
+max_horizon <- 12 # maximum number of days that are propagated in this forecast (e.g. daily timestep has max_horizon = 16)
+sim_name <- '13Jul2020'
 forecast_folder <- paste0(folder, "/FCR_forecasts", '/', timestep, '/', sim_name)
 
 setwd(forecast_folder)
