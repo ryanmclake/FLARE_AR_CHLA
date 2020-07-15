@@ -10,12 +10,10 @@ two_day <- read.csv(paste0(folder, '/FCR_forecasts/2day/2day_timestep_2day_lag_0
 three_day <- read.csv(paste0(folder, '/FCR_forecasts/3day/11Jul2020/ForecastMetrics_3day.csv'))
 four_day <- read.csv(paste0(folder, '/FCR_forecasts/4days/4day_timestep_4day_lag/ForecastMetrics_4days.csv'))
 five_day <- read.csv(paste0(folder, '/FCR_forecasts/5day/12Jul2020/ForecastMetrics_5day.csv'))
-weekly <- read.csv(paste0(folder, '/FCR_forecasts/7day/weekly_dischargeforecast_Apr2020/ForecastMetrics_Weekly.csv'))
+six_day <- read.csv(paste0(folder, '/FCR_forecasts/6day/13Jul2020/ForecastMetrics_6day.csv'))
+weekly <- read.csv(paste0(folder, '/FCR_forecasts/7day/14Jul20_EXOdata_only/ForecastMetrics_7day.csv'))
 ten_day <- read.csv(paste0(folder, '/FCR_forecasts/10day/10jul2020/ForecastMetrics_10day.csv'))
 fortnightly <- read.csv(paste0(folder, '/FCR_forecasts/14day/07Jul2020/ForecastMetrics_fortnightly.csv'))
-
-weekly$day_in_future <- c(7,14)
-fortnightly$day_in_future <- c(14)
 
 #par(mar = c(5,5,4,2), mfrow = c(1,1))
 plot(daily$day_in_future, daily$RMSE_forecast, col = 'blue', cex = 3, ylim = c(0,11), main = 'Full-Year',  cex.axis = 2, cex.main = 2, cex.lab = 2, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
@@ -23,6 +21,7 @@ points(two_day$day_in_future, two_day$RMSE_forecast,  col = 'blue', pch = 13, ce
 points(three_day$day_in_future, three_day$RMSE_forecast,  col = 'blue', pch = 7, cex = 3)
 points(four_day$day_in_future, four_day$RMSE_forecast,  col = 'blue', pch = 10, cex = 3)
 points(five_day$day_in_future, five_day$RMSE_forecast,  col = 'blue', pch = 12, cex = 3)
+points(six_day$day_in_future, six_day$RMSE_forecast,  col = 'blue', pch = 20, cex = 3)
 points(weekly$day_in_future, weekly$RMSE_forecast,  col = 'blue', pch = 15, cex = 3)
 points(ten_day$day_in_future, ten_day$RMSE_forecast,  col = 'blue', pch = 19, cex = 3)
 points(fortnightly$day_in_future, fortnightly$RMSE_forecast, col = 'blue', pch = 24, cex = 3)
