@@ -336,7 +336,8 @@ run_arima <- function(
                                                                                  downscaling_coeff,
                                                                                  full_time_local,
                                                                                  first_obs_date = met_ds_obs_start,
-                                                                                 last_obs_date = met_ds_obs_end)
+                                                                                 last_obs_date = met_ds_obs_end,
+                                                                                 met_obs_fname = met_obs_fname)
     
     if(weather_uncertainty == FALSE & met_downscale_uncertainty == TRUE){
       met_file_names <- met_file_names[1:(1+(1*n_ds_members))]
