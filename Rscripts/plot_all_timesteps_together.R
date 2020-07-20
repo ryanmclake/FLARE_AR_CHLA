@@ -11,9 +11,13 @@ three_day <- read.csv(paste0(folder, '/FCR_forecasts/3day/11Jul2020/ForecastMetr
 four_day <- read.csv(paste0(folder, '/FCR_forecasts/4days/4day_timestep_4day_lag/ForecastMetrics_4days.csv'))
 five_day <- read.csv(paste0(folder, '/FCR_forecasts/5day/12Jul2020/ForecastMetrics_5day.csv'))
 six_day <- read.csv(paste0(folder, '/FCR_forecasts/6day/13Jul2020/ForecastMetrics_6day.csv'))
-weekly <- read.csv(paste0(folder, '/FCR_forecasts/7day/14Jul20_EXOdata_only/ForecastMetrics_7day.csv'))
-ten_day <- read.csv(paste0(folder, '/FCR_forecasts/10day/10jul2020/ForecastMetrics_10day.csv'))
-fortnightly <- read.csv(paste0(folder, '/FCR_forecasts/14day/07Jul2020/ForecastMetrics_fortnightly.csv'))
+seven_day <- read.csv(paste0(folder, '/FCR_forecasts/7day/14Jul20_EXOdata_only/ForecastMetrics_7day.csv'))
+eight_day <- read.csv(paste0(folder, '/FCR_forecasts/8day/15Jul2020/ForecastMetrics_8day.csv'))
+eight_day <- eight_day[eight_day$day_in_future<9,] # 16 forecast metrics are not accurate
+nine_day <- read.csv(paste0(folder, '/FCR_forecasts/9day/15Jul2020/ForecastMetrics_9day.csv'))
+ten_day <- read.csv(paste0(folder, '/FCR_forecasts/10day/10Jul2020/ForecastMetrics_10day.csv'))
+eleven_day <- read.csv(paste0(folder, '/FCR_forecasts/11day/16Jul2020/ForecastMetrics_11day.csv'))
+fourteen_day <- read.csv(paste0(folder, '/FCR_forecasts/14day/07Jul2020/ForecastMetrics_fortnightly.csv'))
 
 #par(mar = c(5,5,4,2), mfrow = c(1,1))
 plot(daily$day_in_future, daily$RMSE_forecast, col = 'blue', cex = 3, ylim = c(0,11), main = 'Full-Year',  cex.axis = 2, cex.main = 2, cex.lab = 2, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
@@ -22,11 +26,14 @@ points(three_day$day_in_future, three_day$RMSE_forecast,  col = 'blue', pch = 7,
 points(four_day$day_in_future, four_day$RMSE_forecast,  col = 'blue', pch = 10, cex = 3)
 points(five_day$day_in_future, five_day$RMSE_forecast,  col = 'blue', pch = 12, cex = 3)
 points(six_day$day_in_future, six_day$RMSE_forecast,  col = 'blue', pch = 20, cex = 3)
-points(weekly$day_in_future, weekly$RMSE_forecast,  col = 'blue', pch = 15, cex = 3)
-points(ten_day$day_in_future, ten_day$RMSE_forecast,  col = 'blue', pch = 19, cex = 3)
-points(fortnightly$day_in_future, fortnightly$RMSE_forecast, col = 'blue', pch = 24, cex = 3)
+points(seven_day$day_in_future, seven_day$RMSE_forecast,  col = 'blue', pch = 15, cex = 3)
+points(eight_day$day_in_future, eight_day$RMSE_forecast,  col = 'blue', pch = 16, cex = 3)
+points(nine_day$day_in_future, nine_day$RMSE_forecast,  col = 'blue', pch = 17, cex = 3)
+points(ten_day$day_in_future, ten_day$RMSE_forecast,  col = 'blue', pch = 18, cex = 3)
+points(eleven_day$day_in_future, eleven_day$RMSE_forecast,  col = 'blue', pch = 19, cex = 3)
+points(fourteen_day$day_in_future, fourteen_day$RMSE_forecast, col = 'blue', pch = 24, cex = 3)
 
-legend('topleft', c('daily', 'weekly', 'fortnightly' ), cex = 1.6, col = c('blue', 'blue', 'blue'),  pch = c( 1,  15,  17), bty = 'n')
+legend('topleft', c('daily', 'seven_day', 'fortnightly' ), cex = 1.6, col = c('blue', 'blue', 'blue'),  pch = c( 1,  15,  17), bty = 'n')
 
 par(mar = c(5,5,4,2))
 plot(daily$day_in_future, daily$RMSE_forecast_nonbloom, col = 'blue', cex = 3, ylim = c(0,7), main = 'Non-Bloom',  cex.axis = 2, cex.main = 2, cex.lab = 2, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
@@ -34,7 +41,7 @@ points(two_day$day_in_future, two_day$RMSE_forecast_nonbloom,  col = 'blue', pch
 points(three_day$day_in_future, three_day$RMSE_forecast_nonbloom,  col = 'blue', pch = 7, cex = 3)
 points(four_day$day_in_future, four_day$RMSE_forecast_nonbloom,  col = 'blue', pch = 10, cex = 3)
 points(five_day$day_in_future, five_day$RMSE_forecast_nonbloom,  col = 'blue', pch = 12, cex = 3)
-points(weekly$day_in_future, weekly$RMSE_forecast_nonbloom,  col = 'blue', pch = 15, cex = 3)
+points(seven_day$day_in_future, seven_day$RMSE_forecast_nonbloom,  col = 'blue', pch = 15, cex = 3)
 points(ten_day$day_in_future, ten_day$RMSE_forecast_nonbloom,  col = 'blue', pch = 19, cex = 3)
 points(fortnightly$day_in_future, fortnightly$RMSE_forecast_nonbloom, col = 'blue', pch = 24, cex = 3)
 
@@ -44,7 +51,7 @@ points(two_day$day_in_future, two_day$RMSE_forecast_bloom,  col = 'blue', pch = 
 points(three_day$day_in_future, three_day$RMSE_forecast_bloom,  col = 'blue', pch = 7, cex = 3)
 points(four_day$day_in_future, four_day$RMSE_forecast_bloom,  col = 'blue', pch = 10, cex = 3)
 points(five_day$day_in_future, five_day$RMSE_forecast_bloom,  col = 'blue', pch = 12, cex = 3)
-points(weekly$day_in_future, weekly$RMSE_forecast_bloom,  col = 'blue', pch = 15, cex = 3)
+points(seven_day$day_in_future, seven_day$RMSE_forecast_bloom,  col = 'blue', pch = 15, cex = 3)
 points(ten_day$day_in_future, ten_day$RMSE_forecast_bloom,  col = 'blue', pch = 19, cex = 3)
 points(fortnightly$day_in_future, fortnightly$RMSE_forecast_bloom, col = 'blue', pch = 24, cex = 3)
 
