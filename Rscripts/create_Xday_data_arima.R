@@ -1,7 +1,7 @@
 # script to create dataframe that is on a 4-day timestep for training forecasts which use SW and discharge as drivers
 
 folder <- 'C:/Users/wwoel/Desktop/FLARE_AR_CHLA'
-timestep_numeric <- 9
+timestep_numeric <- 1
 
 train <- read.csv(paste0(folder, '/data_arima_highfrequency_through_2019.csv'))
 train$Date <- as.Date(train$Date)
