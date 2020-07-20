@@ -1,0 +1,2 @@
+"day_in_future","RMSE_null","RMSE_forecast","RMSE_null_nonbloom","RMSE_forecast_nonbloom","R2_null","R2_forecast","R2_null_nonbloom","R2_forecast_nonbloom","RMSE_null_bloom","RMSE_forecast_bloom","R2_null_bloom","R2_forecasT_bloom"
+11,2.44871684560178,4.21781937316583,1.97687894618607,2.68170568376279,0.908436258194031,0.747667977551691,0.928699985812982,0.80785663929332,6.68769809040089,14.6436753195903,NA,NA
