@@ -721,7 +721,7 @@ run_arima <- function(
     out[i-1, 7] <- max(  ((x[i,,]^2)/0.55) + 0.0308)
     out[i-1, 8] <- min(  ((x[i,,]^2)/0.55) + 0.0308)
     out[i-1, 9] <- var(x[i,,])
-    out[i-1, 10] <- chla_obs[[1]][i+1,1] # +1 bc the first day is the observed chl
+    out[i-1, 10] <- chla_obs[[1]][i,1] 
   }
   
   
