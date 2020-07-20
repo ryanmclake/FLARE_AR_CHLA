@@ -118,7 +118,7 @@ create_inflow_outflow_file <- function(full_time_local,
     #          quote_escape = "none")
 
     tmp2 <- tmp2 %>% 
-      select(time, FLOW)
+     select(time, FLOW)
     
     #write_csv(x = tmp2,
     #          path = paste0(working_directory,"/",outflow_file_names[i]),
