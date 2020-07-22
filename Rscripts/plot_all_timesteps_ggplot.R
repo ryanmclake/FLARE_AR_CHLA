@@ -1,12 +1,14 @@
+library(dplyr)
 library(ggplot2)
 library(RColorBrewer)
 library(scales)
 
 folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
 
-daily <- read.csv(paste0(folder, '/FCR_forecasts/1day/daily_SW_discharge/ForecastMetrics_daily.csv'))
+daily <- read.csv(paste0(folder, '/FCR_forecasts/1day/17Jul2020/ForecastMetrics_1day.csv'))
 daily <- daily %>% select(day_in_future, RMSE_forecast, RMSE_forecast_nonbloom, RMSE_forecast_bloom)
 daily$timestep <- 1
+daily <- daily[daily$day_in_future<16,]
 for (i in 1:length(daily$day_in_future)) {
   daily$horizon[i] <- i
 }
@@ -113,29 +115,38 @@ steps <- rbind(steps, nine_day)
 steps <- rbind(steps, ten_day)
 steps <- rbind(steps, eleven_day)
 steps <- rbind(steps, fourteen_day)
+# re name the columns because they are a little confusing
+colnames(steps) <- c('day_in_future', 'fullyear', 'nonbloom','bloom', 'model_timestep', 'forecasted_timestep')
 
-ggplot(data = steps, aes(x = day_in_future, y = fullyear, col = timestep)) + 
+ggplot(data = steps, aes(x = day_in_future, y = fullyear, col = model_timestep)) + 
   geom_point(size = 4) +
-  scale_color_gradientn(colors = rainbow(20)) 
+  scale_color_gradientn(colors = rainbow(8), breaks = c(1,2,3,4,5,6,7,8,9,10,11,14), guide = 'legend') 
 
-ggplot(data = steps, aes(x = day_in_future, y = fullyear, size = timestep)) + 
+ggplot(data = steps, aes(x = day_in_future, y = fullyear, size = model_timestep)) + 
   geom_point()
   
-ggplot(data = steps, aes(x = day_in_future, y = nonbloom, col = timestep)) + 
+ggplot(data = steps, aes(x = day_in_future, y = nonbloom, col = model_timestep)) + 
   geom_point(size = 4) +
-  scale_color_gradientn(colors = rainbow(8)) 
+  scale_color_gradientn(colors = rainbow(8), breaks = c(1,2,3,4,5,6,7,8,9,10,11,14), guide = 'legend') 
 
-ggplot(data = steps, aes(x = day_in_future, y = bloom, col = timestep)) + 
+ggplot(data = steps, aes(x = day_in_future, y = bloom, col = model_timestep)) + 
   geom_point(size = 4) +
-  scale_color_gradientn(colors = rainbow(8)) 
+  scale_color_gradientn(colors = rainbow(8), breaks = c(1,2,3,4,5,6,7,8,9,10,11,14), guide = 'legend') 
 
-ggplot(data = steps, aes(x = timestep, y = fullyear, col = day_in_future)) +
-  geom_point(size = 4) +
-  scale_color_gradientn(colors = rainbow(20)) 
 
-ggplot(data = steps, aes(x = horizon, y = fullyear, col = timestep)) +
+ggplot(data = steps, aes(x = model_timestep, y = fullyear, col = day_in_future)) +
   geom_point(size = 4) +
-  scale_color_gradientn(colors = rainbow(20)) 
+  scale_color_gradientn(colors = rainbow(8), breaks = c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15), guide = 'legend') 
+
+ggplot(data = steps, aes(x = forecasted_timestep, y = fullyear, col = model_timestep)) +
+  geom_point(size = 4) +
+  scale_color_gradientn(colors = rainbow(8), breaks = c(1,2,3,4,5,6,7,8,9,10,11,14), guide = 'legend') 
+
+ggplot(data = steps, aes(x = forecasted_timestep, y = fullyear/forecasted_timestep, col = model_timestep)) +
+  geom_point(size = 4) +
+  scale_color_gradientn(colors = rainbow(8), breaks = c(1,2,3,4,5,6,7,8,9,10,11,14), guide = 'legend') +
+  ylab('RMSE/propagated timestep') +
+  xlab('propagated timestep')
 
 
 
