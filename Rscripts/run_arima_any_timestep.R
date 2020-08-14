@@ -73,7 +73,9 @@ run_arima <- function(
   temp_obs_fname <- "Catwalk.csv"
   
   if(forecast_start_day < as.Date("2019-01-01")){
-    met_obs_fname <- "FCRmet_legacy01.csv" # needs to be FCRmet_lecagy01.csv if running dates before 01-01-2019 because these files were split up
+    met_obs_fname <- "FCRmet_legacy_2018.csv" # needs to be FCRmet_lecagy01.csv if running dates before 01-01-2019 because these files were split up
+  }else if(forecast_start_day < as.Date('2020-01-01')){
+    met_obs_fname <- 'FCRmet_legacy_2019.csv'
   }else{
     met_obs_fname <- 'FCRmet.csv'
   }
@@ -90,7 +92,10 @@ run_arima <- function(
   diana_data_location <- paste0(data_location, "/", "diana-data")
   manual_data_location <- paste0(data_location, "/", "manual-data") 
   
-
+  # download latest noaa forecasts
+  #  setwd(data_location)
+  #  system("git clone -b fcre --single-branch https://github.com/CareyLabVT/noaa_gefs_forecasts.git fcre")
+  
    
   ###################################
   ##### uncertainty options #########
