@@ -97,7 +97,7 @@ run_arima <- function(
     }
     if(!file.exists(noaa_location)){
       setwd(data_location)
-      system("git clone -b noaa-data --single-branch https://github.com/CareyLabVT/SCCData.git noaa-data")
+      system("git clone -b fcre --single-branch https://github.com/CareyLabVT/noaa_gefs_forecasts.git fcre")
     }
     if(!file.exists(manual_data_location)){
       setwd(data_location)
