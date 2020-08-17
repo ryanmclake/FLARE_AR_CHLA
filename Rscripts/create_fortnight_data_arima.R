@@ -6,7 +6,7 @@ folder <- 'C:/Users/wwoel/Desktop/FLARE_AR_CHLA'
 # run once, shouldn't need to be updated
 #folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
 #source(paste0(folder,"/","Rscripts/data_assimilation_AR.R"))
-outfile <- 'data_arima_weekly_through_2019.csv'
+#outfile <- 'data_arima_weekly_through_2019.csv'
 #forecast_start_day <-"2019-12-30 00:00:00"
 #met_obs_fname <- "FCRmet.csv"
 #data_location = "C:/Users/wwoel/Desktop/FLARE_AR_CHLA/SCCData"
@@ -19,7 +19,7 @@ outfile <- 'data_arima_weekly_through_2019.csv'
 #                  met_obs_fname = met_obs_fname)
 
 
-train <- read.csv(paste0(folder,'/', outfile))
+train <- read.csv(paste0(folder, '/data_arima_7day_through_2020.csv'))
 train$Date <- as.Date(train$Date)
 # make 14 day lag instead of 7 day
 train <- train %>% mutate(Chla_ARlag_timestep_sqrt = lag(Chla_sqrt, 2L))
@@ -31,5 +31,5 @@ train_fortnight <- train[-remove,]
 train_fortnight <- na.omit(train_fortnight)
 
 # file with fortnightly timestep through the forecast period (Dec 2019)
-write.csv(train_fortnight, paste0(folder, '/data_arima_fortnightly_through_2019.csv'), row.names = FALSE)
+write.csv(train_fortnight, paste0(folder, '/data_arima_14day_through_2020.csv'), row.names = FALSE)
 
