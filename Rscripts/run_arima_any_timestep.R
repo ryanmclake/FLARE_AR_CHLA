@@ -217,7 +217,7 @@ run_arima <- function(
   forecast_base_name <- paste0(year(forecast_start_day),
                                forecast_month,
                                forecast_day,
-                               "gep_all_00z")
+                               "_gep_all_00z")
   temp_obs_fname_wdir <-  paste0(working_arima, "/", temp_obs_fname)
   met_obs_fname_wdir <-paste0(met_station_location, "/", met_obs_fname)
   met_forecast_base_file_name <- paste0("met_hourly_",
@@ -249,7 +249,7 @@ run_arima <- function(
   if(forecast_days > 0){
     in_directory <- paste0(noaa_location)
     out_directory <- working_arima
-    file_name <- forecast_base_name
+    file_name <- paste0('fcre_', forecast_base_name)
     
     VarInfo <- data.frame("VarNames" = c("AirTemp",
                                          "WindSpeed",
@@ -468,13 +468,13 @@ run_arima <- function(
 
   if(data_assimilation){
   # read in file with all data and subset to the forecast day
-  data <- read.csv(paste0(folder, '/data_arima_', timestep, '_through_2019.csv'))
+  data <- read.csv(paste0(folder, '/data_arima_', timestep, '_through_2020.csv'))
   data$Date <- as.Date(data$Date)
   data <- data[data$Date<forecast_start_day,]
   print('data subsetted to forecast start day')
   
   }else{
-    data <- read.csv(paste0(folder, '/data_arima_', timestep, '_through_2019.csv'))
+    data <- read.csv(paste0(folder, '/data_arima_', timestep, '_through_2020.csv'))
     data$Date <- as.Date(data$Date)
     data <- data[data$Date<as.Date('2018-01-01'),]
     
