@@ -229,7 +229,7 @@ for(i in 1:max_timestep){
 
 # loop to make figures at each time step
 # FIGURES WITH Y AXIS SET
-for(i in 1:7){
+for(i in 1:max_timestep){
   
   # read in csv of each forecast horizon
   temp <- read.csv(paste0(forecast_folder, '/day_', i, '.csv'))
