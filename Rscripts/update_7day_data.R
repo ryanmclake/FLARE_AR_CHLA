@@ -6,8 +6,7 @@
 # chla one week lag,      source: from EXO sonde but converted into CTD units
 # shortwave radiation     source: FCR met station
 # discharge               source: EDI through 2018 or diana pressure transducer
-data_location
-hist_file = paste0(folder, '/data_arima_', timestep, '_through_2019.csv')
+
 hist_file <- 'data_arima_weekly_through_2019.csv'
 timestep = timestep_numeric
 outfile = paste0(folder, '/data_arima_', timestep, '_through_2020.csv')
