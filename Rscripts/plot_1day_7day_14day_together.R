@@ -6,42 +6,27 @@ library(scales)
 folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
 
 daily <- read.csv(paste0(folder, '/FCR_forecasts/1day/17Jul2020/ForecastMetrics_1day.csv'))
-seven_day <- read.csv(paste0(folder, '/FCR_forecasts/7day/weekly_dischargeforecast_Apr2020/ForecastMetrics_weekly.csv'))
+seven_day <- read.csv(paste0(folder, '/FCR_forecasts/7day/weekly_dischargeforecast_Apr2020/ForecastMetrics_7day.csv'))
 fourteen_day <- read.csv(paste0(folder, '/FCR_forecasts/14day/22Jul2020/ForecastMetrics_14day.csv'))
 
 #par(mar = c(5,5,4,2), mfrow = c(1,1))
-plot(daily$day_in_future, daily$RMSE_forecast, col = 'blue', cex = 3, ylim = c(0,11), main = 'Full-Year',  cex.axis = 2, cex.main = 2, cex.lab = 2, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
+plot(daily$day_in_future, daily$RMSE_forecast, col = 'blue', cex = 3, ylim = c(0,11), xlim = c(0,14), main = 'Full-Year',  cex.axis = 2, cex.main = 2, cex.lab = 2, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
 points(seven_day$day_in_future, seven_day$RMSE_forecast,  col = 'blue', pch = 15, cex = 3)
 points(fourteen_day$day_in_future, fourteen_day$RMSE_forecast, col = 'blue', pch = 24, cex = 3)
+legend('topleft', c('1 day', '7 day', '14 day' ), cex = 1.6, col = c('blue', 'blue', 'blue'),  pch = c( 1,  15,  17), bty = 'n')
 
-legend('topleft', c('daily', 'seven_day', 'fortnightly' ), cex = 1.6, col = c('blue', 'blue', 'blue'),  pch = c( 1,  15,  17), bty = 'n')
-
-par(mar = c(5,5,4,2))
-plot(daily$day_in_future, daily$RMSE_forecast_nonbloom, col = 'blue', cex = 3, ylim = c(0,7), main = 'Non-Bloom',  cex.axis = 2, cex.main = 2, cex.lab = 2, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
-points(two_day$day_in_future, two_day$RMSE_forecast_nonbloom,  col = 'blue', pch = 13, cex = 3)
-points(three_day$day_in_future, three_day$RMSE_forecast_nonbloom,  col = 'blue', pch = 7, cex = 3)
-points(four_day$day_in_future, four_day$RMSE_forecast_nonbloom,  col = 'blue', pch = 10, cex = 3)
-points(five_day$day_in_future, five_day$RMSE_forecast_nonbloom,  col = 'blue', pch = 12, cex = 3)
+plot(daily$day_in_future, daily$RMSE_forecast_nonbloom, col = 'blue', cex = 3, ylim = c(0,7), main = 'Non-bloom',  cex.axis = 2, cex.main = 2, cex.lab = 2, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
 points(seven_day$day_in_future, seven_day$RMSE_forecast_nonbloom,  col = 'blue', pch = 15, cex = 3)
-points(ten_day$day_in_future, ten_day$RMSE_forecast_nonbloom,  col = 'blue', pch = 19, cex = 3)
-points(fortnightly$day_in_future, fortnightly$RMSE_forecast_nonbloom, col = 'blue', pch = 24, cex = 3)
+points(fourteen_day$day_in_future, fourteen_day$RMSE_forecast_nonbloom, col = 'blue', pch = 24, cex = 3)
 
-par(mar = c(5,5,4,2))
-plot(daily$day_in_future, daily$RMSE_forecast_bloom, col = 'blue', cex = 3, ylim = c(0,40), main = 'Bloom',  cex.axis = 2, cex.main = 2, cex.lab = 2, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
-points(two_day$day_in_future, two_day$RMSE_forecast_bloom,  col = 'blue', pch = 13, cex = 3)
-points(three_day$day_in_future, three_day$RMSE_forecast_bloom,  col = 'blue', pch = 7, cex = 3)
-points(four_day$day_in_future, four_day$RMSE_forecast_bloom,  col = 'blue', pch = 10, cex = 3)
-points(five_day$day_in_future, five_day$RMSE_forecast_bloom,  col = 'blue', pch = 12, cex = 3)
+plot(daily$day_in_future, daily$RMSE_forecast_bloom, col = 'blue', cex = 3, ylim = c(0,38), main = 'Bloom',  cex.axis = 2, cex.main = 2, cex.lab = 2, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
 points(seven_day$day_in_future, seven_day$RMSE_forecast_bloom,  col = 'blue', pch = 15, cex = 3)
-points(ten_day$day_in_future, ten_day$RMSE_forecast_bloom,  col = 'blue', pch = 19, cex = 3)
-points(fortnightly$day_in_future, fortnightly$RMSE_forecast_bloom, col = 'blue', pch = 24, cex = 3)
+points(fourteen_day$day_in_future, fourteen_day$RMSE_forecast_bloom, col = 'blue', pch = 24, cex = 3)
 
-
-
-metrics_overtime <- array(NA, dim = c(16,27))
+metrics_overtime <- array(NA, dim = c(14,27))
 colnames(metrics_overtime) <- c('day_in_future',
-                                'RMSE_null', 'RMSE_forecast',"RMSE_null_nonbloom", 'RMSE_forecast_nonbloom', 
-                                'R2_null', 'R2_forecast',"R2_null_nonbloom", 'R2_forecast_nonbloom', 
+                                'RMSE_null_daily', 'RMSE_forecast_daily',"RMSE_null_nonbloom_daily", 'RMSE_forecast_nonbloom_daily', 
+                                'R2_null_daily', 'R2_forecast_daily',"R2_null_nonbloom_daily", 'R2_forecast_nonbloom_daily', 
                                 'RMSE_forecast_weekly', 'R2_forecast_weekly', 'RMSE_forecast_weekly_nonbloom', 'R2_forecast_weekly_nonbloom',
                                 'RMSE_null_weekly', 'R2_null_weekly', 'RMSE_null_weekly_nonbloom', 'R2_null_weekly_nonbloom',
                                 'RMSE_forecast_weekly_bloom', 'RMSE_null_weekly_bloom', 'RMSE_forecast_daily_bloom', 'RMSE_null_daily_bloom',
@@ -50,19 +35,16 @@ colnames(metrics_overtime) <- c('day_in_future',
 
 
 metrics_overtime <- as.data.frame(metrics_overtime)
-# read in the csv with the weekly metrics saved
-weekly <- read.csv(paste0(folder, '/FCR_forecasts/weekly/weekly_dischargeforecast_Apr2020/ForecastMetrics_Weekly.csv'))
-weekly <- weekly[,-1]
 
-metrics_overtime[7,10] <- weekly[1,2] #week1 forecast rmse
-metrics_overtime[7,11] <- weekly[1,6] #week1 forecast r2
-metrics_overtime[7,12] <- weekly[1,4] #week1 nonbloom rmse
-metrics_overtime[7,13] <- weekly[1,8] #week1 r2 nonbloom
+metrics_overtime[7,10] <- seven_day[1,2] #week1 forecast rmse
+metrics_overtime[7,11] <- seven_day[1,6] #week1 forecast r2
+metrics_overtime[7,12] <- seven_day[1,4] #week1 nonbloom rmse
+metrics_overtime[7,13] <- seven_day[1,8] #week1 r2 nonbloom
 
-metrics_overtime[14,10] <- weekly[2,2] #week2 forecast rmse
-metrics_overtime[14,11] <- weekly[2,6] #week2 forecast r2
-metrics_overtime[14,12] <- weekly[2,4] #week2 nonbloom rmse
-metrics_overtime[14,13] <- weekly[2,8]  #week2 r2 nonbloom
+metrics_overtime[14,10] <- seven_day[2,2] #week2 forecast rmse
+metrics_overtime[14,11] <- seven_day[2,6] #week2 forecast r2
+metrics_overtime[14,12] <- seven_day[2,4] #week2 nonbloom rmse
+metrics_overtime[14,13] <- seven_day[2,8]  #week2 r2 nonbloom
 
 metrics_overtime[7,14] <- weekly[1,1]#week1 null rmse
 metrics_overtime[7,15] <- weekly[1,5] #week1 null r2
