@@ -14,6 +14,7 @@ max_timestep <- 1 #maximum number of timesteps that can be propagated to the max
 max_horizon <- 14 # maximum number of days that are propagated in this forecast (e.g. daily timestep has max_horizon = 16)
 sim_name <- '22Jul2020'
 forecast_folder <- paste0(folder, "/FCR_forecasts", '/', timestep, '/', sim_name)
+bloom_threshold <- 17.1
 
 setwd(forecast_folder)
 
@@ -141,7 +142,7 @@ for (i in 1:max_timestep) {
   metrics_overtime[i,6] <- null$coeff_determination
   
   
-  non_bloom <- temp[temp$forecast_date< as.Date("2019-07-17") | temp$forecast_date > as.Date("2019-08-05"), ]
+  non_bloom <- temp[temp$obs_chl_EXO < bloom_threshold, ]
   non_bloom_forecast <- model_metrics(non_bloom$forecast_mean_chl, non_bloom$obs_chl_EXO)
   metrics[1,3] <- non_bloom_forecast$RMSE
   metrics[2,3] <- non_bloom_forecast$NSE
@@ -154,7 +155,7 @@ for (i in 1:max_timestep) {
   metrics_overtime[i,5] <- non_bloom_forecast$RMSE
   metrics_overtime[i,9] <- non_bloom_forecast$coeff_determination
   
-  bloom <- temp[temp$forecast_date> as.Date("2019-07-17") & temp$forecast_date < as.Date("2019-08-05"), ]
+  bloom <- temp[temp$obs_chl_EXO > bloom_threshold, ]
   bloom_forecast <- model_metrics(bloom$forecast_mean_chl, bloom$obs_chl_EXO)
   metrics_overtime[i,11] <- bloom_forecast$RMSE
   
@@ -191,6 +192,9 @@ write.csv(metrics_overtime, paste0(forecast_folder, '/ForecastMetrics_', timeste
 #################################################################################################################################################################################
 #################################################################################################################################################################################
 # plotting
+
+plot(temp$forecast_date, temp$obs_chl_EXO)
+abline(h = 17.1)
 
 # loop to make figures at each time step
 for(i in 1:max_timestep){
