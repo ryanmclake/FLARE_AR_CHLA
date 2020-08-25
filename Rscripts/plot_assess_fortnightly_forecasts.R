@@ -226,7 +226,7 @@ for(i in 1:max_timestep){
           panel.grid.major = element_blank(),
           legend.position = 'right',
           panel.grid.minor = element_blank(),
-          plot.title = element_text(size = 40)))
+          plot.title = element_text(size = 50)))
  dev.off()
 }
 
