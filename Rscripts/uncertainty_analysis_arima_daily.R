@@ -253,7 +253,7 @@ ggplot(mean_prop, aes(x = horizon, y = mean_IC_prop)) +
 mean_prop_long <- mean_prop_long[mean_prop_long$horizon<15,]
 
 cols <- c('IC'="#92D050",'parameter'="#660066", 'process' = '#C55A11', 'weather' = '#FFC000')
-png('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/Uncertainty_Bar_AcrossHorizon_Daily.png', width = 800, height = 785)
+png('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/Uncertainty_Bar_AcrossHorizon_Daily.png', width = 800, height = 885)
 ggplot(mean_prop_long, aes(x = horizon, y = measurement, fill = variable)) + 
   geom_bar(stat = 'identity', position= 'stack') +
   scale_fill_manual(breaks = c('IC', 'parameter', 'process', 'weather'),

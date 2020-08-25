@@ -318,17 +318,18 @@ dev.off()
 ############################################################################################################################################################  
 # stacked bar plots of proportion variance for each forecast horizon
 # create dataframe to write into inside the loop
-mean_prop <- array(NA, dim = c(2, 6))
+mean_prop <- array(NA, dim = c(14, 6))
 colnames(mean_prop) = c('horizon', 'mean_IC_prop', 'mean_parameter_prop','mean_process_prop','mean_weather_prop', 'mean_discharge_prop')
+mean_prop[,1] <- rep(1:14)
+
 
 for (i in 1:2) {
   temp <- uncert_prop[uncert_prop$week==i,]
-  mean_prop[i,1] <- i
-  mean_prop[i, 2] = mean(temp$IC_prop, na.rm = TRUE)
-  mean_prop[i, 3] = mean(temp$parameter_prop, na.rm = TRUE)
-  mean_prop[i, 4] = mean(temp$process_prop, na.rm = TRUE)
-  mean_prop[i, 5] = mean(temp$weather_prop, na.rm = TRUE)
-  mean_prop[i, 6] = mean(temp$discharge_prop, na.rm = TRUE)
+  mean_prop[i*7, 2] = mean(temp$IC_prop, na.rm = TRUE)
+  mean_prop[i*7, 3] = mean(temp$parameter_prop, na.rm = TRUE)
+  mean_prop[i*7, 4] = mean(temp$process_prop, na.rm = TRUE)
+  mean_prop[i*7, 5] = mean(temp$weather_prop, na.rm = TRUE)
+  mean_prop[i*7, 6] = mean(temp$discharge_prop, na.rm = TRUE)
 }
 
 # standard deviation of the proportion over time
@@ -339,7 +340,7 @@ for (i in 1:2) {
 }
 
 mean_prop <- as.data.frame(mean_prop)
-mean_prop <- mean_prop %>% mutate(day_in_future = ifelse(horizon == 1, 7, 14))
+mean_prop <- mean_prop %>% mutate(day_in_future = horizon)
 
 ## put into long format for easy plotting
 mean_prop_long <- mean_prop  %>% 
@@ -350,9 +351,9 @@ ggplot(mean_prop, aes(x = horizon, y = mean_IC_prop)) +
   geom_bar(stat = 'identity', position = 'stack')
 mean_prop_long$day_in_future <- as.factor(mean_prop_long$day_in_future)
 
-png('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/Uncertainty_Bar_AcrossHorizon_Weekly.png', width = 800, height = 885)
+png(paste0(sim_folder, '/Uncertainty_Bar_AcrossHorizon_Weekly.png'), width = 800, height = 885)
 ggplot(mean_prop_long, aes(x = day_in_future, y = measurement, fill = variable )) + 
-  geom_bar(stat = 'identity', position= 'stack', width = 0.2) +
+  geom_bar(stat = 'identity', position= 'stack') +
   scale_fill_manual(breaks = c('discharge', 'IC', 'parameter', 'process', 'weather') ,
                     values = c('#4472C4', '#92D050', '#660066', '#C55A11', '#FFC000'),
                     name = 'Uncertainty Type') +
@@ -361,7 +362,7 @@ ggplot(mean_prop_long, aes(x = day_in_future, y = measurement, fill = variable )
   scale_x_discrete(breaks = c(7,14),
                    labels = c('7','14')) +
   theme_bw() +
-  theme(axis.text.x = element_text(size = 40),
+  theme(axis.text.x = element_text(size = 30),
         axis.text.y = element_text(size = 40),
         axis.title.x = element_text(size =45),
         axis.title.y = element_text(size = 45),
