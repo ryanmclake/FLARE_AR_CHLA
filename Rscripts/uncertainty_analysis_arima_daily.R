@@ -154,7 +154,7 @@ for (i in 1:16) {
                 legend.text = element_text(size = 30),
                 #panel.grid.major = element_blank(),
                 panel.grid.minor = element_blank(),
-                plot.title = element_text(size = 40))
+                plot.title = element_text(size = 50))
   )
   dev.off() 
 }
@@ -186,7 +186,7 @@ p <- p + geom_area(data = temp, aes(x = forecast_date, y = measurement, fill = v
         legend.text = element_text(size = 30),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
-        plot.title = element_text(size = 40))
+        plot.title = element_text(size = 50))
 p <- p + geom_line(data = var, aes(x = forecast_date, y = measurement), lwd = 1.5) +
   scale_y_continuous(expand = c(0,0), sec.axis = sec_axis(~., name = expression (paste("Total Variance (",~μg/L^2,")"  )))) 
 png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/Daily_Day',7, '_Uncertainty_Variance_TimeSeries.png'), width = 1200, height = 785)
@@ -218,7 +218,7 @@ p <- p + xlab('Date') +
         legend.text = element_text(size = 30),
         #panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
-        plot.title = element_text(size = 40))
+        plot.title = element_text(size = 50))
 png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/Daily_Day',14, '_Uncertainty_Variance_TimeSeries.png'), width = 1200, height = 785)
 p
 dev.off()
