@@ -9,7 +9,7 @@ reference_tzone <- "GMT"
 #set the location of the forecasts
 forecast_folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
 setwd(forecast_folder)
-sim_folder <- paste0(forecast_folder, '/FCR_forecasts/weekly/weekly_dischargeforecast_Apr2020')
+sim_folder <- paste0(forecast_folder, '/FCR_forecasts/7day/weekly_dischargeforecast_Apr2020')
 
 # the year's forecasts with all uncertainties 'on' in the forecast output
 myfiles <- list.files(path = sim_folder, pattern = "*weekly.csv")
@@ -154,7 +154,7 @@ for (i in 1:2) { # change the 16 to whatever number of timesteps you have
 
 # pretty time series with geom_area()
 for (i in 1:2) {
-  png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/Weekly_Week',i, '_Uncertainty_TimeSeries.png'), width = 1200, height = 785)
+  png(paste0(sim_folder, '/Weekly_Week',i, '_Uncertainty_TimeSeries.png'), width = 1200, height = 785)
   temp <- uncert_proportion_long[uncert_proportion_long$week==i,]
   temp <- temp[!temp$variable=='total_var',]
   #### THERE IS ONE STUPID DUPLICATED DATE THAT IS STACKING ON TOP AND CREATING A WHITE LINE BELOW
@@ -197,7 +197,7 @@ for (i in 1:2) {
                 legend.text = element_text(size = 30),
                 #panel.grid.major = element_blank(),
                 panel.grid.minor = element_blank(),
-                plot.title = element_text(size = 40))
+                plot.title = element_text(size = 50))
   )
   dev.off() 
 }
@@ -251,11 +251,11 @@ p <- p + geom_area(data = temp, aes(x = forecast_date, y = measurement, fill = v
         legend.text = element_text(size = 30),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
-        plot.title = element_text(size = 40))
+        plot.title = element_text(size = 50))
 p <- p + geom_line(data = var, aes(x = forecast_date, y = measurement), lwd = 1.5) +
   scale_y_continuous(expand = c(0,0), sec.axis = sec_axis(~., name = expression (paste("Total Variance (",~μg/L^2,")"  )))) 
 
-png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/Weekly_Week',1, '_Uncertainty_Variance_TimeSeries.png'), width = 1200, height = 785)
+png(paste0(sim_folder, '/Weekly_Week',1, '_Uncertainty_Variance_TimeSeries.png'), width = 1200, height = 785)
 p
 dev.off()
 
@@ -306,11 +306,11 @@ p <- p + geom_area(data = temp, aes(x = forecast_date, y = measurement, fill = v
         legend.text = element_text(size = 30),
         #panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
-        plot.title = element_text(size = 40))
+        plot.title = element_text(size = 50))
 p <- p + geom_line(data = var, aes(x = forecast_date, y = measurement), lwd = 1.5) +
   scale_y_continuous(expand = c(0,0),sec.axis = sec_axis(~., name = expression (paste("Total Variance (",~μg/L^2,")"  )) )) 
 
-png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/Weekly_Week',2, '_Uncertainty_Variance_TimeSeries.png'), width = 1200, height = 785)
+png(paste0(sim_folder, '/Weekly_Week',2, '_Uncertainty_Variance_TimeSeries.png'), width = 1200, height = 785)
 p
 dev.off()
 
