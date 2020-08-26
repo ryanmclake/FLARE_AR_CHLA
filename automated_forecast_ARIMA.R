@@ -27,13 +27,13 @@ library(RcppRoll)
 
 
 
-data_location = "C:/Users/wwoel/Desktop/FLARE_AR_CHLA/SCCData"
+data_location <-  "C:/Users/wwoel/Desktop/FLARE_AR_CHLA/SCCData"
 folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
 timestep <- '1day' # character definition of the timestep
 timestep_numeric <- 1 # maybe timestep_numeric and timestep_interval are actually the same thing and not both needed -_-
 timestep_interval <- 1 # the interval in between timesteps, e.g. 4day would be 4; daily would be 1; weekly would be 7
-max_timestep <- 16 #maximum number of timesteps that can be propagated to the max time horizon
-max_horizon <- 16 # maximum number of days that are propagated in this forecast (e.g. daily timestep has max_horizon = 16)
+max_timestep <- 14 #maximum number of timesteps that can be propagated to the max time horizon (e.g., daily is 16)
+max_horizon <- 14 # maximum number of days that are propagated in this forecast (e.g. daily timestep has max_horizon = 16)
 sim_name <- '17Jul2020'
 forecast_location <- paste0("C:/Users/wwoel/Desktop/FLARE_AR_CHLA/FCR_forecasts", '/', timestep, '/', sim_name)
 
@@ -48,7 +48,7 @@ DOWNSCALE_MET <- FALSE # should this be TRUE???
 FLAREversion <- "v1.0_beta.1"
 met_ds_obs_start = as.Date("2018-04-06")
 met_ds_obs_end = Sys.Date()
-uncert_mode = 1
+uncert_mode = 3
 null_model = TRUE
 data_assimilation = TRUE
 
@@ -67,7 +67,7 @@ num_forecast_periods <- 365
 source(paste0(folder, "/", "Rscripts/run_arima_any_timestep.R"))
 
 
-forecast_start_day <-"2019-02-24 00:00:00"
+forecast_start_day <-"2019-11-04 00:00:00"
 # the forecast start day is the day that the forecast is initialized, the two days of 'forecasts' are produced for 1 week and 2 weeks into 
 # the future from this day
 start_day <- forecast_start_day 
@@ -102,7 +102,7 @@ repeat{
     }else{
       forecast_month <- paste0(month(forecast_start_time))
     }
-    forecast_base_name <- paste0(year(forecast_start_time),forecast_month,forecast_day,'gep_all_00z.csv')
+    forecast_base_name <- paste0('fcre_', year(forecast_start_time),forecast_month,forecast_day,'_gep_all_00z.csv')
     
     noaa_location <- paste0(data_location,'/','noaa-data')
     #setwd(noaa_location)
