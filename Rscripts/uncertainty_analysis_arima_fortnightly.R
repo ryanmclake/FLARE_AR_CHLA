@@ -158,13 +158,13 @@ uncert_proportion_long <- uncert_proportion_long[uncert_proportion_long$forecast
 
 
 # pretty time series with geom_area()
-  png(paste0(forecast_folder, '/Fortnightly_Uncertainty_TimeSeries.png'), width = 1200, height = 785)
+  png(paste0(forecast_folder, '/Fortnightly_Uncertainty_TimeSeries_legend.png'), width = 1200, height = 785)
   temp <- uncert_proportion_long
   temp <- temp[!temp$variable=='total_var',]
   print(ggplot(temp, aes(x = forecast_date, y = measurement, fill = variable)) +geom_area(position = 'stack') + #ylim(0,1.1) +
           xlab('Date') +
           ylab('Proportion of Variance') +
-          scale_fill_manual(breaks = c('discharge', 'IC', 'parameter', 'process', 'weather') ,
+          scale_fill_manual(labels = c('discharge', 'IC', 'parameter', 'process', 'meteorological') ,
                             values = c('#4472C4', '#92D050', '#660066', '#C55A11', '#FFC000'),
                             name = "Uncertainty Type") +
           ggtitle('Fortnightly Forecast, Day 14') +
