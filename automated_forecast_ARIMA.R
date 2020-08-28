@@ -48,7 +48,7 @@ DOWNSCALE_MET <- FALSE # should this be TRUE???
 FLAREversion <- "v1.0_beta.1"
 met_ds_obs_start = as.Date("2018-04-06")
 met_ds_obs_end = Sys.Date()
-uncert_mode = 3
+uncert_mode = 4
 null_model = TRUE
 data_assimilation = TRUE
 
@@ -67,7 +67,7 @@ num_forecast_periods <- 365
 source(paste0(folder, "/", "Rscripts/run_arima_any_timestep.R"))
 
 
-forecast_start_day <-"2019-11-04 00:00:00"
+forecast_start_day <-"2020-01-02 00:00:00"
 # the forecast start day is the day that the forecast is initialized, the two days of 'forecasts' are produced for 1 week and 2 weeks into 
 # the future from this day
 start_day <- forecast_start_day 
