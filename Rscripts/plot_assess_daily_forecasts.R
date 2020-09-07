@@ -1,8 +1,6 @@
 
 library(ggplot2)
 library(dplyr)
-library(patchwork)
-library(scales)
 
 folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
 
@@ -38,7 +36,7 @@ stuff <- stuff[order(stuff$forecast_date),]
 stuff$forecast_run_day <- as.Date(stuff$forecast_run_day, "%Y-%m-%d")
 
 # now pull in the files from the sim where I only calculated up to 14 day horizon and cut off at 26Jun2020
-myfiles_forecast2 <- myfiles_forecast[443:677]
+myfiles_forecast2 <- myfiles_forecast[443:735]
 dataset_forecast2 <- read.csv(paste0(forecast_folder, "/", myfiles_forecast2[1]))
 dataset_forecast2$timestep <- seq(1, 14, by =1 )
 
@@ -63,7 +61,6 @@ stuff <- rbind(stuff, stuff2)
 dates <- unique(stuff$forecast_run_day)
 myfiles_null <- list.files(path = paste0(forecast_folder, '/null_ensemble'), pattern = paste0('*', 'null_summary', ".csv"))
 dataset_null <- read.csv(paste0(paste0(forecast_folder, '/null_ensemble'), "/", myfiles_null[1]))
-# shit I forgot to archive the forecast run day within the null model file
 dataset_null$forecast_run_day <- as.Date('2018-08-15') 
 dataset_null$forecast_run_day <- as.Date(dataset_null$forecast_run_day, '1970-01-01')
 dataset_null$day_in_future <- seq(0, max_horizon, by = timestep_interval)
@@ -83,7 +80,7 @@ for (i in 2:length(myfiles_null)) {
 
 
 # now pull in the files from the sim where I only calculated up to 14 day horizon and cut off at 26Jun2020
-myfiles_null2 <- myfiles_null[443:677]
+myfiles_null2 <- myfiles_null[138:744]
 dataset_null2 <- read.csv(paste0(forecast_folder, "/null_ensemble/", myfiles_null2[1]))
 dataset_null2$timestep <- seq(0, 14, by =1 )
 dataset_null2$day_in_future <- seq(0, 14, by = timestep_interval)
@@ -94,7 +91,7 @@ for (i in 2:length(myfiles_null2)) {
   temp <- read.csv(paste0(forecast_folder, '/null_ensemble',"/", myfiles_null2[i]))
   temp$day_in_future <- seq(0, 14, by = timestep_interval)
   temp$timestep <- seq(0, 14, by = 1)
-  temp$forecast_run_day <- dates[i]
+  temp$forecast_run_day <- dates[i+137]
   dataset_null2 <- rbind(dataset_null2, temp)
 }
 
@@ -104,6 +101,11 @@ dataset_null <- rbind(dataset_null, dataset_null2)
 #remove spin up dates, so anything before Dec 31, 2018
 stuff <- stuff[stuff$forecast_run_day>'2018-12-31',]
 dataset_null <- dataset_null[dataset_null$forecast_run_day>'2018-12-31',]
+
+
+# remove anything after 15Aug20
+stuff <- stuff[stuff$forecast_run_day<'2020-08-16',]
+dataset_null <- dataset_null[dataset_null$forecast_run_day<'2020-08-16',]
 
 
 # separate into forecast horizon for individual analysis
@@ -141,6 +143,7 @@ for (i in 1:max_timestep) {
   
   temp <- temp[temp$forecast_run_day<=max(temp_null$forecast_run_day),]
   temp <- left_join(temp, temp_null, by = 'forecast_run_day')
+  temp <- na.omit(temp)
   
   # calculate forecast metrics
   source(paste0(folder,"/","Rscripts/model_assessment.R")) # sim, obs
@@ -215,7 +218,6 @@ for (i in 1:max_timestep) {
 metrics_overtime[,1] <-   seq(timestep_numeric, max_horizon, by = timestep_interval)
 metrics_overtime <- as.data.frame(metrics_overtime)
 write.csv(metrics_overtime, paste0(forecast_folder, '/ForecastMetrics_', timestep, '.csv'), row.names = FALSE)
-
 
 #################################################################################################################################################################################
 #################################################################################################################################################################################
