@@ -35,20 +35,12 @@ for (i in 2:length(myfiles_forecast)) {
 stuff <- dataset_forecast 
 stuff$forecast_date <- as.Date(stuff$forecast_date, "%Y-%m-%d")
 stuff <- stuff[order(stuff$forecast_date),]
-if(timestep == 'weekly'){
-  stuff$day_in_future <- seq(timestep_numeric, max_horizon, by = timestep_interval)
-}
-
-if(timestep=='fortnightly'){
-  stuff$day_in_future <- seq(timestep_numeric, max_horizon, by = timestep_interval)
-}
 stuff$forecast_run_day <- as.Date(stuff$forecast_run_day, "%Y-%m-%d")
 dates <- unique(stuff$forecast_run_day)
 
 # bring in the null model data
 myfiles_null <- list.files(path = paste0(forecast_folder, '/null_ensemble'), pattern = paste0('*', 'null_summary', ".csv"))
 dataset_null <- read.csv(paste0(paste0(forecast_folder, '/null_ensemble'), "/", myfiles_null[1]))
-# shit I forgot to archive the forecast run day within the null model file
 dataset_null$forecast_run_day <- as.Date('2018-08-15') 
 dataset_null$forecast_run_day <- as.Date(dataset_null$forecast_run_day, '1970-01-01')
 
@@ -104,6 +96,7 @@ for (i in 1:max_timestep) {
   temp <- read.csv(paste0(forecast_folder, '/day_', i, '.csv'))
   temp$forecast_date <- as.Date(temp$forecast_date)
   temp$forecast_run_day <- as.Date(temp$forecast_run_day)
+  temp <- temp[temp$forecast_run_day < "2020-08-16",]
   temp <- na.omit(temp)
   
   temp_null <- read.csv(paste0(forecast_folder, '/day_', i, '_null.csv'))
@@ -113,10 +106,17 @@ for (i in 1:max_timestep) {
   temp <- temp[temp$forecast_run_day<=max(temp_null$forecast_run_day),]
   temp <- left_join(temp, temp_null, by = 'forecast_run_day')
   
+  obs <- read.csv(paste0(folder, '/obs_chla_02Jan2019_15Aug2020.csv'))
+  obs$forecast_date <- as.Date(obs$forecast_date)
+  obs$forecast_run_day <- as.Date(obs$forecast_run_day)
+  temp <- left_join(temp, obs, by = 'forecast_date')
+  temp <- temp %>% select(forecast_date, forecast_mean_chl, obs_chl_EXO, mean, obs_chl_EXO_on_forecast_date, forecast_run_day.x )
+  
+  
   # calculate forecast metrics
   source(paste0(folder,"/","Rscripts/model_assessment.R")) # sim, obs
   
-  forecast <- model_metrics(temp$forecast_mean_chl, temp$obs_chl_EXO)
+  forecast <- model_metrics(temp$forecast_mean_chl, temp$obs_chl_EXO_on_forecast_date)
   metrics[1,1] <- forecast$RMSE
   metrics[2,1] <- forecast$NSE
   metrics[3,1] <- forecast$KGE
@@ -128,7 +128,7 @@ for (i in 1:max_timestep) {
   metrics_overtime[i,3] <- forecast$RMSE
   metrics_overtime[i,7] <- forecast$coeff_determination
   
-  null <- model_metrics(temp$mean, temp$obs_chl_EXO)
+  null <- model_metrics(temp$mean, temp$obs_chl_EXO_on_forecast_date)
   metrics[1,2] <- null$RMSE
   metrics[2,2] <- null$NSE
   metrics[3,2] <- null$KGE
@@ -141,8 +141,8 @@ for (i in 1:max_timestep) {
   metrics_overtime[i,6] <- null$coeff_determination
   
   
-  non_bloom <- temp[temp$obs_chl_EXO < bloom_threshold, ]
-  non_bloom_forecast <- model_metrics(non_bloom$forecast_mean_chl, non_bloom$obs_chl_EXO)
+  non_bloom <- temp[temp$obs_chl_EXO_on_forecast_date < bloom_threshold, ]
+  non_bloom_forecast <- model_metrics(non_bloom$forecast_mean_chl, non_bloom$obs_chl_EXO_on_forecast_date)
   metrics[1,3] <- non_bloom_forecast$RMSE
   metrics[2,3] <- non_bloom_forecast$NSE
   metrics[3,3] <- non_bloom_forecast$KGE
@@ -154,12 +154,12 @@ for (i in 1:max_timestep) {
   metrics_overtime[i,5] <- non_bloom_forecast$RMSE
   metrics_overtime[i,9] <- non_bloom_forecast$coeff_determination
   
-  bloom <- temp[temp$obs_chl_EXO > bloom_threshold, ]
-  bloom_forecast <- model_metrics(bloom$forecast_mean_chl, bloom$obs_chl_EXO)
+  bloom <- temp[temp$obs_chl_EXO_on_forecast_date > bloom_threshold, ]
+  bloom_forecast <- model_metrics(bloom$forecast_mean_chl, bloom$obs_chl_EXO_on_forecast_date)
   metrics_overtime[i,11] <- bloom_forecast$RMSE
   
   
-  non_bloom_null <- model_metrics(non_bloom$mean, non_bloom$obs_chl_EXO)
+  non_bloom_null <- model_metrics(non_bloom$mean, non_bloom$obs_chl_EXO_on_forecast_date)
   metrics[1,4] <- non_bloom_null$RMSE
   metrics[2,4] <- non_bloom_null$NSE
   metrics[3,4] <- non_bloom_null$KGE
@@ -171,7 +171,7 @@ for (i in 1:max_timestep) {
   metrics_overtime[i,4] <- non_bloom_null$RMSE
   metrics_overtime[i,8] <- non_bloom_null$coeff_determination
   
-  bloom_null <- model_metrics(bloom$mean, bloom$obs_chl_EXO)
+  bloom_null <- model_metrics(bloom$mean, bloom$obs_chl_EXO_on_forecast_date)
   metrics_overtime[i,10] <- bloom_null$RMSE
   
   
@@ -180,8 +180,6 @@ for (i in 1:max_timestep) {
   #write.csv(metrics, paste0(forecast_folder, '/ForecastMetrics_day_', i, '.csv'))
   
 }
-
-
 
 metrics_overtime[,1] <-   seq(timestep_numeric, max_horizon, by = timestep_interval)
 metrics_overtime <- as.data.frame(metrics_overtime)
@@ -202,6 +200,7 @@ for(i in 1:max_timestep){
   temp <- read.csv(paste0(forecast_folder, '/day_', i, '.csv'))
   temp$forecast_date <- as.Date(temp$forecast_date)
   temp$forecast_run_day <- as.Date(temp$forecast_run_day)
+  temp <- temp[temp$forecast_run_day < '2020-08-16',]
 
   #create and save figure with forecast mean, confidence intervals, and obs chl
   #png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/Fig3_forecast_timeseries/Daily_Forecast_Day', i, 'moving_y_axis.png'), width = 1100, height = 800)
@@ -237,6 +236,8 @@ for(i in 1:max_timestep){
   # read in csv of each forecast horizon
   temp <- read.csv(paste0(forecast_folder, '/day_', i, '.csv'))
   temp$forecast_date <- as.Date(temp$forecast_date)
+  temp$forecast_run_day <- as.Date(temp$forecast_run_day)
+  temp <- temp[temp$forecast_run_day < '2020-08-16',]
   
   #create and save figure with forecast mean, confidence intervals, and obs chl
   #png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/Fig3_forecast_timeseries/Daily_Forecast_Day', i, '.png'), width = 1100, height = 800)

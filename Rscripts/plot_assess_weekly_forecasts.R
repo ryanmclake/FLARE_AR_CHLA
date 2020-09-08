@@ -1,8 +1,6 @@
 
 library(ggplot2)
 library(dplyr)
-library(patchwork)
-library(scales)
 
 folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
 
@@ -94,6 +92,11 @@ if(colnames(dataset_null)[1]=='V1'){
 stuff <- stuff[stuff$forecast_run_day>'2018-12-31',]
 dataset_null <- dataset_null[dataset_null$forecast_run_day>'2018-12-31',]
 
+# remove anything after 15Aug20
+stuff <- stuff[stuff$forecast_run_day<'2020-08-16',]
+dataset_null <- dataset_null[dataset_null$forecast_run_day<'2020-08-16',]
+
+
 # separate into forecast horizon for individual analysis
 for (i in 1:max_timestep) { 
   temp <- stuff[stuff$timestep==i,]
@@ -130,10 +133,16 @@ for (i in 1:max_timestep) {
   temp <- temp[temp$forecast_run_day<=max(temp_null$forecast_run_day),]
   temp <- left_join(temp, temp_null, by = 'forecast_run_day')
   
+  obs <- read.csv(paste0(folder, '/obs_chla_02Jan2019_15Aug2020.csv'))
+  obs$forecast_date <- as.Date(obs$forecast_date)
+  obs$forecast_run_day <- as.Date(obs$forecast_run_day)
+  temp <- left_join(temp, obs, by = 'forecast_date')
+  temp <- temp %>% select(forecast_date, forecast_mean_chl, obs_chl_EXO, mean, obs_chl_EXO_on_forecast_date, forecast_run_day.x )
+  
   # calculate forecast metrics
   source(paste0(folder,"/","Rscripts/model_assessment.R")) # sim, obs
   
-  forecast <- model_metrics(temp$forecast_mean_chl, temp$obs_chl_EXO)
+  forecast <- model_metrics(temp$forecast_mean_chl, temp$obs_chl_EXO_on_forecast_date)
   metrics[1,1] <- forecast$RMSE
   metrics[2,1] <- forecast$NSE
   metrics[3,1] <- forecast$KGE
@@ -145,7 +154,7 @@ for (i in 1:max_timestep) {
   metrics_overtime[i,3] <- forecast$RMSE
   metrics_overtime[i,7] <- forecast$coeff_determination
   
-  null <- model_metrics(temp$mean, temp$obs_chl_EXO)
+  null <- model_metrics(temp$mean, temp$obs_chl_EXO_on_forecast_date)
   metrics[1,2] <- null$RMSE
   metrics[2,2] <- null$NSE
   metrics[3,2] <- null$KGE
@@ -158,8 +167,8 @@ for (i in 1:max_timestep) {
   metrics_overtime[i,6] <- null$coeff_determination
   
   
-  non_bloom <- temp[temp$obs_chl_EXO < bloom_threshold, ]
-  non_bloom_forecast <- model_metrics(non_bloom$forecast_mean_chl, non_bloom$obs_chl_EXO)
+  non_bloom <- temp[temp$obs_chl_EXO_on_forecast_date < bloom_threshold, ]
+  non_bloom_forecast <- model_metrics(non_bloom$forecast_mean_chl, non_bloom$obs_chl_EXO_on_forecast_date)
   metrics[1,3] <- non_bloom_forecast$RMSE
   metrics[2,3] <- non_bloom_forecast$NSE
   metrics[3,3] <- non_bloom_forecast$KGE
@@ -171,12 +180,12 @@ for (i in 1:max_timestep) {
   metrics_overtime[i,5] <- non_bloom_forecast$RMSE
   metrics_overtime[i,9] <- non_bloom_forecast$coeff_determination
   
-  bloom <- temp[temp$obs_chl_EXO > bloom_threshold, ]
-  bloom_forecast <- model_metrics(bloom$forecast_mean_chl, bloom$obs_chl_EXO)
+  bloom <- temp[temp$obs_chl_EXO_on_forecast_date > bloom_threshold, ]
+  bloom_forecast <- model_metrics(bloom$forecast_mean_chl, bloom$obs_chl_EXO_on_forecast_date)
   metrics_overtime[i,11] <- bloom_forecast$RMSE
   
   
-  non_bloom_null <- model_metrics(non_bloom$mean, non_bloom$obs_chl_EXO)
+  non_bloom_null <- model_metrics(non_bloom$mean, non_bloom$obs_chl_EXO_on_forecast_date)
   metrics[1,4] <- non_bloom_null$RMSE
   metrics[2,4] <- non_bloom_null$NSE
   metrics[3,4] <- non_bloom_null$KGE
@@ -188,7 +197,7 @@ for (i in 1:max_timestep) {
   metrics_overtime[i,4] <- non_bloom_null$RMSE
   metrics_overtime[i,8] <- non_bloom_null$coeff_determination
   
-  bloom_null <- model_metrics(bloom$mean, bloom$obs_chl_EXO)
+  bloom_null <- model_metrics(bloom$mean, bloom$obs_chl_EXO_on_forecast_date)
   metrics_overtime[i,10] <- bloom_null$RMSE
   
   
