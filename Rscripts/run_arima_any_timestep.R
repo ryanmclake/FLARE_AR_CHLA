@@ -726,9 +726,21 @@ run_arima <- function(
     out[i-1, 7] <- max(  ((x[i,,]^2)/0.55) + 0.0308)
     out[i-1, 8] <- min(  ((x[i,,]^2)/0.55) + 0.0308)
     out[i-1, 9] <- var(x[i,,])
-    out[i-1, 10] <- chla_obs[[1]][i,1] 
-  }
+    
+    }
   
+  
+  if(timestep_numeric==1){
+    for (i in 2:nsteps) {
+      out[i-1, 10] <- chla_obs[[1]][i,1] 
+      
+    }
+    }else if(timestep_numeric==7){
+    out[1:2, 10] <- chla_obs[[1]][c(8,15),1] 
+  }else if(timestep_numeric==14){
+    out[1, 10] <- chla_obs[[1]][15,1] 
+    
+  }
   
   
   out[,12] <- seq(timestep_numeric, max_horizon, by = timestep_interval)
