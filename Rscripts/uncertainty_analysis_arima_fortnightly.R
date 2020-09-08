@@ -1,9 +1,10 @@
 # script to analyze different sources of uncertainty for arma weekly forecast output
 
-library(scales)
 library(rsq)
 library(tidyverse)
+library(lubridate)
 library(Metrics)
+library(scales)
 reference_tzone <- "GMT"
 
 # define specs for the timestep and simulation
@@ -160,6 +161,7 @@ uncert_proportion_long <- uncert_proportion_long[uncert_proportion_long$forecast
 # pretty time series with geom_area()
   png(paste0(forecast_folder, '/Fortnightly_Uncertainty_TimeSeries_legend.png'), width = 1200, height = 785)
   temp <- uncert_proportion_long
+  temp <- temp[temp$forecast_run_day<'2020-08-16',]
   temp <- temp[!temp$variable=='total_var',]
   print(ggplot(temp, aes(x = forecast_date, y = measurement, fill = variable)) +geom_area(position = 'stack') + #ylim(0,1.1) +
           xlab('Date') +
@@ -188,6 +190,7 @@ uncert_proportion_long <- uncert_proportion_long[uncert_proportion_long$forecast
 ### and create plots with the total variance plotted on top
 ##################################
 temp <- uncert_proportion_long
+temp <- temp[temp$forecast_run_day>'2019-01-01',]
 var <- temp[temp$variable=='total_var',]
 temp <- temp[!temp$variable=='total_var',]
 
@@ -200,7 +203,7 @@ p <- p + geom_area(data = temp, aes(x = forecast_date, y = measurement, fill = v
                     values = c('#4472C4', '#92D050', '#660066', '#C55A11', '#FFC000'),
                     name = "Uncertainty Type") +
   ggtitle(paste0('Fortnightly Forecast, Day 14')) +
-  scale_x_date( expand = c(0,0),labels = date_format('%b')) +
+  scale_x_date( expand = c(0,0),labels = date_format('%b'), date_breaks = '3 months') +
   theme_bw() +
   theme(axis.text.x = element_text(size = 35),
         axis.text.y = element_text(size = 35),
