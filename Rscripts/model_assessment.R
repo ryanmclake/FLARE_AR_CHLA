@@ -8,7 +8,7 @@ model_metrics <- function(sim, obs){
   residual <- sim - obs
   data_minusglobamean <- obs - mean(obs, na.rm = TRUE)
   
-  RMSE <- Metrics::rmse(sim, obs)
+  RMSE <- rmse(sim, obs)
   NSE <- NSE(sim, obs)
   KGE <- KGE(sim, obs)
   bias <- mean(residual, na.rm = TRUE)  #mean residual
