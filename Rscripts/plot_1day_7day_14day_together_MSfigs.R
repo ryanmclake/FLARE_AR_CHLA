@@ -84,32 +84,32 @@ legend('topleft', c('null', 'forecast', 'null nonbloom', 'forecast nonbloom'), c
 
 ##################
 # multi-panel figure
-png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/19Aug20_1day7day14dayforecasts/RMSE_all_conditions2.png'), width = 1100, height = 800)
+png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/RMSE_fig_1day7day14dayforecasts/RMSE_all_conditions2.png'), width = 1100, height = 800)
 par(mar = c(5,5,4,2), mfrow = c(2,2))
-plot(metrics_overtime$day_in_future, metrics_overtime$daily_null, col = 'red', xlim = c(0,14), ylim = c(0,11), main = 'Full-Year',  cex.axis = 2, cex.main = 2, cex.lab = 2, cex = 3, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
+plot(metrics_overtime$day_in_future, metrics_overtime$daily_null, col = 'red', pch = 4, xlim = c(0,14), ylim = c(0,11), main = 'Full-Year',  cex.axis = 2, cex.main = 2, cex.lab = 2, cex = 3, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
 points(metrics_overtime$day_in_future, metrics_overtime$daily, col = 'blue', cex = 3)
-points(metrics_overtime$day_in_future, metrics_overtime$weekly,  col = 'blue', pch = 15, cex = 3)
-points(metrics_overtime$day_in_future, metrics_overtime$weekly_null, col = 'red', pch = 15, cex = 3)
-points(metrics_overtime$day_in_future, metrics_overtime$fortnightly_null, col = 'red', pch = 17, cex = 3)
-points(metrics_overtime$day_in_future, metrics_overtime$fortnightly, col = 'blue', pch = 17, cex = 3)
+points(metrics_overtime$day_in_future, metrics_overtime$weekly,  col = 'blue', pch = 0, cex = 3)
+#oints(metrics_overtime$day_in_future, metrics_overtime$weekly_null, col = 'red', pch = 15, cex = 3)
+#points(metrics_overtime$day_in_future, metrics_overtime$fortnightly_null, col = 'red', pch = 17, cex = 3)
+points(metrics_overtime$day_in_future, metrics_overtime$fortnightly, col = 'blue', pch = 2, cex = 3)
 #legend('topleft', c('daily null', 'daily forecast', 'weekly null', 'weekly forecast', 'fortnightly null', 'fortnightly forecast'), cex = 1.6, col = c('red', 'blue', 'red', 'blue', 'red', 'blue'), pch = c(1, 1,  15, 15, 17, 17), bty = 'n')
-legend('topleft', c('null', 'forecast', 'daily', 'weekly', 'fortnightly' ), cex = 1.6, col = c('red', 'blue', 'black', 'black', 'black'), lty = c(1,1, 0, 0, 0), pch = c(26, 26, 1,  15,  17), bty = 'n')
+legend('topleft', c('null', 'forecast', 'daily', 'weekly' ), cex = 1.6, col = c('red', 'blue', 'blue', 'blue'), pch = c(4, 1,  0,  2), bty = 'n')
 
 par(mar = c(5,5,4,2))
-plot(metrics_overtime$day_in_future, metrics_overtime$daily_nonbloom_null, col = 'red', ylim = c(0,11), xlim = c(0,14), main = 'Non-Bloom', cex.main = 2, cex.axis = 2, cex.lab = 2, cex = 3, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
+plot(metrics_overtime$day_in_future, metrics_overtime$daily_nonbloom_null, col = 'red', pch =4, ylim = c(0,11), xlim = c(0,14), main = 'Non-Bloom', cex.main = 2, cex.axis = 2, cex.lab = 2, cex = 3, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
 points(metrics_overtime$day_in_future, metrics_overtime$daily_nonbloom, col = 'blue', cex = 3)
-points(metrics_overtime$day_in_future, metrics_overtime$weekly_nonbloom,  col = 'blue', pch = 15, cex = 3)
-points(metrics_overtime$day_in_future, metrics_overtime$weekly_nonbloom_null, col = 'red', pch = 15, cex = 3)
-points(metrics_overtime$day_in_future, metrics_overtime$fortnightly_nonbloom_null, col = 'red', pch = 17, cex = 3)
-points(metrics_overtime$day_in_future, metrics_overtime$fortnightly_nonbloom, col = 'blue', pch = 17, cex = 3)
+points(metrics_overtime$day_in_future, metrics_overtime$weekly_nonbloom,  col = 'blue', pch = 0, cex = 3)
+#points(metrics_overtime$day_in_future, metrics_overtime$weekly_nonbloom_null, col = 'red', pch = 15, cex = 3)
+#points(metrics_overtime$day_in_future, metrics_overtime$fortnightly_nonbloom_null, col = 'red', pch = 17, cex = 3)
+points(metrics_overtime$day_in_future, metrics_overtime$fortnightly_nonbloom, col = 'blue', pch = 2, cex = 3)
 
 par(mar = c(5,5,4,2))
-plot(metrics_overtime$day_in_future, metrics_overtime$daily_bloom_null, col = 'red', ylim = c(0,35), xlim = c(0,14), main = 'Bloom', cex.main = 2, cex.axis = 2, cex.lab = 2, cex = 3, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
+plot(metrics_overtime$day_in_future, metrics_overtime$daily_bloom_null, col = 'red', pch = 4, ylim = c(0,35), xlim = c(0,14), main = 'Bloom', cex.main = 2, cex.axis = 2, cex.lab = 2, cex = 3, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
 points(metrics_overtime$day_in_future, metrics_overtime$daily_bloom, col = 'blue', cex = 3)
-points(metrics_overtime$day_in_future, metrics_overtime$weekly_bloom,  col = 'blue', pch = 15, cex = 3)
-points(metrics_overtime$day_in_future, metrics_overtime$weekly_bloom_null, col = 'red', pch = 15, cex = 3)
-points(metrics_overtime$day_in_future, metrics_overtime$fortnightly_bloom_null, col = 'red', pch = 17, cex = 3)
-points(metrics_overtime$day_in_future, metrics_overtime$fortnightly_bloom, col = 'blue', pch = 17, cex = 3)
+points(metrics_overtime$day_in_future, metrics_overtime$weekly_bloom,  col = 'blue', pch = 0, cex = 3)
+#points(metrics_overtime$day_in_future, metrics_overtime$weekly_bloom_null, col = 'red', pch = 15, cex = 3)
+#points(metrics_overtime$day_in_future, metrics_overtime$fortnightly_bloom_null, col = 'red', pch = 17, cex = 3)
+points(metrics_overtime$day_in_future, metrics_overtime$fortnightly_bloom, col = 'blue', pch = 2, cex = 3)
 dev.off()
 
 ##################
@@ -132,47 +132,8 @@ points(metrics_overtime$day_in_future, metrics_overtime$weekly_bloom,  col = 'bl
 points(metrics_overtime$day_in_future, metrics_overtime$fortnightly_bloom, col = 'blue', pch = 17, cex = 3)
 dev.off()
 
-
-#############################################################################################
-# individual plots
-png(paste0(forecast_folder, '/RMSE_full_year.png'), width = 1100, height = 800)
-par(mar = c(5,5,4,2), mfrow = c(2,1))
-plot(metrics_overtime$day_in_future, metrics_overtime$RMSE_null, col = 'red', ylim = c(0,11), main = 'Full-Year', cex.axis = 2, cex.main = 3, cex.lab = 2, cex = 3, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
-points(metrics_overtime$day_in_future, metrics_overtime$RMSE_forecast, col = 'blue', cex = 3)
-points(metrics_overtime$day_in_future, metrics_overtime$RMSE_forecast_weekly,  col = 'blue', pch = 15, cex = 3)
-points(metrics_overtime$day_in_future, metrics_overtime$RMSE_null_weekly, col = 'red', pch = 15, cex = 3)
-legend('topleft', c('daily null', 'daily forecast', 'weekly null', 'weekly forecast'), cex = 3, col = c('red', 'blue', 'red', 'blue'), pch = c(1, 1,  15, 15), bty = 'n')
-dev.off()
-
-png(paste0(forecast_folder, '/RMSE_bloom.png'), width = 1100, height = 800)
-par(mar = c(5,5,4,2))
-plot(metrics_overtime$day_in_future, metrics_overtime$RMSE_null_daily_bloom, col = 'red', ylim = c(0,33), main = 'Bloom', cex.main = 3, cex.axis = 2, cex.lab = 2, cex = 3, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
-points(metrics_overtime$day_in_future, metrics_overtime$RMSE_forecast_daily_bloom, col = 'blue', cex = 3)
-points(metrics_overtime$day_in_future, metrics_overtime$RMSE_forecast_weekly_bloom,  col = 'blue', pch = 15, cex = 3)
-points(metrics_overtime$day_in_future, metrics_overtime$RMSE_null_weekly_bloom, col = 'red', pch = 15, cex = 3)
-#legend('topleft', c('daily null', 'daily forecast', 'weekly null', 'weekly forecast'), cex = 3, col = c('red', 'blue', 'red', 'blue'), pch = c(1, 1,  15, 15), bty = 'n')
-dev.off()
-
-png(paste0(forecast_folder, '/RMSE_nonbloom.png'), width = 1100, height = 800)
-par(mar = c(5,5,4,2))
-plot(metrics_overtime$day_in_future, metrics_overtime$RMSE_null_nonbloom, col = 'red', ylim = c(0,11), main = 'Non-Bloom', cex.main = 3, cex.axis = 2, cex.lab = 2, cex = 3, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
-points(metrics_overtime$day_in_future, metrics_overtime$RMSE_forecast_nonbloom, col = 'blue', cex = 3)
-points(metrics_overtime$day_in_future, metrics_overtime$RMSE_forecast_weekly_nonbloom,  col = 'blue', pch = 15, cex = 3)
-points(metrics_overtime$day_in_future, metrics_overtime$RMSE_null_weekly_nonbloom, col = 'red', pch = 15, cex = 3)
-#legend('topleft', c('daily null', 'daily forecast', 'weekly null', 'weekly forecast'), cex = 3, col = c('red', 'blue', 'red', 'blue'), pch = c(1, 1,  15, 15), bty = 'n')
-dev.off()
-
-plot(metrics_overtime$day_in_future, metrics_overtime$R2_null, col = 'red', ylim = c(0,1), xlab = 'forecast horizon', ylab = 'Coefficient of Determination')
-points(metrics_overtime$day_in_future, metrics_overtime$R2_forecast, col = 'blue')
-points(metrics_overtime$day_in_future, metrics_overtime$R2_forecast_nonbloom, col = 'orange')
-points(metrics_overtime$day_in_future, metrics_overtime$R2_null_nonbloom, col = 'purple')
-points(metrics_overtime$day_in_future, metrics_overtime$R2_forecast_weekly, col = 'blue', pch = 15)
-points(metrics_overtime$day_in_future, metrics_overtime$R2_forecast_weekly_nonbloom, col = 'orange', pch = 15)
-points(metrics_overtime$day_in_future, metrics_overtime$R2_null_weekly, col = 'red', pch = 15)
-points(metrics_overtime$day_in_future, metrics_overtime$R2_null_weekly_nonbloom, col = 'purple', pch = 15)
-legend('topright', c('null', 'forecast', 'null nonbloom', 'forecast nonbloom'), col = c('red', 'blue', 'purple', 'orange'), lty = c(1,1), bty = 'n')
-
-
+###########################
+# write file to csv
 
 metrics_RMSE <- metrics_overtime#[,c(1,3,2, 5, 4, 20,21,10,14,12,16,18,19)] #select the values wanted for manuscript figure in the right order
 metrics_RMSE <- metrics_RMSE[1:14,]
