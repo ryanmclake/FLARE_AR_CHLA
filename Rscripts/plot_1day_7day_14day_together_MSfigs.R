@@ -86,30 +86,24 @@ legend('topleft', c('null', 'forecast', 'null nonbloom', 'forecast nonbloom'), c
 # multi-panel figure
 png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/RMSE_fig_1day7day14dayforecasts/RMSE_all_conditions2.png'), width = 1100, height = 800)
 par(mar = c(5,5,4,2), mfrow = c(2,2))
-plot(metrics_overtime$day_in_future, metrics_overtime$daily_null, col = 'red', pch = 4, xlim = c(0,14), ylim = c(0,11), main = 'Full-Year',  cex.axis = 2, cex.main = 2, cex.lab = 2, cex = 3, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
-points(metrics_overtime$day_in_future, metrics_overtime$daily, col = 'blue', cex = 3)
-points(metrics_overtime$day_in_future, metrics_overtime$weekly,  col = 'blue', pch = 0, cex = 3)
-#oints(metrics_overtime$day_in_future, metrics_overtime$weekly_null, col = 'red', pch = 15, cex = 3)
-#points(metrics_overtime$day_in_future, metrics_overtime$fortnightly_null, col = 'red', pch = 17, cex = 3)
-points(metrics_overtime$day_in_future, metrics_overtime$fortnightly, col = 'blue', pch = 2, cex = 3)
-#legend('topleft', c('daily null', 'daily forecast', 'weekly null', 'weekly forecast', 'fortnightly null', 'fortnightly forecast'), cex = 1.6, col = c('red', 'blue', 'red', 'blue', 'red', 'blue'), pch = c(1, 1,  15, 15, 17, 17), bty = 'n')
-legend('topleft', c('null', 'forecast', 'daily', 'weekly' ), cex = 1.6, col = c('red', 'blue', 'blue', 'blue'), pch = c(4, 1,  0,  2), bty = 'n')
-
-par(mar = c(5,5,4,2))
 plot(metrics_overtime$day_in_future, metrics_overtime$daily_nonbloom_null, col = 'red', pch =4, ylim = c(0,11), xlim = c(0,14), main = 'Non-Bloom', cex.main = 2, cex.axis = 2, cex.lab = 2, cex = 3, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
 points(metrics_overtime$day_in_future, metrics_overtime$daily_nonbloom, col = 'blue', cex = 3)
 points(metrics_overtime$day_in_future, metrics_overtime$weekly_nonbloom,  col = 'blue', pch = 0, cex = 3)
-#points(metrics_overtime$day_in_future, metrics_overtime$weekly_nonbloom_null, col = 'red', pch = 15, cex = 3)
-#points(metrics_overtime$day_in_future, metrics_overtime$fortnightly_nonbloom_null, col = 'red', pch = 17, cex = 3)
 points(metrics_overtime$day_in_future, metrics_overtime$fortnightly_nonbloom, col = 'blue', pch = 2, cex = 3)
+legend('topleft', c('null', 'daily', 'weekly', 'fortnightly' ), cex = 1.6, col = c('red', 'blue', 'blue', 'blue'), pch = c(4, 1,  0,  2), bty = 'n')
 
 par(mar = c(5,5,4,2))
 plot(metrics_overtime$day_in_future, metrics_overtime$daily_bloom_null, col = 'red', pch = 4, ylim = c(0,35), xlim = c(0,14), main = 'Bloom', cex.main = 2, cex.axis = 2, cex.lab = 2, cex = 3, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
 points(metrics_overtime$day_in_future, metrics_overtime$daily_bloom, col = 'blue', cex = 3)
 points(metrics_overtime$day_in_future, metrics_overtime$weekly_bloom,  col = 'blue', pch = 0, cex = 3)
-#points(metrics_overtime$day_in_future, metrics_overtime$weekly_bloom_null, col = 'red', pch = 15, cex = 3)
-#points(metrics_overtime$day_in_future, metrics_overtime$fortnightly_bloom_null, col = 'red', pch = 17, cex = 3)
 points(metrics_overtime$day_in_future, metrics_overtime$fortnightly_bloom, col = 'blue', pch = 2, cex = 3)
+
+par(mar = c(5,5,4,2))
+plot(metrics_overtime$day_in_future, metrics_overtime$daily_null, col = 'red', pch = 4, xlim = c(0,14), ylim = c(0,11), main = '1.5 Years',  cex.axis = 2, cex.main = 2, cex.lab = 2, cex = 3, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
+points(metrics_overtime$day_in_future, metrics_overtime$daily, col = 'blue', cex = 3)
+points(metrics_overtime$day_in_future, metrics_overtime$weekly,  col = 'blue', pch = 0, cex = 3)
+points(metrics_overtime$day_in_future, metrics_overtime$fortnightly, col = 'blue', pch = 2, cex = 3)
+
 dev.off()
 
 ##################
