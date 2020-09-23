@@ -64,6 +64,22 @@ points(data$Date, (pred_daily^2), col = 'blue', type= 'l')
 points(data$Date, (pred_avg^2), col = 'red', type= 'l')
 legend('topright', c('drivers day of', 'drivers averaged over week'), col = c('blue', 'red'), lty = c(1,1), bty = 'n', cex = 0.75)
 
+###########################################################################################################################################################################
+## SI Figure
+png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/averaged_vs_point_drivers_SI.png'), width = 1100, height = 800)
+par(mar = c(5,5,4,2), mfrow = c(2,2))
+plot(data$Date, (data$Chla_sqrt)^2, ylab = 'Chla (ug/L, CTD units)', xlab = 'Date', cex.main = 2, cex.axis = 2, cex.lab = 2, cex = 2)
+points(data$Date, (pred_daily^2), col = 'blue', type= 'l', cex = 2)
+points(data$Date, (pred_avg^2), col = 'red', type= 'l', cex = 2)
+legend('topright', c('drivers day of', 'drivers averaged over week'), col = c('blue', 'red'), lty = c(1,1), bty = 'n', cex = 1.6)
+
+par(mar = c(5,5,4,2))
+plot(data$daily_mean_flow, data$weekly_mean_flow, ylab = 'Discharge averaged over Week', xlab = 'Discharge on predicted day', cex.main = 2, cex.axis = 2, cex.lab = 2, cex = 2)
+abline(a = 0, b = 1)
+par(mar = c(5,5,4,2))
+plot(data$daily_mean_shortwave, data$weekly_mean_shortwave, ylab = 'Shortwave averaged over week', xlab = 'Shortwave on predicted day', cex.main = 2, cex.axis = 2, cex.lab = 2, cex = 2)
+abline(a = 0, b = 1)
+dev.off()
 ##########################################################################################################################################################################
 # output the dataframe
 write.csv(data, paste0(folder, '/data_arima_driver_average.csv'), row.names = FALSE)
