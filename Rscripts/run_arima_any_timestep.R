@@ -39,8 +39,6 @@ run_arima <- function(
   #################################################
   
   source(paste0(folder,"/","Rscripts/create_obs_met_input.R"))
-  source(paste0(folder,"/","Rscripts/process_GEFS2GLM.R"))
-  source(paste0(folder,"/","Rscripts/archive_forecast.R"))
   source(paste0(folder,"/","Rscripts/met_downscale/process_downscale_GEFS.R")) 
   
   
@@ -348,9 +346,8 @@ run_arima <- function(
     for(j in 2:length(met_file_names)){
       temp<-read.csv(met_file_names[j])
       temp$date <- date(temp$time)
-      # for(i in 2:(length(unique(temp$date))-1)){  # use this line for the Dec 2018 and Nov 2019 forecasts which are in GMT
-      
-      for(i in 1:(length(unique(temp$date)))){
+
+      for(i in 1:(length(unique(temp$date))-1)){
         temp1<-subset(temp, temp$date==unique(temp$date)[i])
         temp2 <- temp1 %>% mutate(SW = mean(temp1$ShortWave)) 
         data[i,j-1]=temp2[1,10] #'j-1' because you start at 2 in the loop above
@@ -543,7 +540,7 @@ run_arima <- function(
       for(j in 1:nmembers){
         
         p <- sample(seq(1,length(samples[[1]][,1])), 1, replace = TRUE) 
-        null_error[i, j] <- samples[[1]][p,4]
+        null_error[i, j] <- samples[[1]][p,5]
         step_index = step_index + 1
         
         if(step_index > 16){
