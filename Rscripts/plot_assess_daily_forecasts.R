@@ -1,6 +1,8 @@
 
 library(ggplot2)
 library(dplyr)
+library(lubridate)
+library(scales)
 
 folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
 
@@ -243,6 +245,7 @@ for(i in 1:14){
   png(paste0(forecast_folder, '/', timestep, '_Forecast_Timestep', i, '_moving_y_axis.png'), width = 1100, height = 800)
   print(ggplot(temp, aes(forecast_date, forecast_mean_chl)) +
     geom_line(size = 2) +
+    geom_text(x = as.Date('2020-06-10'), y = max(temp$forecast_CI95_upper, na.rm = TRUE), size = 15, label = paste0('RMSE = ', round(metrics_overtime[i,3], digits = 1))) + 
     geom_point(aes(forecast_date, obs_chl_EXO), size = 4, stroke = 0, shape = 19, color = 'dodgerblue4') +
     geom_ribbon(aes(ymin = forecast_CI95_lower, ymax = forecast_CI95_upper), fill = 'grey1', linetype = 2, alpha = 0.2) +
     xlab('Date') +
