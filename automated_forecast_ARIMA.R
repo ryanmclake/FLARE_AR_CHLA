@@ -32,7 +32,7 @@ folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
 timestep <- '14day' # character definition of the timestep
 timestep_numeric <- 14 # maybe timestep_numeric and timestep_interval are actually the same thing and not both needed -_-
 timestep_interval <- 14 # the interval in between timesteps, e.g. 4day would be 4; daily would be 1; weekly would be 7
-max_timestep <- 1 #maximum number of timesteps that can be propagated to the max time horizon (e.g., daily is 16)
+max_timestep <- 1 #maximum number of timesteps that can be propagated to the max time horizon (e.g., daily is 16, weekly is 2)
 max_horizon <- 14 # maximum number of days that are propagated in this forecast (e.g. daily timestep has max_horizon = 16)
 sim_name <- '22Jul2020'
 forecast_location <- paste0("C:/Users/wwoel/Desktop/FLARE_AR_CHLA/FCR_forecasts", '/', timestep, '/', sim_name)
@@ -57,7 +57,7 @@ data_assimilation = TRUE
 # 2) the number of downscaling essembles (50 is current)
 # get to the total number of essembles
 #n_enkf_members <- 1
-n_ds_members <- 2
+n_ds_members <- 1
 # SET UP NUMBER OF ENSEMBLE MEMBERS
 n_met_members <- 21
 
@@ -67,7 +67,7 @@ num_forecast_periods <- 365
 source(paste0(folder, "/", "Rscripts/run_arima_any_timestep.R"))
 
 
-forecast_start_day <-"2020-06-27 00:00:00"
+forecast_start_day <-"2020-06-29 00:00:00"
 # the forecast start day is the day that the forecast is initialized, the two days of 'forecasts' are produced for 1 week and 2 weeks into 
 # the future from this day
 start_day <- forecast_start_day 
