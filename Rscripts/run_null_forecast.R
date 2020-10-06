@@ -16,13 +16,17 @@ run_null <- function(
   library(rjags)
   
   obs_all <- read.csv(paste0(folder, '/obs_chl_15Aug18_29Aug20.csv'))
+  
   colnames(obs_all) <- c('date', 'chla_ugL')
   obs_all$date <- as.Date(obs_all$date)
   obs_all <- obs_all %>% mutate(chla_sqrt = sqrt(chla_ugL))
   obs <- obs_all[obs_all$date<forecast_start_day,]
   
-  full_time <- seq(min(obs$date), as.Date(forecast_start_day) + days(max_timestep), by = "1 day")
-  forecast_time <- full_time[full_time>forecast_start_day]
+  past_time <- seq(min(obs$date), as.Date(forecast_start_day), by = timestep_numeric) 
+  add_time <- seq(as.Date(forecast_start_day),  as.Date(forecast_start_day) + days(max_horizon), by = timestep_numeric) 
+  full_time <- c(past_time, add_time)
+  obs <- obs[obs$date %in% past_time,]
+  forecast_time <- add_time[add_time>forecast_start_day]
   
   #Full time series with gaps
   y <- c(obs$chla_sqrt)
@@ -88,7 +92,6 @@ model {
   null_out <- as.data.frame(null_out)
   colnames(null_out) <- c('mean', 'upper_CI', 'lower_CI', 'date', 'forecast_run_day', 'day_in_future', 'timestep')
   
-  forecast_time
   
   for (i in 1:length(full_time) ){
     p <- sample(seq(1,length(samples[[1]][,i])), 420, replace = TRUE) # pick 420 random numbers from the first chain, i'th column
@@ -106,8 +109,16 @@ model {
   null_save <- null_out[null_out$date %in% forecast_time,]
   
   null_save$forecast_run_day <- forecast_start_day
-  null_save$day_in_future <- seq(1,max_horizon)
-  null_save$timestep <- seq(1,max_horizon)
+  if(timestep=='1day'){
+    null_save$day_in_future <- seq(1,max_horizon)
+    null_save$timestep <- seq(1,max_horizon)
+  }else if(timestep=='7day'){
+    null_save$day_in_future <- c(7,14)
+    null_save$timestep <- c(1,2)
+  }else if(timestep=='14day'){
+    null_save$day_in_future <- 14
+    null_save$timestep <- 1
+    }
   
   # save the file
   if(day(forecast_start_day) < 10){
