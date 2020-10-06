@@ -10,8 +10,8 @@ folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
 timestep <- '1day' # character definition of the timestep
 timestep_numeric <- 1 # maybe timestep_numeric and timestep_interval are actually the same thing and not both needed -_-
 timestep_interval <- 1 # the interval in between timesteps, e.g. 4day would be 4; daily would be 1; weekly would be 7
-max_timestep <- 16 #maximum number of timesteps that can be propagated to the max time horizon
-max_horizon <- 16 # maximum number of days that are propagated in this forecast (e.g. daily timestep has max_horizon = 16)
+max_timestep <- 14 #maximum number of timesteps that can be propagated to the max time horizon
+max_horizon <- 14 # maximum number of days that are propagated in this forecast (e.g. daily timestep has max_horizon = 16)
 sim_name <- '17Jul2020'
 forecast_folder <- paste0(folder, "/FCR_forecasts", '/', timestep, '/', sim_name)
 bloom_threshold <- 17.1
@@ -38,26 +38,26 @@ stuff <- stuff[order(stuff$forecast_date),]
 stuff$forecast_run_day <- as.Date(stuff$forecast_run_day, "%Y-%m-%d")
 
 # now pull in the files from the sim where I only calculated up to 14 day horizon and cut off at 26Jun2020
-myfiles_forecast2 <- myfiles_forecast[443:735]
-dataset_forecast2 <- read.csv(paste0(forecast_folder, "/", myfiles_forecast2[1]))
-dataset_forecast2$timestep <- seq(1, 14, by =1 )
+#myfiles_forecast2 <- myfiles_forecast[i+1:735]
+#dataset_forecast2 <- read.csv(paste0(forecast_folder, "/", myfiles_forecast2[1]))
+#dataset_forecast2$timestep <- seq(1, 14, by =1 )
 
 
 # read in files
-for (i in 2:length(myfiles_forecast2)) {
-  temp_2 <- read.csv(paste0(forecast_folder,"/", myfiles_forecast2[i]))
-  temp_2$timestep <-  seq(1, 14, by =1 ) # this is the number of timesteps continued into the future, maybe should call this horizon?
-  dataset_forecast2 <- rbind(dataset_forecast2, temp_2)
-}
+#for (i in 2:length(myfiles_forecast2)) {
+#  temp_2 <- read.csv(paste0(forecast_folder,"/", myfiles_forecast2[i]))
+#  temp_2$timestep <-  seq(1, 14, by =1 ) # this is the number of timesteps continued into the future, maybe should call this horizon?
+#  dataset_forecast2 <- rbind(dataset_forecast2, temp_2)
+#}
 
 # some data arranging
-stuff2 <- dataset_forecast2 
-stuff2$forecast_date <- as.Date(stuff2$forecast_date, "%Y-%m-%d")
-stuff2 <- stuff2[order(stuff2$forecast_date),]
-stuff2$forecast_run_day <- as.Date(stuff2$forecast_run_day, "%Y-%m-%d")
+#stuff2 <- dataset_forecast2 
+#stuff2$forecast_date <- as.Date(stuff2$forecast_date, "%Y-%m-%d")
+#stuff2 <- stuff2[order(stuff2$forecast_date),]
+#stuff2$forecast_run_day <- as.Date(stuff2$forecast_run_day, "%Y-%m-%d")
 
 stuff <- stuff[stuff$day_in_future<15,]
-stuff <- rbind(stuff, stuff2)
+#stuff <- rbind(stuff, stuff2)
 
 # bring in the null model data
 dates <- unique(stuff$forecast_run_day)
@@ -82,23 +82,23 @@ for (i in 2:length(myfiles_null)) {
 
 
 # now pull in the files from the sim where I only calculated up to 14 day horizon and cut off at 26Jun2020
-myfiles_null2 <- myfiles_null[138:744]
-dataset_null2 <- read.csv(paste0(forecast_folder, "/null_ensemble/", myfiles_null2[1]))
-dataset_null2$timestep <- seq(0, 14, by =1 )
-dataset_null2$day_in_future <- seq(0, 14, by = timestep_interval)
-dataset_null2$forecast_run_day <- as.Date('2018-08-15') 
-dataset_null2$forecast_run_day <- as.Date(dataset_null2$forecast_run_day, '1970-01-01')
+#myfiles_null2 <- myfiles_null[138:744]
+#dataset_null2 <- read.csv(paste0(forecast_folder, "/null_ensemble/", myfiles_null2[1]))
+#dataset_null2$timestep <- seq(0, 14, by =1 )
+#dataset_null2$day_in_future <- seq(0, 14, by = timestep_interval)
+#dataset_null2$forecast_run_day <- as.Date('2018-08-15') 
+#dataset_null2$forecast_run_day <- as.Date(dataset_null2$forecast_run_day, '1970-01-01')
 
-for (i in 2:length(myfiles_null2)) {
-  temp <- read.csv(paste0(forecast_folder, '/null_ensemble',"/", myfiles_null2[i]))
-  temp$day_in_future <- seq(0, 14, by = timestep_interval)
-  temp$timestep <- seq(0, 14, by = 1)
-  temp$forecast_run_day <- dates[i+137]
-  dataset_null2 <- rbind(dataset_null2, temp)
-}
+#for (i in 2:length(myfiles_null2)) {
+#  temp <- read.csv(paste0(forecast_folder, '/null_ensemble',"/", myfiles_null2[i]))
+#  temp$day_in_future <- seq(0, 14, by = timestep_interval)
+#  temp$timestep <- seq(0, 14, by = 1)
+#  temp$forecast_run_day <- dates[i+137]
+#  dataset_null2 <- rbind(dataset_null2, temp)
+#}
 
 dataset_null <- dataset_null[dataset_null$day_in_future<15,]
-dataset_null <- rbind(dataset_null, dataset_null2)
+#dataset_null <- rbind(dataset_null, dataset_null2)
 
 #remove spin up dates, so anything before Dec 31, 2018
 stuff <- stuff[stuff$forecast_run_day>'2018-12-31',]
@@ -224,7 +224,7 @@ for (i in 1:max_timestep) {
 
 metrics_overtime[,1] <-   seq(timestep_numeric, max_horizon, by = timestep_interval)
 metrics_overtime <- as.data.frame(metrics_overtime)
-write.csv(metrics_overtime, paste0(forecast_folder, '/ForecastMetrics_', timestep, '.csv'), row.names = FALSE)
+write.csv(metrics_overtime, paste0(forecast_folder, '/ForecastMetrics_', timestep, 'run23Sep20.csv'), row.names = FALSE)
 
 #################################################################################################################################################################################
 #################################################################################################################################################################################
