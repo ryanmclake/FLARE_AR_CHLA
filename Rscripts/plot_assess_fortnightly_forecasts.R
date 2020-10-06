@@ -14,6 +14,7 @@ max_timestep <- 1 #maximum number of timesteps that can be propagated to the max
 max_horizon <- 14 # maximum number of days that are propagated in this forecast (e.g. daily timestep has max_horizon = 16)
 sim_name <- '22Jul2020'
 forecast_folder <- paste0(folder, "/FCR_forecasts", '/', timestep, '/', sim_name)
+null_folder <- paste0(folder, '/FCR_forecasts/', timestep, '/null_fortnightly')
 bloom_threshold <- 17.1
 
 setwd(forecast_folder)
@@ -36,38 +37,23 @@ stuff <- dataset_forecast
 stuff$forecast_date <- as.Date(stuff$forecast_date, "%Y-%m-%d")
 stuff <- stuff[order(stuff$forecast_date),]
 stuff$forecast_run_day <- as.Date(stuff$forecast_run_day, "%Y-%m-%d")
-dates <- unique(stuff$forecast_run_day)
 
 # bring in the null model data
-myfiles_null <- list.files(path = paste0(forecast_folder, '/null_ensemble'), pattern = paste0('*', 'null_summary', ".csv"))
-dataset_null <- read.csv(paste0(paste0(forecast_folder, '/null_ensemble'), "/", myfiles_null[1]))
-dataset_null$forecast_run_day <- as.Date('2018-08-15') 
-dataset_null$forecast_run_day <- as.Date(dataset_null$forecast_run_day, '1970-01-01')
+myfiles_null <- list.files(path = null_folder, pattern = paste0('*', 'null_summary', ".csv"))
+dataset_null <- read.csv(paste0(null_folder, "/", myfiles_null[1]))
 
-dataset_null$day_in_future <- seq(0, max_horizon, by = timestep_interval)
-dataset_null$timestep <- seq(0, max_timestep, by = 1)
-
-# read in files
-# V1 = mean of the ensembles
-# V2 = upper 95% CI
-# V3 = lower 95% CI
 for (i in 2:length(myfiles_null)) {
-  temp <- read.csv(paste0(forecast_folder, '/null_ensemble',"/", myfiles_null[i]))
-  temp$day_in_future <- seq(0, max_horizon, by = timestep_interval)
-  temp$timestep <- seq(0, max_timestep, by = 1)
-  temp$forecast_run_day <- dates[i]
+  temp <- read.csv(paste0(null_folder,"/", myfiles_null[i]))
   dataset_null <- rbind(dataset_null, temp)
   }
-
-# some of the forecast null model files have a different column naming convention, so fix that here
-if(colnames(dataset_null)[1]=='V1'){
-  colnames(dataset_null) <- c('mean', 'CI_upper', 'CI_lower', 'forecast_run_day', 'day_in_future', 'timestep')
-} 
+dataset_null$forecast_run_day <- as.Date(dataset_null$forecast_run_day)
 
 #remove spin up dates, so anything before Dec 31, 2018
 stuff <- stuff[stuff$forecast_run_day>'2018-12-31',]
-dataset_null <- dataset_null[dataset_null$forecast_run_day>'2018-12-31',]
 
+# remove anything after 15Aug20
+stuff <- stuff[stuff$forecast_run_day<'2020-08-16',]
+dataset_null <- dataset_null[dataset_null$forecast_run_day<'2020-08-16',]
 
 # separate into forecast horizon for individual analysis
 for (i in 1:max_timestep) { 
@@ -75,10 +61,8 @@ for (i in 1:max_timestep) {
   write.csv(temp, paste0(forecast_folder, '/day_', i, '.csv'), row.names = FALSE)
 }
 
-for (i in 1:max_timestep) { 
-  temp <- dataset_null[dataset_null$timestep==i,]
-  write.csv(temp, paste0(forecast_folder, '/day_', i, '_null.csv'), row.names = FALSE)
-}
+  write.csv(dataset_null, paste0(null_folder, '/day_', i, '_null.csv'), row.names = FALSE)
+
 
 ########################################################################################################################################################################
 # create table that null and forecast metrics will be written into
@@ -99,7 +83,7 @@ for (i in 1:max_timestep) {
   temp <- temp[temp$forecast_run_day < "2020-08-16",]
   temp <- na.omit(temp)
   
-  temp_null <- read.csv(paste0(forecast_folder, '/day_', i, '_null.csv'))
+  temp_null <- read.csv(paste0(null_folder, '/day_', i, '_null.csv'))
   temp_null$forecast_run_day <- as.Date(temp_null$forecast_run_day)
   temp_null <- na.omit(temp_null)
   
@@ -183,7 +167,7 @@ for (i in 1:max_timestep) {
 
 metrics_overtime[,1] <-   seq(timestep_numeric, max_horizon, by = timestep_interval)
 metrics_overtime <- as.data.frame(metrics_overtime)
-write.csv(metrics_overtime, paste0(forecast_folder, '/ForecastMetrics_', timestep, '.csv'), row.names = FALSE)
+write.csv(metrics_overtime, paste0(null_folder, '/ForecastMetrics_', timestep, '.csv'), row.names = FALSE)
 
 
 #################################################################################################################################################################################
