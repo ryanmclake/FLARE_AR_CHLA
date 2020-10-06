@@ -5,7 +5,7 @@ library(scales)
 
 folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
 
-daily <- read.csv(paste0(folder, '/FCR_forecasts/1day/17Jul2020/ForecastMetrics_1day.csv'))
+daily <- read.csv(paste0(folder, '/FCR_forecasts/1day/17Jul2020/ForecastMetrics_1dayrun23Sep20.csv'))
 seven_day <- read.csv(paste0(folder, '/FCR_forecasts/7day/weekly_dischargeforecast_Apr2020/ForecastMetrics_7day.csv'))
 fourteen_day <- read.csv(paste0(folder, '/FCR_forecasts/14day/22Jul2020/ForecastMetrics_14day.csv'))
 
@@ -84,7 +84,7 @@ legend('topleft', c('null', 'forecast', 'null nonbloom', 'forecast nonbloom'), c
 
 ##################
 # multi-panel figure
-png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/RMSE_fig_1day7day14dayforecasts/RMSE_all_conditions2.png'), width = 1100, height = 800)
+png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/RMSE_fig_1day7day14dayforecasts/RMSE_all_conditions_run23Sep20.png'), width = 1100, height = 800)
 par(mar = c(5,5,4,2), mfrow = c(2,2))
 plot(metrics_overtime$day_in_future, metrics_overtime$daily_nonbloom_null, col = 'red', pch =4, ylim = c(0,11), xlim = c(0,14), main = 'Non-Bloom', cex.main = 2, cex.axis = 2, cex.lab = 2, cex = 3, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
 points(metrics_overtime$day_in_future, metrics_overtime$daily_nonbloom, col = 'blue', cex = 3)
