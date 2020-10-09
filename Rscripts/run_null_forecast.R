@@ -22,15 +22,22 @@ run_null <- function(
   obs_all <- obs_all %>% mutate(chla_sqrt = sqrt(chla_ugL))
   obs <- obs_all[obs_all$date<forecast_start_day,]
   
-  past_time <- seq(min(obs$date), as.Date(forecast_start_day), by = timestep_numeric) 
-  add_time <- seq(as.Date(forecast_start_day),  as.Date(forecast_start_day) + days(max_horizon), by = timestep_numeric) 
-  full_time <- c(past_time, add_time)
-  obs <- obs[obs$date %in% past_time,]
-  forecast_time <- add_time[add_time>forecast_start_day]
+  if(timestep=='1day'){  
+    full_time <- seq(min(obs$date), as.Date(forecast_start_day)+ days(max_horizon), by = timestep_numeric) 
+    forecast_time <- full_time[full_time>forecast_start_day]
+  }else{
+    
+    past_time <- seq(min(obs$date), as.Date(forecast_start_day), by = timestep_numeric) 
+    add_time <- seq(as.Date(forecast_start_day),  as.Date(forecast_start_day) + days(max_horizon), by = timestep_numeric) 
+    full_time <- c(past_time, add_time)
+    obs <- obs[obs$date %in% past_time,]
+    forecast_time <- add_time[add_time>forecast_start_day]
+    
+}
   
   #Full time series with gaps
   y <- c(obs$chla_sqrt)
-  time <- c(obs$Date)
+  time <- c(obs$date)
   #Indexes of full time series with gaps
   y_index <- 1:length(y)
   #Remove gaps
@@ -65,7 +72,7 @@ model {
 }'
   
   j.model <- jags.model(file = textConnection(randomwalk),
-                        data = list('y' = obs$chla_sqrt,
+                        data = list('y' = y_gaps,
                                     'y_index' = y_index,
                                     'nobs' = length(y_index),
                                     'sd_obs' = 0.5,
