@@ -13,7 +13,7 @@ run_arima <- function(
   push_to_git = FALSE,
   pull_from_git = TRUE, 
   data_location = NA, 
-  #nmembers = NA,
+  nmembers = NA,
   n_ds_members = 50,
   uncert_mode = 1,
   reference_tzone,
@@ -39,11 +39,6 @@ run_arima <- function(
   source(paste0(folder,"/","Rscripts/create_obs_met_input.R"))
   source(paste0(folder,"/","Rscripts/met_downscale/process_downscale_GEFS.R")) 
   
-  
-  
-  ###RUN OPTIONS
-  pre_scc <- FALSE
-  
   ### METEROLOGY DOWNSCALING OPTIONS
   downscaling_coeff = NA  
   if(is.na(downscaling_coeff)){
@@ -58,10 +53,10 @@ run_arima <- function(
   
   
   
-  #Define modeled depths and depths with observations
+  #Define modeled depths
   modeled_depths <- 1
   
-  # obs depths temp and do are not relevant for ARIMA but am leaving here in case they are called later in the script, this should be cleaned out eventually 
+  # obs depths temp and do which are needed in order to call the catwalk data for obs chla
   observed_depths_temp <- c(0.1, 1, 2, 3, 4, 5, 6, 7, 8, 9)
   observed_depths_do <- c(1, 5, 9)
   observed_depths_chla_fdom <- 1
@@ -195,9 +190,6 @@ run_arima <- function(
   #### Step 4: Set Array Length for final chl forecast#######
   ###########################################################
   nsteps <- max_timestep + 1  # add 1 in order to store the initial conditions 
-  
-  n_met_members <- 21 # number of NOAA ensemble members
-  nmembers <- n_met_members*20
   nstates <- 1 #only one state here, chlorophyll
   
   x <- array(NA, dim=c(nsteps, nmembers, nstates))
@@ -331,8 +323,6 @@ run_arima <- function(
       temp<-read.csv(met_file_names[j])
       temp$date <- date(temp$time)
       for(i in 2:(length(unique(temp$date))-1)){  # use this line for the Dec 2018 and Nov 2019 forecasts which are in GMT
-        
-        #for(i in 1:(length(unique(temp$date)))){
         temp1<-subset(temp, temp$date==unique(temp$date)[i])
         temp2 <- temp1 %>% mutate(SW = mean(temp1$ShortWave)) 
         data[i-1,j-1]=temp2[1,10] #'j-1' because you start at 2 in the loop above
@@ -341,11 +331,11 @@ run_arima <- function(
     }
     
   }else{
-    for(j in 2:length(met_file_names)){
+    for(j in 2:length(met_file_names)){ # start at 2 because first file is obs met
       temp<-read.csv(met_file_names[j])
       temp$date <- date(temp$time)
 
-      for(i in 1:(length(unique(temp$date))-1)){
+      for(i in 2:(length(unique(temp$date)))){ # start at 2 because first date is forecast start day
         temp1<-subset(temp, temp$date==unique(temp$date)[i])
         temp2 <- temp1 %>% mutate(SW = mean(temp1$ShortWave)) 
         data[i,j-1]=temp2[1,10] #'j-1' because you start at 2 in the loop above
@@ -360,26 +350,13 @@ run_arima <- function(
   take <- seq(timestep_numeric, max_horizon, by = timestep_interval)
   
   # add empty first row because of indexing below with the model
-  sw_forecast <- matrix(NA, c(max_timestep+1), n_met_members)  
+  #sw_forecast <- matrix(NA, c(max_timestep+1), n_met_members)  
   spot <- seq(2, max_timestep+1, by = 1)
-  sw_forecast[spot,] <- data[take,]
+  sw_forecast <- data[take,]
 
   ####################################################
-  #### STEP 2: DETECT PLATFORM  
+  #### rearrange files  
   ####################################################
-  
-  switch(Sys.info() [["sysname"]],
-         Linux = { machine <- "unix" },
-         Darwin = { machine <- "mac" },
-         Windows = { machine <- "windows"})
-  
-  ###INSTALL PREREQUISITES##
-  
-  #INSTALL libnetcdf
-  if(machine == "unix") {
-    system("if [ $(dpkg-query -W -f='${Status}' libnetcdf-dev 2>/dev/null | grep -c 'ok installed') -eq 0 ]; then sudo apt update && sudo apt install libnetcdf-dev; fi;")
-    Sys.setenv(LD_LIBRARY_PATH=paste("../glm/unix/", Sys.getenv("LD_LIBRARY_PATH"),sep=":"))
-  }
   
   # move files from the sim folder into the working arima folder
   sim_files_folder <- paste0(folder, "/", "sim_files")
@@ -395,7 +372,8 @@ run_arima <- function(
   ####CREATE INFLOW AND OUTFILE FILES############
   ###############################################
   
-  source(paste0(folder,"/","Rscripts/create_inflow_outflow_file_forecastdischarge.R"))
+#  source(paste0(folder,"/","Rscripts/create_inflow_outflow_file_forecastdischarge.R"))
+  source(paste0(folder,"/","Rscripts/create_discharge_forecast_ensembles.R"))
   source(paste0(folder,"/","Rscripts/inflow_qaqc.R"))
   
   
@@ -411,8 +389,8 @@ run_arima <- function(
               working_arima)
   
   start_forecast_step <- hist_days + 1
-  Discharge <- create_inflow_outflow_file(full_time_local = full_time_day_local,
-                             working_directory = noaa_location, #?
+  create_inflow_outflow_file(full_time_local = full_time_day_local,
+                             working_directory = working_arima,
                              input_file_tz = 'EST5EDT', 
                              start_forecast_step = start_forecast_step,
                              inflow_file1 = cleaned_inflow_file,
@@ -422,11 +400,11 @@ run_arima <- function(
                              inflow_process_uncertainty = driver_uncertainty_discharge)
   
   # identify the days of the discharge forecast that are needed for this forecast
-  Discharge <- as.data.frame(Discharge)
-  colnames(Discharge) <- c('time', 'FLOW')
-  forecast_sequence <- seq(as.Date(forecast_start_day), as.Date(forecast_start_day)+max_horizon, by = timestep_interval) 
+  #Discharge <- as.data.frame(Discharge)
+  #colnames(Discharge) <- c('time', 'FLOW')
+  #forecast_sequence <- seq(as.Date(forecast_start_day), as.Date(forecast_start_day)+max_horizon, by = timestep_interval) 
   
-  discharge_forecast <- Discharge[Discharge$time %in% forecast_sequence,]
+  #discharge_forecast <- Discharge[Discharge$time %in% forecast_sequence,]
   
   
   ############################################
@@ -479,49 +457,79 @@ run_arima <- function(
   library(PerformanceAnalytics)
   
   setwd(folder)
+
+  #Full time series with gaps
+  y <- c(data$Chla_sqrt)
+  time <- c(data$Date)
+  #Indexes of full time series with gaps
+  y_index <- 1:length(y)
+  #Remove gaps
+  y_gaps <- y[!is.na(y)]
+  #keep indexes to reference the gappy time series
+  y_index <- y_index[!is.na(y)]
   
-  N <- nrow(data)
+  obs <- na.omit(data)
   
-  sink("jags_model.bug")
-  cat('model {
-  for (i in 1:N) {
-    chla[i] ~ dnorm(chla.hat[i], tau)
-    chla.hat[i] <- beta[1] + beta[2]*chla_lag[i] + beta[3]*discharge[i] + beta[4]*sw[i]
-  }
+  # define time vector
+  N <- nrow(obs)
+ 
+  AR = '
+model {
   
-  #Vague priors on the beta
+#### priors
+   #Vague priors on the beta
   for(j in 1:4){
     beta[j] ~ dnorm(0,1/100000)
   }
-
-  # Prior for the inverse variance
-  sigma ~ dunif(0, 100) # standard deviation
-	tau <- 1 / (sigma * sigma) # sigma^2 doesnt work in JAGS
-}'
-  )
-  sink()
   
-  jags <- jags.model('jags_model.bug',
-                     data = list('chla' = data$Chla_sqrt,
-                                 'chla_lag' = data$Chla_ARlag_timestep_sqrt,
-                                 'discharge' = data$mean_flow,
-                                 'sw' = data$ShortWave_mean,
-                                 'N' = N),
-                     n.chains = 4,
-                     n.adapt = 100)
+  sigma ~ dunif(0.001, 100) # prior for standard deviation of sigma, process error
+	tau_process <- 1 / (sigma * sigma) # bayes uses precision, 1/sd^2
+	tau_obs <- 1/(sd_obs*sd_obs) # precision for obs error, 1/sd of observation error ^2
+	tau_ic <- 1/(sd_obs*sd_obs) # precision for obs error, 1/sd of observation error ^2
+  latent.chl[1] ~ dnorm(x_ic, tau_ic) #latent.chl is latent state 
+  chla[1] ~ dnorm(latent.chl[1], tau_obs) #chla is the predictions
+
+#### observation error and process model
+  for (i in 1:N) {
+    chla[i] ~ dnorm(latent.chl[i], tau_process) # chla vector includes process, parameter, and observation error  
+    latent.chl[i] = beta[1] + beta[2]*chla_lag[i] + beta[3]*discharge[i] + beta[4]*sw[i]
+        
+  }
+  
+  
+##### data model
+#  for(t in 1:nobs){
+#  y[t] ~ dnorm(latent.chl[y_index[t]],tau_obs)
+#  }
+
+}'
+  
+  j.model <- jags.model(file = textConnection(AR),
+                        data = list(
+                          #'y' = y_gaps, # data index without gaps
+                          #          'y_index' = y_index,
+                          #          'nobs' = length(y_index),
+                                    'sd_obs' = 0.5,
+                                    'x_ic' = obs$Chla_sqrt[1],
+                                    'chla' = obs$Chla_sqrt,
+                                    'chla_lag' = obs$Chla_ARlag_timestep_sqrt,
+                                    'discharge' = obs$mean_flow,
+                                    'sw' = obs$ShortWave_mean,
+                                    'N' = N),
+                        n.chains = 4,
+                        n.adapt = 100)  
   
   #burn in, this updates the jags$state()
-  update(jags,n.iter = 1000)
+  update(j.model,n.iter = 1000)
   
   #sample from posterier starting from the end of the burn in.  The coda.samples track samples for a trace plot
-  samples = coda.samples(model = jags,
-                         variable.names = c('beta','sigma'),
+  samples = coda.samples(model = j.model,
+                         variable.names = c('latent.chl', 'beta','sigma'),
                          n.iter = 10000)
   
   par_matrix <- as.matrix(samples[1])
-  
-  #chart.Correlation(par_matrix)
-  
+  t <- nrow(data) # this is the the last observation in the dataset, therefore the distribution of latent chl to index as IC for the model
+
   save(samples, file = "MCMC_output_ARIMA_Whitney.Rdata")
   
 #########################################################################################################################################################################  
@@ -573,7 +581,7 @@ run_arima <- function(
   # the model!
     for (i in 2:nsteps) {
       met_index <- 1
-    for(j in 1:nmembers){  #want this to be length(nmembers) = 
+    for(j in 1:nmembers){  
       if(process_uncertainty == TRUE){
         added_process_uncertainty =  rnorm(1, 0,ensemble_pars[j, 5])
       }else{
