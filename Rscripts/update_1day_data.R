@@ -177,7 +177,7 @@ data$Date <- as.Date(data$Date)
   data_assimilate <- data_assimilate %>% mutate(Chla_ARlag1_sqrt = ifelse(Chla_ARlag1_sqrt>0, Chla_ARlag1_sqrt, lag(Chla_sqrt, n = 1L))) %>% 
     mutate(Chla_ARlag_timestep_sqrt = Chla_ARlag1_sqrt)
   #data_assimilate <- na.omit(data_assimilate)
-  
+  data_assimilate <- data_assimilate[data_assimilate$Date>'2018-08-14',]
   write.csv(data_assimilate,outfile , row.names = FALSE)
   
   
