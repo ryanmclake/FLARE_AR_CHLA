@@ -27,9 +27,6 @@ working_arima <- paste0(folder, "/", "ARIMA_working")
 data <- read.csv(hist_file)
 data$Date <- as.Date(data$Date)
 
-# remove dates between Apr 2018 and Aug 2018 in weekly dataset to make equal with daily training dataset
-data <- data[data$Date<"2018-04-01" | data$Date>'2018-08-13',]
-data <- data[!duplicated(data$Date),]
 
   #######################################################################################################################################################################################
   ### gather EXO data for chl response and lag driver data 
@@ -104,8 +101,8 @@ data <- data[!duplicated(data$Date),]
   met_hist_2019 <- read.csv('./ARIMA_working/update_met.csv')
   met_hist_daily_2019 <- met_hist_2019 %>% mutate(Date = date(time)) %>% 
     group_by(Date) %>% 
-    mutate(RelHum_mean = mean(RelHum)) %>% 
-    mutate(ShortWave_mean = mean(ShortWave)) %>% 
+    mutate(RelHum_mean = mean(RelHum, na.rm = TRUE)) %>% 
+    mutate(ShortWave_mean = mean(ShortWave, na.rm = TRUE)) %>% 
     select(Date, RelHum_mean, ShortWave_mean)
   met_hist_daily_2019 <- met_hist_daily_2019[!duplicated(met_hist_daily_2019$Date),]
   met_hist_daily_2019 <- met_hist_daily_2019 %>% select(Date, ShortWave_mean)
@@ -126,8 +123,8 @@ data <- data[!duplicated(data$Date),]
   met_hist <- read.csv('./ARIMA_working/update_met.csv')
   met_hist_daily_2020 <- met_hist %>% mutate(Date = date(time)) %>% 
     group_by(Date) %>% 
-    mutate(RelHum_mean = mean(RelHum)) %>% 
-    mutate(ShortWave_mean = mean(ShortWave)) %>% 
+    mutate(RelHum_mean = mean(RelHum, na.rm = TRUE)) %>% 
+    mutate(ShortWave_mean = mean(ShortWave, na.rm = TRUE)) %>% 
     select(Date, RelHum_mean, ShortWave_mean)
   met_hist_daily_2020 <- met_hist_daily_2020[!duplicated(met_hist_daily_2020$Date),]
   
@@ -179,7 +176,7 @@ data <- data[!duplicated(data$Date),]
   # create the lag for new datapoints
   data_assimilate <- data_assimilate %>% mutate(Chla_ARlag1_sqrt = ifelse(Chla_ARlag1_sqrt>0, Chla_ARlag1_sqrt, lag(Chla_sqrt, n = 1L))) %>% 
     mutate(Chla_ARlag_timestep_sqrt = Chla_ARlag1_sqrt)
-  data_assimilate <- na.omit(data_assimilate)
+  #data_assimilate <- na.omit(data_assimilate)
   
   write.csv(data_assimilate,outfile , row.names = FALSE)
   
