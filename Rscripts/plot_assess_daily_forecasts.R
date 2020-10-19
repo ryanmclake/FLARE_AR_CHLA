@@ -14,6 +14,7 @@ max_timestep <- 14 #maximum number of timesteps that can be propagated to the ma
 max_horizon <- 14 # maximum number of days that are propagated in this forecast (e.g. daily timestep has max_horizon = 16)
 sim_name <- '17Jul2020'
 forecast_folder <- paste0(folder, "/FCR_forecasts", '/', timestep, '/', sim_name)
+null_folder <- paste0(folder, '/FCR_forecasts/', timestep, '/null_daily')
 bloom_threshold <- 17.1
 
 setwd(forecast_folder)
@@ -171,7 +172,7 @@ for (i in 1:max_timestep) {
 
 metrics_overtime[,1] <-   seq(timestep_numeric, max_horizon, by = timestep_interval)
 metrics_overtime <- as.data.frame(metrics_overtime)
-write.csv(metrics_overtime, paste0(folder, '/FCR_forecasts/1day/null_daily/ForecastMetrics_', timestep, 'run23Sep20.csv'), row.names = FALSE)
+write.csv(metrics_overtime, paste0(folder, '/FCR_forecasts/1day/null_daily/ForecastMetrics_', timestep, '.csv'), row.names = FALSE)
 
 #################################################################################################################################################################################
 #################################################################################################################################################################################
