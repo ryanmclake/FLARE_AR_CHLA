@@ -3,14 +3,14 @@
 
 folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
 data_location <-  "C:/Users/wwoel/Desktop/FLARE_AR_CHLA/SCCData"
-forecast_start_day <-"2019-01-02 00:00:00"
+forecast_start_day <-"2019-01-01 00:00:00"
 nmembers <- 420
-timestep <- '14day'
-timestep_numeric <- 14
-timestep_interval <- 14
-max_timestep <- 1 #max propagations of the timestep: daily = 14, weekly = 2, fortnightly = 1
+timestep <- '7day'
+timestep_numeric <- 7
+timestep_interval <- 7
+max_timestep <- 2 #max propagations of the timestep: daily = 14, weekly = 2, fortnightly = 1
 max_horizon <- 14 # maximum number of days that are propagated in this forecast (e.g. daily timestep has max_horizon = 14)
-sim_name <- 'null_fortnightly'
+sim_name <- 'null_weekly'
 forecast_location <- paste0(folder, '/FCR_forecasts/', timestep, '/', sim_name)
 
 start_day <- forecast_start_day 
