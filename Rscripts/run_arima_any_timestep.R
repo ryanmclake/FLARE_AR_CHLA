@@ -350,9 +350,9 @@ run_arima <- function(
   take <- seq(timestep_numeric, max_horizon, by = timestep_interval)
   
   # add empty first row because of indexing below with the model
-  #sw_forecast <- matrix(NA, c(max_timestep+1), n_met_members)  
+  sw_forecast <- matrix(NA, c(max_timestep+1), n_met_members)  
   spot <- seq(2, max_timestep+1, by = 1)
-  sw_forecast <- data[take,]
+  sw_forecast <- data[,]
 
   ####################################################
   #### rearrange files  
@@ -399,12 +399,22 @@ run_arima <- function(
                              forecast_days = forecast_days,
                              inflow_process_uncertainty = driver_uncertainty_discharge)
   
-  # identify the days of the discharge forecast that are needed for this forecast
-  #Discharge <- as.data.frame(Discharge)
-  #colnames(Discharge) <- c('time', 'FLOW')
-  #forecast_sequence <- seq(as.Date(forecast_start_day), as.Date(forecast_start_day)+max_horizon, by = timestep_interval) 
+ discharge_file_names <- list.files(path = paste0(working_arima, '/'), pattern = paste0('inflow_forecast_ensemble', '*'))
+ discharge_forecast <- read.csv(paste0(working_arima, '/', discharge_file_names[1]))
+ discharge_forecast <- discharge_forecast %>% select(time, FLOW)
+ colnames(discharge_forecast) <- c('time', 'FLOW_1')
+ discharge_forecast$time <- as.Date(discharge_forecast$time)
+ 
+ for (i in 2:length(discharge_file_names)) {
+   temp <- read.csv(paste0(working_arima, '/', discharge_file_names[i]))
+   temp <- temp %>% select(FLOW)
+   colnames(temp) <- c(paste0('FLOW_', i))
+  discharge_forecast <- cbind(discharge_forecast, temp) 
+ }
   
-  #discharge_forecast <- Discharge[Discharge$time %in% forecast_sequence,]
+  
+  forecast_sequence <- seq(as.Date(forecast_start_day), as.Date(forecast_start_day)+max_horizon, by = timestep_interval) 
+  discharge_forecast <- discharge_forecast[discharge_forecast$time %in% forecast_sequence,]
   
   
   ############################################
@@ -443,7 +453,7 @@ run_arima <- function(
   # read in file with all data and subset to the forecast day
   data <- read.csv(paste0(folder, '/data_arima_', timestep, '_through_2020.csv'))
   data$Date <- as.Date(data$Date)
-  data <- data[data$Date<forecast_start_day,]
+  data <- data[data$Date<=forecast_start_day,]
   print('data subsetted to forecast start day')
   
   }else{
@@ -490,12 +500,14 @@ model {
   chla[1] ~ dnorm(latent.chl[1], tau_obs) #chla is the predictions
 
 #### observation error and process model
-  for (i in 1:N) {
+  for (i in 2:N) {
     chla[i] ~ dnorm(latent.chl[i], tau_process) # chla vector includes process, parameter, and observation error  
     latent.chl[i] = beta[1] + beta[2]*chla_lag[i] + beta[3]*discharge[i] + beta[4]*sw[i]
         
   }
   
+#### save the last latent.chl value for IC to run the forecast  
+  IC_forecast <- latent.chl[N]
   
 ##### data model
 #  for(t in 1:nobs){
@@ -524,80 +536,86 @@ model {
   
   #sample from posterier starting from the end of the burn in.  The coda.samples track samples for a trace plot
   samples = coda.samples(model = j.model,
-                         variable.names = c('latent.chl', 'beta','sigma'),
+                         variable.names = c('IC_forecast', 'beta','sigma'),
                          n.iter = 10000)
   
   par_matrix <- as.matrix(samples[1])
   t <- nrow(data) # this is the the last observation in the dataset, therefore the distribution of latent chl to index as IC for the model
 
-  save(samples, file = "MCMC_output_ARIMA_Whitney.Rdata")
+ # save(samples, file = "MCMC_output_ARIMA_Whitney.Rdata")
   
 #########################################################################################################################################################################  
-  # the first column is observed chl that is sqrt transformed (because the model is based on sqrt units) and corrected into CTD units (because it is observed in EXO units)
-  if(initial_condition_uncertainty == TRUE& !is.na(chla_obs[[1]][1,1]) ){
-    for(i in 1:nmembers){
-      x[1,i,] <- rnorm(1, chla_obs[[1]][1,1]*0.55 - 0.0308, 0.5) # sample from a normal distribution around the mean obs chl value in CTD units, 0.5 is the mean residual btw comparison of CTD and EXO
-      if(x[1,i,] < 0 ){x[1,i,] <- rnorm(1, chla_obs[[1]][1,1]*0.55 - 0.0308, 0.5)} # if a negative value is chosen, sample again
-      if(x[1,i,] < 0 ){x[1,i,] <- rnorm(1, chla_obs[[1]][1,1]*0.55 - 0.0308, 0.5)} # if a negative value is chosen, sample again # doing this a bunch of times in case a negative comes up a second time, not sure how to quantifiably figure out what the right number of times is here
-      if(x[1,i,] < 0 ){x[1,i,] <- rnorm(1, chla_obs[[1]][1,1]*0.55 - 0.0308, 0.5)} # if a negative value is chosen, sample again
-      if(x[1,i,] < 0 ){x[1,i,] <- rnorm(1, chla_obs[[1]][1,1]*0.55 - 0.0308, 0.5)} # if a negative value is chosen, sample again
-      if(x[1,i,] < 0 ){x[1,i,] <- rnorm(1, chla_obs[[1]][1,1]*0.55 - 0.0308, 0.5)} # if a negative value is chosen, sample again
-      if(x[1,i,] < 0 ){x[1,i,] <- rnorm(1, chla_obs[[1]][1,1]*0.55 - 0.0308, 0.5)} # if a negative value is chosen, sample again
-      if(x[1,i,] < 0 ){x[1,i,] <- rnorm(1, chla_obs[[1]][1,1]*0.55 - 0.0308, 0.5)} # if a negative value is chosen, sample again
-      if(x[1,i,] < 0 ){x[1,i,] <- rnorm(1, chla_obs[[1]][1,1]*0.55 - 0.0308, 0.5)} # if a negative value is chosen, sample again
-      if(x[1,i,] < 0 ){x[1,i,] <- rnorm(1, chla_obs[[1]][1,1]*0.55 - 0.0308, 0.5)} # if a negative value is chosen, sample again
-      if(x[1,i,] < 0 ){x[1,i,] <- rnorm(1, chla_obs[[1]][1,1]*0.55 - 0.0308, 0.5)} # if a negative value is chosen, sample again
-      
-    }
-    
-    x[1,,] <-   sqrt(x[1,,]) # take the sqrt to return to model units
-  }else{
-    x[1,1:nmembers,] <- sqrt(chla_obs[[1]][1,1]*0.55 - 0.0308) 
-  }
+#### set up uncertainties for parameters, process, and IC uncertainty (from MCMC output)
   
-  
-  
-  npars <- 5
+  npars <- 6 # 4 beta parms, 1 process, 1 initial condition
   ensemble_pars <- array(NA, dim = c(nmembers, npars)) 
+  
+  # order of MCMC output
+  # IC_forecast, beta 1, bea2, beta3, beta 4, sigma
   
   # for loop to sample from distribution of each parameter value
   for(j in 1:nmembers){
-    if(parameter_uncertainty == TRUE){
-      p <- sample(seq(1,length(samples[[1]][,1])), 1, replace = TRUE) #changed 0 to 1 7/16
+    if(parameter_uncertainty == TRUE & process_uncertainty == TRUE & initial_condition_uncertainty == TRUE){
+      p <- sample(seq(1,length(samples[[1]][,1])), 1, replace = TRUE) 
       ensemble_pars[j, 1] <- samples[[1]][p,1]
       ensemble_pars[j, 2] <- samples[[1]][p,2]
       ensemble_pars[j, 3] <- samples[[1]][p,3]
       ensemble_pars[j, 4] <- samples[[1]][p,4]
       ensemble_pars[j, 5] <- samples[[1]][p,5]
-    }else{
-      ensemble_pars[j, 1] <- mean(samples[[1]][,1])
+      ensemble_pars[j, 6] <- samples[[1]][p,6]
+    }else if(parameter_uncertainty == FALSE & process_uncertainty == TRUE & initial_condition_uncertainty == TRUE){
+      p <- sample(seq(1,length(samples[[1]][,1])), 1, replace = TRUE) 
+      ensemble_pars[j, 1] <- samples[[1]][p,1]
       ensemble_pars[j, 2] <- mean(samples[[1]][,2])
       ensemble_pars[j, 3] <- mean(samples[[1]][,3])
       ensemble_pars[j, 4] <- mean(samples[[1]][,4])
       ensemble_pars[j, 5] <- mean(samples[[1]][,5])     
+      ensemble_pars[j, 6] <- samples[[1]][p,6]
+    }else if(parameter_uncertainty == TRUE & process_uncertainty == FALSE & initial_condition_uncertainty == TRUE){
+      p <- sample(seq(1,length(samples[[1]][,1])), 1, replace = TRUE)
+      ensemble_pars[j, 1] <- samples[[1]][p,1]
+      ensemble_pars[j, 2] <- samples[[1]][p,2]
+      ensemble_pars[j, 3] <- samples[[1]][p,3]
+      ensemble_pars[j, 4] <- samples[[1]][p,4]
+      ensemble_pars[j, 5] <- samples[[1]][p,5]
+      ensemble_pars[j, 6] <- mean(samples[[1]][,6])
+    }else if(parameter_uncertainty == TRUE & process_uncertainty == TRUE & initial_condition_uncertainty == FALSE){
+      p <- sample(seq(1,length(samples[[1]][,1])), 1, replace = TRUE) 
+      ensemble_pars[j, 1] <- mean(samples[[1]][,1])
+      ensemble_pars[j, 2] <- samples[[1]][p,2]
+      ensemble_pars[j, 3] <- samples[[1]][p,3]
+      ensemble_pars[j, 4] <- samples[[1]][p,4]
+      ensemble_pars[j, 5] <- samples[[1]][p,5]
+      ensemble_pars[j, 6] <- samples[[1]][p,6]
     }
   }  
+  
   
   # the model!
     for (i in 2:nsteps) {
       met_index <- 1
     for(j in 1:nmembers){  
       if(process_uncertainty == TRUE){
-        added_process_uncertainty =  rnorm(1, 0,ensemble_pars[j, 5])
+        added_process_uncertainty =  rnorm(1, 0,ensemble_pars[j, 6])
       }else{
         added_process_uncertainty = 0.0
       }
-      if(driver_uncertainty_discharge == TRUE){
-        curr_discharge = rnorm(1, discharge_forecast[i,2], 0.00965) #sd from QT's discharge forecasts
+      if(initial_condition_uncertainty == TRUE){
+        x[1,j,] <- ensemble_pars[j,1]
       }else{
-        curr_discharge = discharge_forecast[i,2]
+        x[1,,] <- sqrt(chla_obs[[1]][1,1]*0.55 - 0.0308)  # convert to sqrt and CTD units
+      }
+      if(driver_uncertainty_discharge == TRUE){
+        curr_discharge = rnorm(1, discharge_forecast[i,met_index+1], 0.00965) #sd from QT's discharge forecasts
+      }else{
+        curr_discharge = discharge_forecast[i,2] 
       }
       if(weather_uncertainty == TRUE){
         curr_shortwave = sw_forecast[i,met_index]
       }else{
         curr_shortwave = sw_forecast[i]
       }
-      x[i,j,] <- ensemble_pars[j, 1] + ensemble_pars[j, 2]*x[i-1,j,] + ensemble_pars[j, 3]*curr_discharge + ensemble_pars[j, 4]*curr_shortwave + added_process_uncertainty
+      x[i,j,] <- ensemble_pars[j, 2] + ensemble_pars[j, 3]*x[i-1,j,] + ensemble_pars[j, 4]*curr_discharge + ensemble_pars[j, 5]*curr_shortwave + added_process_uncertainty
       met_index = met_index + 1
       if(met_index > n_met_members){
         met_index <- 1
@@ -607,11 +625,7 @@ model {
   
   
   
-  forecast_ensemble_file_name <- paste0(year(forecast_start_day), "_", 
-                                        file_name_forecast_start_month, "_", 
-                                        file_name_forecast_start_day, "_", 
-                                        "chla_", timestep, "_ensembles.csv")
-  
+ 
   # create the output dataframe for archiving the forecast statistics (mean, sd, 95% CI, and obs chl)
   out <- data.frame("forecast_date" = forecast_sequence[-1], 
                     "forecast_mean_chl" =rep(NA) , 
@@ -668,11 +682,11 @@ model {
   
   
   out[,12] <- seq(timestep_numeric, max_horizon, by = timestep_interval)
-  out[,13] <- mean(ensemble_pars[,1])
-  out[,14]<- mean(ensemble_pars[,2])
-  out[,15]<- mean(ensemble_pars[,3])
-  out[,16]<- mean(ensemble_pars[,4])
-  out[,17]<- mean(ensemble_pars[,5])
+  out[,13] <- mean(ensemble_pars[,2])
+  out[,14]<-  mean(ensemble_pars[,3])
+  out[,15]<-  mean(ensemble_pars[,4])
+  out[,16]<-  mean(ensemble_pars[,5])
+  out[,17]<-  mean(ensemble_pars[,6])
   
   
   
