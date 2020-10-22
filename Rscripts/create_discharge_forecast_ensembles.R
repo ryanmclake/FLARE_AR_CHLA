@@ -108,9 +108,13 @@ create_inflow_outflow_file <- function(full_time_local,
       select(time, FLOW, TEMP, SALT) %>% 
       mutate_at(vars(c("FLOW", "TEMP", "SALT", wq_names_tmp)), funs(round(., 4)))
       
-    
+   if(i < 10){
+      file_name_discharge <- paste0('inflow_forecast_ensemble_', "0", i)
+    }else{
+      file_name_discharge <- paste0('inflow_forecast_ensemble_', i) 
+    }
     write_csv(x = tmp2,
-              path = paste0(working_directory,"/inflow_forecast_ensemble_",i, '.csv'),
+              path = paste0(working_directory,"/", file_name_discharge, '.csv'),
               quote_escape = "none")
 
     tmp2 <- tmp2 %>% 
