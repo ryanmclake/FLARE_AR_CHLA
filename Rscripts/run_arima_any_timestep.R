@@ -352,7 +352,13 @@ run_arima <- function(
   # add empty first row because of indexing below with the model
   sw_forecast <- matrix(NA, c(max_timestep+1), n_met_members)  
   spot <- seq(2, max_timestep+1, by = 1)
-  sw_forecast <- data[,]
+  if(timestep == '1day'){
+    sw_forecast <- data[,]
+  }else if(timestep == '7day'){ 
+    sw_forecast[2:3,] <- data[take,] 
+  }else if(timestep == '14day'){
+    sw_forecast[2,] <- data[take,]     
+  }
 
   ####################################################
   #### rearrange files  
