@@ -41,8 +41,8 @@ create_inflow_outflow_file <- function(full_time_local,
                                col_types = col_types) %>% 
       mutate(time = as_date(time)) %>% 
       group_by(time) %>% 
-      summarize(Rain = mean(Rain),
-                AirTemp = mean(AirTemp)) %>% 
+      summarize(Rain = mean(Rain, na.rm = TRUE),
+                AirTemp = mean(AirTemp, na.rm = TRUE)) %>% 
       mutate(ensemble = m-1) %>% 
       mutate(AirTempMean = roll_mean(AirTemp, n = 5, align = "right",fill=NA),
              RainMean = roll_mean(Rain, n = 5, align = "right",fill=NA),
@@ -75,11 +75,11 @@ create_inflow_outflow_file <- function(full_time_local,
   
   for(i in 1:nrow(tmp)){
     if(tmp$forecast[i] == 0 & is.na(tmp$FLOW[i]) & !include_wq){
-      tmp[i, c("FLOW", "TEMP",wq_names_tmp)]  <- inflow %>% 
+      list(tmp[i, c("FLOW", "TEMP",wq_names_tmp)]  <- inflow %>% 
         filter(time < full_time_day_local[start_forecast_step]) %>% 
         mutate(doy = yday(time)) %>% 
         filter(doy == yday(tmp$time[i])) %>% 
-        summarize_at(.vars = c("FLOW", "TEMP", wq_names_tmp), mean, na.rm = TRUE) %>% 
+        summarize_at(.vars = c("FLOW", "TEMP", wq_names_tmp), mean, na.rm = TRUE)) %>% 
         unlist()
     }
     
