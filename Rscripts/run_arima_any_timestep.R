@@ -457,7 +457,7 @@ run_arima <- function(
 
   if(data_assimilation){
   # read in file with all data and subset to the forecast day
-  data <- read.csv(paste0(folder, '/data_arima_', timestep, '_through_2020.csv'))
+  data <- read.csv(paste0(folder, '/training_datasets/data_arima_', timestep, '_through_2020.csv'))
   data$Date <- as.Date(data$Date)
   data <- data[data$Date<=forecast_start_day,]
   print('data subsetted to forecast start day')
