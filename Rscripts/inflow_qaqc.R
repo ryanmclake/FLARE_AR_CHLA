@@ -35,28 +35,27 @@ inflow_qaqc <- function(fname,
                         input_file_tz,
                         working_directory){
   
-  folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
-  
+
   ##Step 1: Pull required data from GitHub ##
   diana_location <- fname[1]
-  hist1_location <- fname[2]
-  hist2_location <- fname[3]
+  hist_location <- fname[2]
+  #hist2_location <- fname[3]
   ##Step 2: Read in historical flow data, clean, subset to 2013 - April 22nd 2019, and aggregate to daily mean##
   #reformating timestamp a few times currently required, but I'm working to make that process cleaner.
   
   flownames <- c('TIMESTAMP', 'flow_cms', 'wtr_weir')
   
-  hist2 <- read_csv(hist2_location, skip=1, col_names = F)
-  hist2 <- hist2[,c(3,7,8)]
-  colnames(hist2) <- flownames
-  TIMESTAMP_in <- force_tz(hist2$TIMESTAMP, tzone = input_file_tz)
-  hist2$TIMESTAMP <- with_tz(TIMESTAMP_in,tz = local_tzone)
-  hist2 <- na.omit(hist2)
-  hist2 = aggregate(list(flow_cms = hist2$flow_cms, wtr_weir = hist2$wtr_weir), list(TIMESTAMP = cut(hist2$TIMESTAMP, "1 day")), mean);
-  hist2$TIMESTAMP <- as.POSIXct(hist2$TIMESTAMP, format = '%Y-%m-%d')
-  hist2 = hist2[ hist2$TIMESTAMP < as.POSIXct('2019-04-22'),]
+  hist <- read_csv(hist_location, skip=1, col_names = F)
+  hist <- hist[,c(3,7,8)]
+  colnames(hist) <- flownames
+  TIMESTAMP_in <- force_tz(hist$TIMESTAMP, tzone = input_file_tz)
+  hist$TIMESTAMP <- with_tz(TIMESTAMP_in,tz = local_tzone)
+  hist <- na.omit(hist)
+  hist = aggregate(list(flow_cms = hist$flow_cms, wtr_weir = hist$wtr_weir), list(TIMESTAMP = cut(hist$TIMESTAMP, "1 day")), mean);
+  hist$TIMESTAMP <- as.POSIXct(hist$TIMESTAMP, format = '%Y-%m-%d')
+  hist = hist[ hist$TIMESTAMP < as.POSIXct('2019-04-22'),]
   
-  hist_inflow <- hist2 #inflow from 2013-April 2019
+  hist_inflow <- hist #inflow from 2013-April 2019
   
   ##Step 2: Read in diana data, convert flow from PSI to CSM, calculations to account for building new weir in June 2019 (FCR Specific), and aggregate to daily mean.##
  # download.file('https://github.com/CareyLabVT/SCCData/raw/diana-data/FCRweir.csv',paste0(folder, '/SCCData/diana-data/FCRweir.csv'))
