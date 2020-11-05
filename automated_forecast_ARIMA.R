@@ -34,8 +34,8 @@ timestep_numeric <- 14
 timestep_interval <- 14 # the interval in between timesteps, e.g. 4day would be 4; daily would be 1; weekly would be 7
 max_timestep <- 1 #maximum number of timesteps that can be propagated to the max time horizon (e.g., daily is 14, weekly is 2)
 max_horizon <- 14 # maximum number of days that are propagated in this forecast (e.g. daily timestep has max_horizon = 14)
-sim_name <- 'update_bayes_method_Oct_2020'
-forecast_location <- paste0("C:/Users/wwoel/Desktop/FLARE_AR_CHLA/FCR_forecasts", '/', timestep, '/', sim_name)
+sim_name <- 'test'
+forecast_location <- paste0(folder, "/FCR_forecasts", '/', timestep, '/', sim_name)
 
 
 restart_file <- NA
