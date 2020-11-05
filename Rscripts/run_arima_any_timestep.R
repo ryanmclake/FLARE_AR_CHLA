@@ -29,8 +29,12 @@ run_arima <- function(
 ){
   
   
-  
-  
+  ###############################################
+  ## create folders for forecast output #########
+  ###############################################
+
+  dir.create(forecast_location)  
+  dir.create(paste0(forecast_location, '/ensemble_plots'))
   
   ################################################
   ### LOAD R FUNCTIONS
@@ -110,13 +114,15 @@ run_arima <- function(
     parameter_uncertainty <- FALSE
     met_downscale_uncertainty <- FALSE
     driver_uncertainty_discharge <- FALSE
+    dir.create(paste0(forecast_location, '/uncertainty_2_process'))
     }else if( uncert_mode == 3){ # isolate weather uncertainty (ie, all other sources of uncertainty turned off)
     process_uncertainty <- FALSE
     weather_uncertainty <- TRUE
     initial_condition_uncertainty <- FALSE
     parameter_uncertainty <- FALSE
     met_downscale_uncertainty <- FALSE
-    driver_uncertainty_discharge <- FALSE
+    driver_uncertainty_discharge <- FALSE  
+    dir.create(paste0(forecast_location, '/uncertainty_3_weather'))
     } else if(uncert_mode == 4) { # isolate initial condition uncertainty (ie, all other sources of uncertainty turned off)
     process_uncertainty <- FALSE
     weather_uncertainty <- FALSE
@@ -124,6 +130,7 @@ run_arima <- function(
     parameter_uncertainty <- FALSE
     met_downscale_uncertainty <- FALSE
     driver_uncertainty_discharge <- FALSE
+    dir.create(paste0(forecast_location, '/uncertainty_4_initial_condition'))
     } else if(uncert_mode == 5){ # isolate parameter uncertainty (ie, all other sources of uncertainty turned off)
     process_uncertainty <- FALSE
     weather_uncertainty <- FALSE
@@ -131,6 +138,7 @@ run_arima <- function(
     parameter_uncertainty <- TRUE
     met_downscale_uncertainty <- FALSE
     driver_uncertainty_discharge <- FALSE
+    dir.create(paste0(forecast_location, '/uncertainty_5_parameter'))
     } else if(uncert_mode == 6){ # isolate discharge uncertainty (ie, all other sources of uncertainty turned off)
     process_uncertainty <- FALSE
     weather_uncertainty <- FALSE
@@ -138,6 +146,7 @@ run_arima <- function(
     parameter_uncertainty <- FALSE
     met_downscale_uncertainty <- FALSE
     driver_uncertainty_discharge <- TRUE
+    dir.create(paste0(forecast_location, '/uncertainty_6_discharge'))
     }
     
     
