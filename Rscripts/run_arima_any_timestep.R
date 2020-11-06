@@ -32,7 +32,7 @@ run_arima <- function(
   ###############################################
   ## create folders for forecast output #########
   ###############################################
-
+  
   dir.create(forecast_location)  
   dir.create(paste0(forecast_location, '/ensemble_plots'))
   
@@ -378,9 +378,9 @@ run_arima <- function(
   fl <- c(list.files(sim_files_folder, full.names = TRUE))
   tmp <- file.copy(from = fl, to = working_arima, overwrite = TRUE)
   tmp <- file.copy(from = fl, to = working_arima, overwrite = TRUE)
-  if(!is.na(restart_file)){
-    tmp <- file.copy(from = restart_file, to = working_arima, overwrite = TRUE)
-  }
+ # if(!is.na(restart_file)){
+ #    tmp <- file.copy(from = restart_file, to = working_arima, overwrite = TRUE)
+ #  }
 
   
   ###############################################
@@ -419,12 +419,17 @@ run_arima <- function(
  colnames(discharge_forecast) <- c('time', 'FLOW_1')
  discharge_forecast$time <- as.Date(discharge_forecast$time)
  
- for (i in 2:length(discharge_file_names)) {
-   temp <- read.csv(paste0(working_arima, '/', discharge_file_names[i]))
-   temp <- temp %>% select(FLOW)
-   colnames(temp) <- c(paste0('FLOW_', i))
-  discharge_forecast <- cbind(discharge_forecast, temp) 
- }
+if(weather_uncertainty==TRUE){
+  for (i in 2:length(discharge_file_names)) {
+    temp <- read.csv(paste0(working_arima, '/', discharge_file_names[i]))
+    temp <- temp %>% select(FLOW)
+    colnames(temp) <- c(paste0('FLOW_', i))
+    discharge_forecast <- cbind(discharge_forecast, temp) 
+  }
+}else{
+  discharge_forecast <- discharge_forecast
+}
+  
   
   
   forecast_sequence <- seq(as.Date(forecast_start_day), as.Date(forecast_start_day)+max_horizon, by = timestep_interval) 
