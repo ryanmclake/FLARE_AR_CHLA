@@ -34,7 +34,7 @@ timestep_numeric <- 14
 timestep_interval <- 14 # the interval in between timesteps, e.g. 4day would be 4; daily would be 1; weekly would be 7
 max_timestep <- 1 #maximum number of timesteps that can be propagated to the max time horizon (e.g., daily is 14, weekly is 2)
 max_horizon <- 14 # maximum number of days that are propagated in this forecast (e.g. daily timestep has max_horizon = 14)
-sim_name <- 'test'
+sim_name <- 'updates_bayes_method_Oct_2020'
 forecast_location <- paste0(folder, "/FCR_forecasts", '/', timestep, '/', sim_name)
 
 
@@ -47,7 +47,7 @@ forecast_days <-max_horizon
 DOWNSCALE_MET <- FALSE # if FALSE<-not accounting for uncertainty in meteorological downscaling of NOAA forecasts
 met_ds_obs_start = as.Date("2018-04-06")
 met_ds_obs_end = Sys.Date()
-uncert_mode = 1
+uncert_mode = 2
 data_assimilation = TRUE
 local_tzone <- "EST5EDT"
 include_wq <<- FALSE
@@ -62,7 +62,7 @@ num_forecast_periods <- 365 # number of times the script will loop through autom
 
 
 # initialize forecast time
-forecast_start_day <-"2019-11-04 00:00:00" # day the forecast initialized
+forecast_start_day <-"2019-01-02 00:00:00" # day the forecast initialized
 start_day <- forecast_start_day 
 start_day <- as.POSIXct(start_day, format = "%Y-%m-%d %H:%M:%S")
 hist_days <- 1
@@ -137,7 +137,7 @@ repeat{
   
   forecast_day_count <- forecast_day_count + 1
   
-  restart_file <- unlist(forecast)[1]
+ # restart_file <- unlist(forecast)[1]
   
 
   
