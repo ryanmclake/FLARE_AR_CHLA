@@ -574,7 +574,7 @@ model {
   
   # for loop to sample from distribution of each parameter value
   for(j in 1:nmembers){
-    if(parameter_uncertainty == TRUE & process_uncertainty == TRUE & initial_condition_uncertainty == TRUE){
+    if(uncert_mode==1){ #all vary
       p <- sample(seq(1,length(samples[[1]][,1])), 1, replace = TRUE) 
       ensemble_pars[j, 1] <- samples[[1]][p,1]
       ensemble_pars[j, 2] <- samples[[1]][p,2]
@@ -582,30 +582,44 @@ model {
       ensemble_pars[j, 4] <- samples[[1]][p,4]
       ensemble_pars[j, 5] <- samples[[1]][p,5]
       ensemble_pars[j, 6] <- samples[[1]][p,6]
-    }else if(parameter_uncertainty == FALSE & process_uncertainty == TRUE & initial_condition_uncertainty == TRUE){
+    }else if(uncert_mode==2){ #only process varies
       p <- sample(seq(1,length(samples[[1]][,1])), 1, replace = TRUE) 
-      ensemble_pars[j, 1] <- samples[[1]][p,1]
+      ensemble_pars[j, 1] <- mean(samples[[1]][,1])
       ensemble_pars[j, 2] <- mean(samples[[1]][,2])
       ensemble_pars[j, 3] <- mean(samples[[1]][,3])
       ensemble_pars[j, 4] <- mean(samples[[1]][,4])
       ensemble_pars[j, 5] <- mean(samples[[1]][,5])     
       ensemble_pars[j, 6] <- samples[[1]][p,6]
-    }else if(parameter_uncertainty == TRUE & process_uncertainty == FALSE & initial_condition_uncertainty == TRUE){
+    }else if(uncert_mode==4){ #only initial conditions vary
       p <- sample(seq(1,length(samples[[1]][,1])), 1, replace = TRUE)
       ensemble_pars[j, 1] <- samples[[1]][p,1]
-      ensemble_pars[j, 2] <- samples[[1]][p,2]
-      ensemble_pars[j, 3] <- samples[[1]][p,3]
-      ensemble_pars[j, 4] <- samples[[1]][p,4]
-      ensemble_pars[j, 5] <- samples[[1]][p,5]
+      ensemble_pars[j, 2] <- mean(samples[[1]][,2])
+      ensemble_pars[j, 3] <- mean(samples[[1]][,3])
+      ensemble_pars[j, 4] <- mean(samples[[1]][,4])
+      ensemble_pars[j, 5] <- mean(samples[[1]][,5])
       ensemble_pars[j, 6] <- mean(samples[[1]][,6])
-    }else if(parameter_uncertainty == TRUE & process_uncertainty == TRUE & initial_condition_uncertainty == FALSE){
+    }else if(uncert_mode==5){
       p <- sample(seq(1,length(samples[[1]][,1])), 1, replace = TRUE) 
       ensemble_pars[j, 1] <- mean(samples[[1]][,1])
       ensemble_pars[j, 2] <- samples[[1]][p,2]
       ensemble_pars[j, 3] <- samples[[1]][p,3]
       ensemble_pars[j, 4] <- samples[[1]][p,4]
       ensemble_pars[j, 5] <- samples[[1]][p,5]
-      ensemble_pars[j, 6] <- samples[[1]][p,6]
+      ensemble_pars[j, 6] <- mean(samples[[1]][,6])
+    }else if(uncert_mode==3){
+      ensemble_pars[j, 1] <- mean(samples[[1]][,1])
+      ensemble_pars[j, 2] <- mean(samples[[1]][,2])
+      ensemble_pars[j, 3] <- mean(samples[[1]][,3])
+      ensemble_pars[j, 4] <- mean(samples[[1]][,4])
+      ensemble_pars[j, 5] <- mean(samples[[1]][,5])
+      ensemble_pars[j, 6] <- mean(samples[[1]][,6])
+    }else if(uncert_mode==6){
+      ensemble_pars[j, 1] <- mean(samples[[1]][,1])
+      ensemble_pars[j, 2] <- mean(samples[[1]][,2])
+      ensemble_pars[j, 3] <- mean(samples[[1]][,3])
+      ensemble_pars[j, 4] <- mean(samples[[1]][,4])
+      ensemble_pars[j, 5] <- mean(samples[[1]][,5])
+      ensemble_pars[j, 6] <- mean(samples[[1]][,6])
     }
   }  
   
