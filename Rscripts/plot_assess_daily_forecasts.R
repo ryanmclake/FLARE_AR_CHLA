@@ -12,7 +12,7 @@ timestep_numeric <- 1 # maybe timestep_numeric and timestep_interval are actuall
 timestep_interval <- 1 # the interval in between timesteps, e.g. 4day would be 4; daily would be 1; weekly would be 7
 max_timestep <- 14 #maximum number of timesteps that can be propagated to the max time horizon
 max_horizon <- 14 # maximum number of days that are propagated in this forecast (e.g. daily timestep has max_horizon = 16)
-sim_name <- '17Jul2020'
+sim_name <- 'update_bayes_method_Oct_2020'
 forecast_folder <- paste0(folder, "/FCR_forecasts", '/', timestep, '/', sim_name)
 null_folder <- paste0(folder, '/FCR_forecasts/', timestep, '/null_daily')
 bloom_threshold <- 17.1
@@ -172,7 +172,7 @@ for (i in 1:max_timestep) {
 
 metrics_overtime[,1] <-   seq(timestep_numeric, max_horizon, by = timestep_interval)
 metrics_overtime <- as.data.frame(metrics_overtime)
-write.csv(metrics_overtime, paste0(folder, '/FCR_forecasts/1day/null_daily/ForecastMetrics_', timestep, '.csv'), row.names = FALSE)
+write.csv(metrics_overtime, paste0(forecast_folder, '/ForecastMetrics_', timestep, '.csv'), row.names = FALSE)
 
 #################################################################################################################################################################################
 #################################################################################################################################################################################
