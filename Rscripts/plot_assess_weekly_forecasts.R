@@ -10,7 +10,7 @@ timestep_numeric <- 7 # maybe timestep_numeric and timestep_interval are actuall
 timestep_interval <- 7 # the interval in between timesteps, e.g. 4day would be 4; daily would be 1; weekly would be 7
 max_timestep <- 2 #maximum number of timesteps that can be propagated to the max time horizon
 max_horizon <- 14 # maximum number of days that are propagated in this forecast (e.g. daily timestep has max_horizon = 16)
-sim_name <- 'weekly_dischargeforecast_Apr2020'
+sim_name <- 'update_bayes_method_Oct_2020'
 forecast_folder <- paste0(folder, "/FCR_forecasts", '/', timestep, '/', sim_name)
 bloom_threshold <- 17.1
 setwd(forecast_folder)
@@ -33,31 +33,6 @@ stuff <- dataset_forecast
 stuff$forecast_date <- as.Date(stuff$forecast_date, "%Y-%m-%d")
 stuff <- stuff[order(stuff$forecast_date),]
 stuff$forecast_run_day <- as.Date(stuff$forecast_run_day, "%Y-%m-%d")
-
-# repeat but for files which end in 'weekly' instead of '7day'
-# read in the individual forecast files named for the day on which the forecast is made
-myfiles_forecast2 <- list.files(path = forecast_folder, pattern = paste0('*', 'weekly', ".csv"))
-dataset_forecast2 <- read.csv(paste0(forecast_folder, "/", myfiles_forecast2[1]))
-dataset_forecast2$timestep <- seq(1, max_timestep, by =1 )
-
-# read in files
-for (i in 2:length(myfiles_forecast2)) {
-  temp_2 <- read.csv(paste0(forecast_folder,"/", myfiles_forecast2[i]))
-  temp_2$timestep <-  seq(1, max_timestep, by =1 ) # this is the number of timesteps continued into the future, maybe should call this horizon?
-  dataset_forecast2 <- rbind(dataset_forecast2, temp_2)
-}
-
-# some data arranging
-stuff2 <- dataset_forecast2 
-stuff2$forecast_date <- as.Date(stuff2$forecast_date, "%Y-%m-%d")
-stuff2 <- stuff2[order(stuff2$forecast_date),]
-stuff2$day_in_future <- seq(timestep_numeric, max_horizon, by = timestep_interval)
-stuff2$forecast_run_day <- as.Date(stuff2$forecast_run_day, "%Y-%m-%d")
-
-# put stuff and stuff2 together
-stuff2 <- stuff2 %>% select(-week)
-stuff <- stuff %>% select(-day_in_future, day_in_future)
-stuff <- rbind(stuff2, stuff)
 
 
 # bring in the null model data
@@ -85,9 +60,9 @@ for (i in 1:max_timestep) {
 }
 
 
-  temp <- dataset_null[dataset_null$timestep==7,]
+  temp <- dataset_null[dataset_null$day_in_future==7,]
   write.csv(temp, paste0(folder, '/FCR_forecasts/', timestep, '/null_weekly' ,'/day_', 1, '_null.csv'), row.names = FALSE)
-  temp <- dataset_null[dataset_null$timestep==14,]
+  temp <- dataset_null[dataset_null$day_in_future==14,]
   write.csv(temp, paste0(folder, '/FCR_forecasts/', timestep, '/null_weekly' ,'/day_', 2, '_null.csv'), row.names = FALSE)
   
 
