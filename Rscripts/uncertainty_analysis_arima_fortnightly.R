@@ -13,7 +13,7 @@ timestep_numeric <- 14 # maybe timestep_numeric and timestep_interval are actual
 timestep_interval <- 14 # the interval in between timesteps, e.g. 4day would be 4; daily would be 1; weekly would be 7
 max_timestep <- 1 #maximum number of timesteps that can be propagated to the max time horizon
 max_horizon <- 14 # maximum number of days that are propagated in this forecast (e.g. daily timestep has max_horizon = 16)
-sim_name <- '22Jul2020'
+sim_name <- 'update_bayes_method_Oct_2020'
 folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
 forecast_folder <- paste0(folder, "/FCR_forecasts", '/', timestep, '/', sim_name)
 bloom_threshold <- 17.1
@@ -196,12 +196,12 @@ temp <- temp[!temp$variable=='total_var',]
 
 
 p <- ggplot() 
-p <- p + geom_area(data = temp, aes(x = forecast_date, y = measurement, fill = variable)) + 
+p <- p + geom_area(data = temp, position = 'stack', aes(x = forecast_date, y = measurement, fill = variable)) + 
   xlab('Date') +
   ylab('Proportion of Variance') +
-  scale_fill_manual(breaks = c('discharge', 'IC', 'parameter', 'process', 'weather') ,
-                    values = c('#4472C4', '#92D050', '#660066', '#C55A11', '#FFC000'),
-                    name = "Uncertainty Type") +
+  scale_fill_manual(labels = c('discharge', 'IC', 'parameter', 'process', 'meteorological') ,
+                  values = c('#4472C4', '#92D050', '#660066', '#C55A11', '#FFC000'),
+                  name = "Uncertainty Type") +
   ggtitle(paste0('Fortnightly Forecast, Day 14')) +
   scale_x_date( expand = c(0,0),labels = date_format('%b'), date_breaks = '3 months') +
   theme_bw() +
@@ -258,9 +258,9 @@ mean_prop_long$day_in_future <- as.factor(mean_prop_long$day_in_future)
 png(paste0(forecast_folder, '/Uncertainty_Bar_AcrossHorizon_Fortnightly.png'), width = 800, height = 885)
 ggplot(mean_prop_long, aes(x = day_in_future, y = measurement, fill = variable )) + 
   geom_bar(stat = 'identity', position= 'stack') +
-  scale_fill_manual(breaks = c('discharge', 'IC', 'parameter', 'process', 'weather') ,
+  scale_fill_manual(labels = c('discharge', 'IC', 'parameter', 'process', 'meteorological') ,
                     values = c('#4472C4', '#92D050', '#660066', '#C55A11', '#FFC000'),
-                    name = 'Uncertainty Type') +
+                    name = "Uncertainty Type") +
   xlab('Forecast Horizon (days)') +
   ylab('Proportion of Variance') +
   scale_x_discrete(breaks = c(7,14),
