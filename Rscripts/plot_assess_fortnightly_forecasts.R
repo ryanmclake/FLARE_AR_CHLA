@@ -12,7 +12,7 @@ timestep_numeric <- 14 # maybe timestep_numeric and timestep_interval are actual
 timestep_interval <- 14 # the interval in between timesteps, e.g. 4day would be 4; daily would be 1; weekly would be 7
 max_timestep <- 1 #maximum number of timesteps that can be propagated to the max time horizon
 max_horizon <- 14 # maximum number of days that are propagated in this forecast (e.g. daily timestep has max_horizon = 16)
-sim_name <- '22Jul2020'
+sim_name <- 'update_bayes_method_Oct_2020'
 forecast_folder <- paste0(folder, "/FCR_forecasts", '/', timestep, '/', sim_name)
 null_folder <- paste0(folder, '/FCR_forecasts/', timestep, '/null_fortnightly')
 bloom_threshold <- 17.1
