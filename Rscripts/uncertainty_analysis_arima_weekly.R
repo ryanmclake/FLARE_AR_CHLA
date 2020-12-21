@@ -8,7 +8,7 @@ reference_tzone <- "GMT"
 
 #set the location of the forecasts
 folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
-forecast_folder <- paste0(folder, '/FCR_forecasts/7day/weekly_dischargeforecast_Apr2020')
+forecast_folder <- paste0(folder, '/FCR_forecasts/7day/update_bayes_method_Oct_2020')
 
 # uncert_mode = 1, normal forecast run
 myfiles_forecast <- list.files(path = forecast_folder, pattern = paste0('*7day', ".csv"))
@@ -27,32 +27,6 @@ stuff$forecast_date <- as.Date(stuff$forecast_date, "%Y-%m-%d")
 stuff <- stuff[order(stuff$forecast_date),]
 stuff$forecast_run_day <- as.Date(stuff$forecast_run_day, "%Y-%m-%d")
 
-# repeat but for files which end in 'weekly' instead of '7day'
-# read in the individual forecast files named for the day on which the forecast is made
-myfiles_forecast2 <- list.files(path = forecast_folder, pattern = paste0('*', 'weekly', ".csv"))
-dataset_forecast2 <- read.csv(paste0(forecast_folder, "/", myfiles_forecast2[1]))
-
-# read in files
-for (i in 2:length(myfiles_forecast2)) {
-  temp_2 <- read.csv(paste0(forecast_folder,"/", myfiles_forecast2[i]))
-  dataset_forecast2 <- rbind(dataset_forecast2, temp_2)
-}
-
-# some data arranging
-stuff2 <- dataset_forecast2 
-stuff2$forecast_date <- as.Date(stuff2$forecast_date, "%Y-%m-%d")
-stuff2 <- stuff2[order(stuff2$forecast_date),]
-stuff2$day_in_future <- seq(7, 14, by = 7)
-stuff2$forecast_run_day <- as.Date(stuff2$forecast_run_day, "%Y-%m-%d")
-
-
-# put stuff and stuff2 together
-stuff2 <- stuff2 %>% select(-week)
-stuff <- stuff %>% select(-day_in_future, day_in_future)
-stuff <- rbind(stuff2, stuff)
-
-dataset <- stuff
-
 # read in each batch on uncertainty files
 ################ uncertainty 2 = process uncertainty
 myfiles_2 <- list.files(path = paste0(forecast_folder, "/uncertainty_2_process/"), pattern = "*7day.csv")
@@ -62,19 +36,6 @@ for (i in 2:length(myfiles_2)) {
   temp <- read.csv(paste0(forecast_folder, "/uncertainty_2_process/", myfiles_2[i]))
   dataset_2 <- rbind(dataset_2, temp)
 }
-
-myfiles_2_other <- list.files(path = paste0(forecast_folder, "/uncertainty_2_process"), pattern = "*weekly.csv")
-dataset_2_other <- read.csv(paste0(forecast_folder, "/uncertainty_2_process/", myfiles_2_other[1]))
-# read in files
-for (i in 2:length(myfiles_2_other)) {
-  temp <- read.csv(paste0(forecast_folder, "/uncertainty_2_process/", myfiles_2_other[i]))
-  dataset_2_other <- rbind(dataset_2_other, temp)
-}
-#colnames(dataset_6_other)[colnames(dataset_6_other)=='week'] <- 'day_in_future'
-dataset_2_other <- dataset_2_other %>% mutate(day_in_future=ifelse(week>1,14,7))
-dataset_2_other <- dataset_2_other %>% select(-week)
-
-dataset_2 <- rbind(dataset_2_other, dataset_2)
 
 
 ############### uncertainty 3 = weather uncertainty
@@ -86,18 +47,6 @@ for (i in 2:length(myfiles_3)) {
   dataset_3 <- rbind(dataset_3, temp)
 }
 
-myfiles_3_other <- list.files(path = paste0(forecast_folder, "/uncertainty_3_weather"), pattern = "*weekly.csv")
-dataset_3_other <- read.csv(paste0(forecast_folder, "/uncertainty_3_weather/", myfiles_3_other[1]))
-# read in files
-for (i in 2:length(myfiles_3_other)) {
-  temp <- read.csv(paste0(forecast_folder, "/uncertainty_3_weather/", myfiles_3_other[i]))
-  dataset_3_other <- rbind(dataset_3_other, temp)
-}
-dataset_3_other <- dataset_3_other %>% mutate(day_in_future=ifelse(week>1,14,7))
-dataset_3_other <- dataset_3_other %>% select(-week)
-dataset_3 <- rbind(dataset_3_other, dataset_3)
-
-
 ############### uncertainty 4 = initial condition uncertainty
 myfiles_4 <- list.files(path = paste0(forecast_folder, "/uncertainty_4_initial_condition/"), pattern = "*7day.csv")
 dataset_4 <- read.csv(paste0(forecast_folder, "/uncertainty_4_initial_condition/", myfiles_4[1]))
@@ -106,17 +55,6 @@ for (i in 2:length(myfiles_4)) {
   temp <- read.csv(paste0(forecast_folder, "/uncertainty_4_initial_condition/", myfiles_4[i]))
   dataset_4 <- rbind(dataset_4, temp)
 }
-
-myfiles_4_other <- list.files(path = paste0(forecast_folder, "/uncertainty_4_initial_condition"), pattern = "*weekly.csv")
-dataset_4_other <- read.csv(paste0(forecast_folder, "/uncertainty_4_initial_condition/", myfiles_4_other[1]))
-# read in files
-for (i in 2:length(myfiles_4_other)) {
-  temp <- read.csv(paste0(forecast_folder, "/uncertainty_4_initial_condition/", myfiles_4_other[i]))
-  dataset_4_other <- rbind(dataset_4_other, temp)
-}
-dataset_4_other <- dataset_4_other %>% mutate(day_in_future=ifelse(week>1,14,7))
-dataset_4_other <- dataset_4_other %>% select(-week)
-dataset_4 <- rbind(dataset_4_other, dataset_4)
 
 ############### uncertainty 5 = parameter uncertainty
 myfiles_5 <- list.files(path = paste0(forecast_folder, "/uncertainty_5_parameter"), pattern = "*7day.csv")
@@ -127,17 +65,6 @@ for (i in 2:length(myfiles_5)) {
   dataset_5 <- rbind(dataset_5, temp)
 }
 
-myfiles_5_other <- list.files(path = paste0(forecast_folder, "/uncertainty_5_parameter"), pattern = "*weekly.csv")
-dataset_5_other <- read.csv(paste0(forecast_folder, "/uncertainty_5_parameter/", myfiles_5_other[1]))
-# read in files
-for (i in 2:length(myfiles_5_other)) {
-  temp <- read.csv(paste0(forecast_folder, "/uncertainty_5_parameter/", myfiles_5_other[i]))
-  dataset_5_other <- rbind(dataset_5_other, temp)
-}
-dataset_5_other <- dataset_5_other %>% mutate(day_in_future=ifelse(week>1,14,7))
-dataset_5_other <- dataset_5_other %>% select(-week)
-dataset_5 <- rbind(dataset_5_other, dataset_5)
-
 ############### uncertainty 6 = discharge driver uncertainty
 myfiles_6 <- list.files(path = paste0(forecast_folder, "/uncertainty_6_discharge"), pattern = "*7day.csv")
 dataset_6 <- read.csv(paste0(forecast_folder, "/uncertainty_6_discharge/", myfiles_6[1]))
@@ -146,19 +73,6 @@ for (i in 2:length(myfiles_6)) {
   temp <- read.csv(paste0(forecast_folder, "/uncertainty_6_discharge/", myfiles_6[i]))
   dataset_6 <- rbind(dataset_6, temp)
 }
-
-myfiles_6_other <- list.files(path = paste0(forecast_folder, "/uncertainty_6_discharge"), pattern = "*weekly.csv")
-dataset_6_other <- read.csv(paste0(forecast_folder, "/uncertainty_6_discharge/", myfiles_6_other[1]))
-# read in files
-for (i in 2:length(myfiles_6_other)) {
-  temp <- read.csv(paste0(forecast_folder, "/uncertainty_6_discharge/", myfiles_6_other[i]))
-  dataset_6_other <- rbind(dataset_6_other, temp)
-}
-#colnames(dataset_6_other)[colnames(dataset_6_other)=='week'] <- 'day_in_future'
-dataset_6_other <- dataset_6_other %>% mutate(day_in_future=ifelse(week>1,14,7))
-dataset_6_other <- dataset_6_other %>% select(-week)
-
-dataset_6 <- rbind(dataset_6_other, dataset_6)
 
 
 process <- mean(dataset_2$forecast_variance, na.rm = TRUE)
@@ -262,13 +176,14 @@ temp <- rbind(process_prop, weather_prop)
 temp <- rbind(temp, discharge_prop)
 temp <- rbind(temp, IC_prop)
 temp <- rbind(temp, parameter_prop)
-
+temp$variable <- as.factor(temp$variable)
 
 p <- ggplot() 
-p <- p + geom_area(data = temp, aes(x = forecast_date, y = measurement, fill = variable)) + 
+p <- p + 
+  geom_area(data = temp, aes(x = forecast_date, y = measurement, fill = variable)) + 
   xlab('Date') +
   ylab('Proportion of Variance') +
-  scale_fill_manual(breaks = c('discharge', 'IC', 'parameter', 'process', 'weather') ,
+  scale_fill_manual(labels = c('discharge', 'IC', 'parameter', 'process', 'meteorological') ,
                     values = c('#4472C4', '#92D050', '#660066', '#C55A11', '#FFC000'),
                     name = "Uncertainty Type") +
   ggtitle(paste0('Weekly Forecast, Day 7')) +
@@ -282,7 +197,8 @@ p <- p + geom_area(data = temp, aes(x = forecast_date, y = measurement, fill = v
         legend.text = element_text(size = 30),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
-        plot.title = element_text(size = 50))
+        plot.title = element_text(size = 50),
+        legend.position = 'none')
 p <- p + geom_line(data = var, aes(x = forecast_date, y = measurement), lwd = 1.5) +
   scale_y_continuous(expand = c(0,0), sec.axis = sec_axis(~., name = expression (paste("Total Variance (",~μg/L^2,")"  )))) 
 
@@ -324,7 +240,7 @@ p <- ggplot()
 p <- p + geom_area(data = temp, aes(x = forecast_date, y = measurement, fill = variable)) + 
   xlab('Date') +
   ylab('Proportion of Variance') +
-  scale_fill_manual(breaks = c('discharge', 'IC', 'parameter', 'process', 'weather') ,
+  scale_fill_manual(labels = c('discharge', 'IC', 'parameter', 'process', 'meteorological') ,
                     values = c('#4472C4', '#92D050', '#660066', '#C55A11', '#FFC000'),
                     name = "Uncertainty Type") +
   ggtitle(paste0('Weekly Forecast, Day 14')) +
@@ -338,7 +254,8 @@ p <- p + geom_area(data = temp, aes(x = forecast_date, y = measurement, fill = v
         legend.text = element_text(size = 30),
         #panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
-        plot.title = element_text(size = 50))
+        plot.title = element_text(size = 50),
+        legend.position = 'none')
 p <- p + geom_line(data = var, aes(x = forecast_date, y = measurement), lwd = 1.5) +
   scale_y_continuous(expand = c(0,0),sec.axis = sec_axis(~., name = expression (paste("Total Variance (",~μg/L^2,")"  )) )) 
 
@@ -386,7 +303,31 @@ mean_prop_long$day_in_future <- as.factor(mean_prop_long$day_in_future)
 png(paste0(forecast_folder, '/Uncertainty_Bar_AcrossHorizon_Weekly.png'), width = 800, height = 885)
 ggplot(mean_prop_long, aes(x = day_in_future, y = measurement, fill = variable )) + 
   geom_bar(stat = 'identity', position= 'stack') +
-  scale_fill_manual(breaks = c('discharge', 'IC', 'parameter', 'process', 'weather') ,
+  scale_fill_manual(labels = c('discharge', 'IC', 'parameter', 'process', 'weather') ,
+                    values = c('#4472C4', '#92D050', '#660066', '#C55A11', '#FFC000'),
+                    name = 'Uncertainty Type') +
+  xlab('Forecast Horizon (days)') +
+  ylab('Proportion of Variance') +
+  scale_x_discrete(breaks = c(7,14),
+                   labels = c('7','14')) +
+  theme_bw() +
+  theme(axis.text.x = element_text(size = 30),
+        axis.text.y = element_text(size = 40),
+        axis.title.x = element_text(size =45),
+        axis.title.y = element_text(size = 45),
+        legend.title = element_text(size = 35),
+        legend.text = element_text(size = 30),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        legend.position = 'none') 
+dev.off()
+
+# create figure with legend
+png(paste0(forecast_folder, '/LEGEND.png'), width = 800, height = 885)
+ggplot(mean_prop_long, aes(x = day_in_future, y = measurement, fill = variable )) + 
+  geom_bar(stat = 'identity', position= 'stack') +
+  scale_fill_manual(labels = c('discharge', 'initial condition', 'parameter', 'process', 'weather') ,
                     values = c('#4472C4', '#92D050', '#660066', '#C55A11', '#FFC000'),
                     name = 'Uncertainty Type') +
   xlab('Forecast Horizon (days)') +
@@ -404,4 +345,3 @@ ggplot(mean_prop_long, aes(x = day_in_future, y = measurement, fill = variable )
         panel.grid.minor = element_blank(),
         panel.border = element_blank()) 
 dev.off()
-

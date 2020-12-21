@@ -213,7 +213,8 @@ p <- p + geom_area(data = temp, position = 'stack', aes(x = forecast_date, y = m
         legend.text = element_text(size = 30),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
-        plot.title = element_text(size = 50))
+        plot.title = element_text(size = 50),
+        legend.position = 'none')
 p <- p + geom_line(data = var, aes(x = forecast_date, y = measurement), lwd = 1.5) +
   scale_y_continuous(expand = c(0,0), sec.axis = sec_axis(~., name = expression (paste("Total Variance (",~μg/L^2,")"  )))) 
 
@@ -274,7 +275,8 @@ ggplot(mean_prop_long, aes(x = day_in_future, y = measurement, fill = variable )
         legend.text = element_text(size = 30),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
-        panel.border = element_blank()) 
+        panel.border = element_blank(),
+        legend.position = 'none') 
 dev.off()
 
 
