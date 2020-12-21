@@ -5,7 +5,7 @@ library(scales)
 
 folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
 
-daily <- read.csv(paste0(folder, '/FCR_forecasts/1day/null_daily/ForecastMetrics_1day.csv'))
+daily <- read.csv(paste0(folder, '/FCR_forecasts/1day/update_bayes_method_Oct_2020/ForecastMetrics_1day.csv'))
 seven_day <- read.csv(paste0(folder, '/FCR_forecasts/7day/null_weekly/ForecastMetrics_7day.csv'))
 fourteen_day <- read.csv(paste0(folder, '/FCR_forecasts/14day/null_fortnightly/ForecastMetrics_14day.csv'))
 
@@ -86,23 +86,29 @@ legend('topleft', c('null', 'forecast', 'null nonbloom', 'forecast nonbloom'), c
 # multi-panel figure
 png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/RMSE_fig_1day7day14dayforecasts/RMSE_all_conditions_RWnull.png'), width = 1100, height = 800)
 par(mar = c(5,5,4,2), mfrow = c(2,2))
-plot(metrics_overtime$day_in_future, metrics_overtime$daily_nonbloom_null, col = 'red', pch =4, ylim = c(0,11), xlim = c(0,14), main = 'Non-Bloom', cex.main = 2, cex.axis = 2, cex.lab = 2, cex = 3, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
+plot(metrics_overtime$day_in_future, metrics_overtime$daily_nonbloom_null, col = 'red',  ylim = c(0,11), xlim = c(0,14), main = 'Non-Bloom', cex.main = 2, cex.axis = 2, cex.lab = 2, cex = 3, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
 points(metrics_overtime$day_in_future, metrics_overtime$daily_nonbloom, col = 'blue', cex = 3)
 points(metrics_overtime$day_in_future, metrics_overtime$weekly_nonbloom,  col = 'blue', pch = 0, cex = 3)
+points(metrics_overtime$day_in_future, metrics_overtime$weekly_nonbloom_null,  col = 'red', pch = 0, cex = 3)
 points(metrics_overtime$day_in_future, metrics_overtime$fortnightly_nonbloom, col = 'blue', pch = 2, cex = 3)
-legend('topleft', c('null', 'daily', 'weekly', 'fortnightly' ), cex = 1.6, col = c('red', 'blue', 'blue', 'blue'), pch = c(4, 1,  0,  2), bty = 'n')
+points(metrics_overtime$day_in_future, metrics_overtime$fortnightly_nonbloom_null, col = 'red', pch = 2, cex = 3)
+legend('topleft', c('daily forecast', 'weekly forecast', 'fortnightly forecast', 'daily null', 'weekly null', 'fortnightly null' ), cex = 1.6, col = c('blue', 'blue', 'blue', 'red', 'red', 'red'), pch = c(1,  0,  2, 1, 0, 2), bty = 'n')
 
 par(mar = c(5,5,4,2))
-plot(metrics_overtime$day_in_future, metrics_overtime$daily_bloom_null, col = 'red', pch = 4, ylim = c(0,35), xlim = c(0,14), main = 'Bloom', cex.main = 2, cex.axis = 2, cex.lab = 2, cex = 3, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
+plot(metrics_overtime$day_in_future, metrics_overtime$daily_bloom_null, col = 'red', ylim = c(0,35), xlim = c(0,14), main = 'Bloom', cex.main = 2, cex.axis = 2, cex.lab = 2, cex = 3, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
 points(metrics_overtime$day_in_future, metrics_overtime$daily_bloom, col = 'blue', cex = 3)
 points(metrics_overtime$day_in_future, metrics_overtime$weekly_bloom,  col = 'blue', pch = 0, cex = 3)
+points(metrics_overtime$day_in_future, metrics_overtime$weekly_bloom_null,  col = 'red', pch = 0, cex = 3)
 points(metrics_overtime$day_in_future, metrics_overtime$fortnightly_bloom, col = 'blue', pch = 2, cex = 3)
+points(metrics_overtime$day_in_future, metrics_overtime$fortnightly_bloom_null, col = 'red', pch = 2, cex = 3)
 
 par(mar = c(5,5,4,2))
-plot(metrics_overtime$day_in_future, metrics_overtime$daily_null, col = 'red', pch = 4, xlim = c(0,14), ylim = c(0,11), main = '1.5 Years',  cex.axis = 2, cex.main = 2, cex.lab = 2, cex = 3, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
+plot(metrics_overtime$day_in_future, metrics_overtime$daily_null, col = 'red', xlim = c(0,14), ylim = c(0,11), main = '1.5 Years',  cex.axis = 2, cex.main = 2, cex.lab = 2, cex = 3, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
 points(metrics_overtime$day_in_future, metrics_overtime$daily, col = 'blue', cex = 3)
 points(metrics_overtime$day_in_future, metrics_overtime$weekly,  col = 'blue', pch = 0, cex = 3)
+points(metrics_overtime$day_in_future, metrics_overtime$weekly_null,  col = 'red', pch = 0, cex = 3)
 points(metrics_overtime$day_in_future, metrics_overtime$fortnightly, col = 'blue', pch = 2, cex = 3)
+points(metrics_overtime$day_in_future, metrics_overtime$fortnightly_null, col = 'red', pch = 2, cex = 3)
 
 dev.off()
 
