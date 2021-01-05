@@ -47,7 +47,7 @@ forecast_days <-max_horizon
 DOWNSCALE_MET <- FALSE # if FALSE<-not accounting for uncertainty in meteorological downscaling of NOAA forecasts
 met_ds_obs_start = as.Date("2018-04-06")
 met_ds_obs_end = Sys.Date()
-uncert_mode = 4
+uncert_mode = 6
 data_assimilation = TRUE
 local_tzone <- "EST5EDT"
 include_wq <<- FALSE
@@ -62,7 +62,7 @@ num_forecast_periods <- 365 # number of times the script will loop through autom
 
 
 # initialize forecast time
-forecast_start_day <-"2019-11-04 00:00:00" # day the forecast initialized
+forecast_start_day <-"2020-01-02 00:00:00" # day the forecast initialized
 start_day <- forecast_start_day 
 start_day <- as.POSIXct(start_day, format = "%Y-%m-%d %H:%M:%S")
 hist_days <- 1
