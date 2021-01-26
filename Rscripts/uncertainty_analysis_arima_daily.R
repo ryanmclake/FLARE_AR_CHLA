@@ -2,6 +2,8 @@
 library(rsq)
 library(tidyverse)
 library(Metrics)
+library(lubridate)
+library(scales)
 reference_tzone <- "GMT"
 
 #set the location of the forecasts
@@ -330,8 +332,32 @@ ggplot(mean_prop_long, aes(x = horizon, y = measurement, fill = variable )) +
         legend.text = element_text(size = 30),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
-        panel.border = element_blank(),
-        legend.position = 'none')  
+        panel.border = element_blank())#,
+        #legend.position = 'none')  
+dev.off()
+
+# save figure of just the legend
+png(paste0(forecast_folder, '/Uncertainty_Legend.png'), width = 800, height = 885)
+ggplot(mean_prop_long, aes(x = horizon, y = measurement, fill = variable )) + 
+  geom_bar(stat = 'identity', position= 'stack') +
+  scale_fill_manual(labels = c('discharge', 'initial conditions', 'parameter', 'process', 'meteorological') ,
+                    values = c('#4472C4', '#92D050', '#660066', '#C55A11', '#FFC000'),
+                    name = 'Uncertainty Type') +
+  xlab('Forecast Horizon (days)') +
+  ylab('Proportion of Variance') +
+  scale_x_discrete(breaks = c(7,14),
+                   labels = c('7','14')) +
+  theme_bw() +
+  theme(axis.text.x = element_blank(),
+       # axis.text.y = element_blank(),
+        axis.title.x = element_text(size =45),
+        axis.title.y = element_text(size = 45),
+        legend.title = element_text(size = 35),
+        legend.text = element_text(size = 30),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank())#,
+#legend.position = 'none')  
 dev.off()
 
 
