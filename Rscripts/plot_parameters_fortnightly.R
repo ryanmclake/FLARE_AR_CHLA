@@ -9,7 +9,8 @@ reference_tzone <- "GMT"
 #set the location of the forecasts
 folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
 timestep <- '14day'
-forecast_folder <- paste0(folder, "/FCR_forecasts", '/', timestep, '/22Jul2020')
+sim_name <- 'update_bayes_method_Oct_2020'
+forecast_folder <- paste0(folder, "/FCR_forecasts", '/', timestep, '/', sim_name)
 
 # code to read in the individual forecast files named for the day on which the forecast is made
 myfiles <- list.files(path = forecast_folder, pattern = "*ensemble_parameters.csv")
@@ -21,7 +22,7 @@ for (i in 2:length(myfiles)) {
   dataset <- rbind(dataset, temp)
 }
 
-colnames(dataset) <- c('intercept', 'chl_parm', 'discharge_parm', 'sw_parm', 'error_term')
+colnames(dataset) <- c('latent_chl', 'intercept', 'chl_parm', 'discharge_parm', 'sw_parm', 'error_term')
 
 # these plots are of all the ensemble members and aren't really that useful
 plot(dataset$intercept)
@@ -51,8 +52,9 @@ stuff$forecast_run_day <- as.Date(stuff$forecast_run_day, "%Y-%m-%d")
 parms <- stuff[!duplicated(stuff$forecast_run_day),]
 plot(parms$forecast_date, parms$par1, type = 'l', ylab = 'Intercept')
 plot(parms$forecast_date, parms$par2, type = 'l', ylab = 'Chl parm')
-plot(parms$forecast_date, parms$par3, type = 'l', ylab = 'Shortwave parm')
-plot(parms$forecast_date, parms$par4, type = 'l', ylab = 'error term')
+plot(parms$forecast_date, parms$par3, type = 'l', ylab = 'Discharge parm')
+plot(parms$forecast_date, parms$par4, type = 'l', ylab = 'Shortwave parm')
+plot(parms$forecast_date, parms$par5, type = 'l', ylab = 'Error term')
 
 #remove spinup
 parms <- parms[parms$forecast_run_day>'2018-12-31',]
