@@ -131,7 +131,7 @@ file.copy(from = paste0(old_folder, "/", names), to = paste0(new_folder, "/", ne
 #####################################################################################################
 # parameter output files
 
-new_folder <- './FCR_forecasts/parameter_folder_EDI'
+new_folder <- './FCR_forecasts/parameter_output_EDI'
 old_folder <- './FCR_forecasts/1day/update_bayes_method_Oct_2020'
 dir.create(new_folder)
 names <- list.files(path = old_folder, pattern = '*parameters.csv')
