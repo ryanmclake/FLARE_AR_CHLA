@@ -117,8 +117,16 @@ newNames <- sub("chla_14day.csv", "chla_14day_uncert4.csv", names)
 file.copy(from = paste0(old_folder, "/", names), to = paste0(new_folder, "/", newNames))
 
 # do again for 14day files in each of the uncertainty folders, uncertainty_5_parameter
+old_folder <- './FCR_forecasts/14day/update_bayes_method_Oct_2020/uncertainty_5_parameter'
+names <- list.files(path = old_folder, pattern = '*chla_14day.csv')
+newNames <- sub("chla_14day.csv", "chla_14day_uncert5.csv", names)
+file.copy(from = paste0(old_folder, "/", names), to = paste0(new_folder, "/", newNames))
 
 # do again for 14day files in each of the uncertainty folders, uncertainty_6_discharge
+old_folder <- './FCR_forecasts/14day/update_bayes_method_Oct_2020/uncertainty_6_discharge'
+names <- list.files(path = old_folder, pattern = '*chla_14day.csv')
+newNames <- sub("chla_14day.csv", "chla_14day_uncert6.csv", names)
+file.copy(from = paste0(old_folder, "/", names), to = paste0(new_folder, "/", newNames))
 
 #####################################################################################################
 # parameter output files
@@ -132,8 +140,16 @@ newNames <- sub("parameters.csv", "parameters_1day_uncert1.csv", names)
 file.copy(from = paste0(old_folder, "/", names), to = paste0(new_folder, "/", newNames))
 
 # do again for 7day parameter output
+old_folder <- './FCR_forecasts/7day/update_bayes_method_Oct_2020'
+names <- list.files(path = old_folder, pattern = '*parameters.csv')
+newNames <- sub("parameters.csv", "parameters_7day_uncert1.csv", names)
+file.copy(from = paste0(old_folder, "/", names), to = paste0(new_folder, "/", newNames))
 
 # do again for 14day parameter output
+old_folder <- './FCR_forecasts/14day/update_bayes_method_Oct_2020'
+names <- list.files(path = old_folder, pattern = '*parameters.csv')
+newNames <- sub("parameters.csv", "parameters_14day_uncert1.csv", names)
+file.copy(from = paste0(old_folder, "/", names), to = paste0(new_folder, "/", newNames))
 
 # DO NOT NEED TO DO SAVE PARAMETER OUTPUT FOR UNCERTAINTY MODES 2-6
 
@@ -148,5 +164,13 @@ newNames <- sub("null_summary.csv", "null_summary_1day.csv", names)
 file.copy(from = paste0(old_folder, "/", names), to = paste0(new_folder, "/", newNames))
 
 # do again for 7day null
+old_folder <- './FCR_forecasts/7day/null_weekly'
+names <- list.files(path = old_folder, pattern = '*null_summary.csv')
+newNames <- sub("null_summary.csv", "null_summary_7day.csv", names)
+file.copy(from = paste0(old_folder, "/", names), to = paste0(new_folder, "/", newNames))
 
 # do again for 14day null
+old_folder <- './FCR_forecasts/14day/null_fortnightly'
+names <- list.files(path = old_folder, pattern = '*null_summary.csv')
+newNames <- sub("null_summary.csv", "null_summary_14day.csv", names)
+file.copy(from = paste0(old_folder, "/", names), to = paste0(new_folder, "/", newNames))
