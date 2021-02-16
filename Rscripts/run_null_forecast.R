@@ -51,21 +51,23 @@ run_null <- function(
 model {
   
 ## Priors
-  sigma ~ dunif(0.001, 100) # prior for standard deviation of sigma, process error
-	tau_process <- 1 / (sigma * sigma) # bayes uses precision, 1/sd^2
-	tau_obs <- 1/(sd_obs*sd_obs) # precision for obs error, 1/sd of observation error ^2
-  latent.chl[1] ~ dnorm(x_ic, tau_obs) #latent.chl is latent state 
-  chla[1] ~ dnorm(latent.chl[1], tau_obs) 
+sd_process ~ dunif(0.001, 100) # prior for standard deviation of process error distribution
+tau_process <- 1 / (sd_process * sd_process) # jags uses precision, 1/sd^2
+tau_obs <- 1/(sd_obs*sd_obs) # precision for obs error, 1/sd of observation error ^2
+  
+# initialize latent state
+latent.chl[1] ~ dnorm(x_ic, tau_process)
+y[1] ~ dnorm(latent.chl[1], tau_obs)
 
-## observation error and process model
-  for (i in 2:N) {
-    latent.chl[i] ~ dnorm(latent.chl[i-1], tau_process) 
-        chla[i] ~ dnorm(latent.chl[i], tau_obs) # chla vector includes process (and parameter, tau_process) error + observation error
+
+  for(i in 2:N){
+  # process model
+    chl[i] <- latent.chl[i-1] 
+    latent.chl[i] ~ dnorm(chl[i], tau_process) 
   }
   
-  
-## Data Model
-  for(t in 1:nobs){
+  ## Data Model
+  for(t in 2:nobs){
     y[t] ~ dnorm(latent.chl[y_index[t]],tau_obs)
   }
 
@@ -75,7 +77,7 @@ model {
                         data = list('y' = y_gaps,
                                     'y_index' = y_index,
                                     'nobs' = length(y_index),
-                                    'sd_obs' = 0.5,
+                                    'sd_obs' = 0.21,
                                     'x_ic' = obs$chla_sqrt[1],
                                     'N' = N),
                         n.chains = 4,
@@ -86,11 +88,11 @@ model {
   
   #sample from posterier starting from the end of the burn in.  The coda.samples track samples for a trace plot
   samples = coda.samples(model = j.model,
-                         variable.names = c( 'chla', 'sigma'),
+                         variable.names = c( 'chl', 'sd_process'),
                          n.iter = 10000)
   
   #### diagnostics
-  # gelman.diag(samples)
+   gelman.diag(samples)
   # library(LaplacesDemon)
   # ESS(samples)
   
@@ -100,12 +102,12 @@ model {
   colnames(null_out) <- c('mean', 'upper_CI', 'lower_CI', 'date', 'forecast_run_day', 'day_in_future', 'timestep')
   
   
-  for (i in 1:length(full_time) ){
+  for (i in 1:length(full_time)-1){
     p <- sample(seq(1,length(samples[[1]][,i])), 420, replace = TRUE) # pick 420 random numbers from the first chain, i'th column
     temp <- samples[[1]][p,i]
-    null_out[i,1] <-  mean(temp)^2
-    null_out[i,2] <-  qnorm(0.975, mean = mean(temp), sd =sd(temp) )^2 #upper CI
-    null_out[i,3] <- qnorm(0.025, mean = mean(temp), sd =sd(temp) )^2 #lower CI
+    null_out[i+1,1] <-  mean(temp)^2
+    null_out[i+1,2] <-  qnorm(0.975, mean = mean(temp), sd =sd(temp) )^2 #upper CI
+    null_out[i+1,3] <- qnorm(0.025, mean = mean(temp), sd =sd(temp) )^2 #lower CI
   }
   
   null_out$date <- full_time 
@@ -114,6 +116,13 @@ model {
   
   # save only the forecasted data at end of time series
   null_save <- null_out[null_out$date %in% forecast_time,]
+  plot(null_out$date, null_out$mean, type = 'l', ylim = c(0, 20))
+  points(null_out$date, null_out$upper_CI)
+  points(null_out$date, null_out$lower_CI)
+  # check plot
+  plot(null_save$date, null_save$mean, type = 'l', ylim = c(0, 20))
+  points(null_save$date, null_save$upper_CI)
+  points(null_save$date, null_save$lower_CI)
   
   null_save$forecast_run_day <- forecast_start_day
   if(timestep=='1day'){
