@@ -467,14 +467,13 @@ if(weather_uncertainty==TRUE){
 #########################################################################################################################
 ###### data assimilation  ###############################################################################################
 #########################################################################################################################
-
   if(data_assimilation){
-  # read in file with all data and subset to the forecast day
-  data <- read.csv(paste0(folder, '/training_datasets/data_arima_', timestep, '_through_2020.csv'))
-  data$Date <- as.Date(data$Date)
-  data <- data[data$Date<=forecast_start_day,]
-  print('data subsetted to forecast start day')
-  
+    # read in file with all data and subset to the forecast day
+    data <- read.csv(paste0(folder, '/training_datasets/data_arima_', timestep, '_through_2020.csv'))
+    data$Date <- as.Date(data$Date)
+    data <- data[data$Date<=forecast_start_day,]
+    print('data subsetted to forecast start day')
+    
   }else{
     data <- read.csv(paste0(folder, '/data_arima_', timestep, '_through_2020.csv'))
     data$Date <- as.Date(data$Date)
@@ -486,77 +485,97 @@ if(weather_uncertainty==TRUE){
   library(PerformanceAnalytics)
   
   setwd(folder)
-
+  
   #Full time series with gaps
   y <- c(data$Chla_sqrt)
   time <- c(data$Date)
-  #Indexes of full time series with gaps
-  y_index <- 1:length(y)
-  #Remove gaps
-  y_gaps <- y[!is.na(y)]
-  #keep indexes to reference the gappy time series
-  y_index <- y_index[!is.na(y)]
+  
   
   obs <- na.omit(data)
   
   # define time vector
   N <- nrow(obs)
- 
+  
+  
   AR = '
 model {
-  
-#### priors
-   #Vague priors on the beta
-  for(j in 1:4){
-    beta[j] ~ dnorm(0,1/100000)
-  }
-  
-  sigma ~ dunif(0.001, 100) # prior for standard deviation of sigma, process error
-	tau_process <- 1 / (sigma * sigma) # bayes uses precision, 1/sd^2
-	tau_obs <- 1/(sd_obs*sd_obs) # precision for obs error, 1/sd of observation error ^2
-	tau_ic <- 1/(sd_obs*sd_obs) # precision for obs error, 1/sd of observation error ^2
-  latent.chl[1] ~ dnorm(x_ic, tau_ic) #latent.chl is latent state 
-  chla[1] ~ dnorm(latent.chl[1], tau_obs) #chla is the predictions
 
-#### observation error and process model
-  for (i in 2:N) {
-    chla[i] ~ dnorm(latent.chl[i], tau_process) # chla vector includes process, parameter, and observation error  
-    latent.chl[i] = beta[1] + beta[2]*chla_lag[i] + beta[3]*discharge[i] + beta[4]*sw[i]
-        
+sd_beta <- 1000
+
+#Vague priors on the beta
+
+  beta1 ~ dnorm(0,1/(sd_beta*sd_beta))
+  beta2 ~ dnorm(0,1/(sd_beta*sd_beta))
+  beta3 ~ dnorm(0,1/(sd_beta*sd_beta))
+  beta4 ~ dnorm(0,1/(sd_beta*sd_beta))
+
+
+sd_process ~ dunif(0.001, 100) # prior for standard deviation of process error distribution
+tau_process <- 1 / (sd_process * sd_process) # jags uses precision, 1/sd^2
+tau_obs <- 1/(sd_obs*sd_obs) # precision for obs error, 1/sd of observation error ^2
+
+
+
+# initialize latent state
+latent.chl[1] ~ dnorm(x_ic, tau_process)
+y[1] ~ dnorm(latent.chl[1], tau_obs)
+
+
+  for(i in 2:N){
+  # data model
+    y[i] ~ dnorm(latent.chl[i], tau_obs)
+    
+  # process model
+    chl[i] <- beta1 + beta2*latent.chl[i-1] + beta3*discharge[i] + beta4*sw[i]
+    latent.chl[i] ~ dnorm(chl[i], tau_process) 
   }
-  
-#### save the last latent.chl value for IC to run the forecast  
+
   IC_forecast <- latent.chl[N]
-  
-##### data model
-#  for(t in 1:nobs){
-#  y[t] ~ dnorm(latent.chl[y_index[t]],tau_obs)
-#  }
+
 
 }'
   
+  #Initialize parameters 
+  nchain = 4
+  chain_seeds <- c(200,800,1400, 600)
+  #param <- c(-5, 0, 5, 10)
+  init <- list()
+  for(i in 1:nchain){
+    init[[i]] <- list(sd_process = 0.5,
+                      beta1 = rnorm(1, 1.65, 0.26), # initial conditions for beta parameters taken from
+                      beta2 = rnorm(1, 0.46, 0.08), # weekly training dataset model fitting
+                      beta3 = rnorm(1, -3.05, 1.39), 
+                      beta4 = rnorm(1, -0.0025, 0.00064),
+                      .RNG.name = "base::Wichmann-Hill",
+                      .RNG.seed = chain_seeds[i])
+  }
+  
   j.model <- jags.model(file = textConnection(AR),
                         data = list(
-                          #'y' = y_gaps, # data index without gaps
-                          #          'y_index' = y_index,
-                          #          'nobs' = length(y_index),
-                                    'sd_obs' = 0.5,
-                                    'x_ic' = obs$Chla_sqrt[1],
-                                    'chla' = obs$Chla_sqrt,
-                                    'chla_lag' = obs$Chla_ARlag_timestep_sqrt,
-                                    'discharge' = obs$mean_flow,
-                                    'sw' = obs$ShortWave_mean,
-                                    'N' = N),
+                          'sd_obs' = 0.21,
+                          'x_ic' = obs$Chla_sqrt[1],
+                          'y' = obs$Chla_sqrt,
+                          'discharge' = obs$mean_flow,
+                          'sw' = obs$ShortWave_mean,
+                          'N' = N),
+                        inits = init,
                         n.chains = 4,
-                        n.adapt = 100)  
+                        n.adapt = 1000)  
   
   #burn in, this updates the jags$state()
   update(j.model,n.iter = 1000)
   
   #sample from posterier starting from the end of the burn in.  The coda.samples track samples for a trace plot
   samples = coda.samples(model = j.model,
-                         variable.names = c('IC_forecast', 'beta','sigma'),
+                         variable.names = c('IC_forecast', 'beta1', 'beta2', 'beta3', 'beta4', 'sd_process'),
                          n.iter = 10000)
+  
+  #### diagnostics
+  #gelman.diag(samples)
+  #traceplot(samples)
+  
+  # library(LaplacesDemon)
+  #ESS(samples)
   
   par_matrix <- as.matrix(samples[1])
   t <- nrow(data) # this is the the last observation in the dataset, therefore the distribution of latent chl to index as IC for the model
@@ -570,7 +589,7 @@ model {
   ensemble_pars <- array(NA, dim = c(nmembers, npars)) 
   
   # order of MCMC output
-  # IC_forecast, beta 1, bea2, beta3, beta 4, sigma
+  # IC_forecast, beta 1, beta2, beta3, beta4, sd_process
   
   # for loop to sample from distribution of each parameter value
   for(j in 1:nmembers){
@@ -624,7 +643,7 @@ model {
   }  
   
   
-  # the model!
+  # the model! performed in sqrt transformed CTD units
     for (i in 2:nsteps) {
       met_index <- 1
     for(j in 1:nmembers){  
@@ -636,12 +655,13 @@ model {
       if(initial_condition_uncertainty == TRUE){
         x[1,j,] <- ensemble_pars[j,1]
       }else{
-        x[1,,] <- sqrt(chla_obs[[1]][1,1]*0.55 - 0.0308)  # convert to sqrt and CTD units
+        x[1,,] <- mean(ensemble_pars[,1])
+        #x[1,,] <- sqrt(chla_obs[[1]][1,1]*0.55 - 0.0308)  # convert to sqrt and CTD units
       }
       if(driver_uncertainty_discharge == TRUE){
-        curr_discharge = rnorm(1, discharge_forecast[i,met_index+1], 0.00965) #sd from QT's discharge forecasts
+        curr_discharge = rnorm(1, discharge_forecast[i,met_index+1], 0.00965) #sd from QT's discharge forecasts, met_index+1 bc the first col is time
       }else{
-        curr_discharge = discharge_forecast[i,2] 
+        curr_discharge = discharge_forecast[i,2] # if not discharge uncertainty, use just one of the discharge ensembles
       }
       if(weather_uncertainty == TRUE){
         curr_shortwave = sw_forecast[i,met_index]
@@ -681,26 +701,35 @@ model {
   
   
   
-  
+  CTD_EXO_slope <- 0.6
+  CTD_EXO_intercept <- -0.25
   
   for (i in 2:nsteps) {
     error_upper <-  qnorm(0.975, mean = mean(x[i,,]), sd =sd((x[i,,])) )
-    error_upper <- (error_upper^2)/0.55 + 0.0308
+    #error_upper <- (error_upper^2)/CTD_EXO_slope + CTD_EXO_intercept
+    #error_upper <- ((error_upper + CTD_EXO_intercept)/CTD_EXO_slope)^2
     error_lower <- qnorm(0.025, mean = mean(x[i,,]), sd =sd((x[i,,])) )
-    error_lower <- (error_lower^2)/0.55 + 0.0308
+    #error_lower <- (error_lower^2)/CTD_EXO_slope + CTD_EXO_intercept
     
-    out[i-1, 2] <- mean(    ((x[i,,]^2)/0.55) + 0.0308)
-    out[i-1, 3] <- median(    ((x[i,,]^2)/0.55) + 0.0308)
-    out[i-1, 4] <- sd(    ((x[i,,]^2)/0.55) + 0.0308)
+    #out[i-1, 2] <- mean(    ((x[i,,]^2)/CTD_EXO_slope) + CTD_EXO_intercept)
+    #out[i-1, 3] <- median(    ((x[i,,]^2)/CTD_EXO_slope) + CTD_EXO_intercept)
+    #out[i-1, 4] <- sd(    ((x[i,,]^2)/CTD_EXO_slope) + CTD_EXO_intercept)
+    out[i-1, 2] <- mean(x[i,,])
+    out[i-1, 3] <- median(x[i,,])
+    out[i-1, 4] <- sd(x[i,,])
     out[i-1, 5] <- error_upper 
     out[i-1, 6] <- error_lower
-    out[i-1, 7] <- max(  ((x[i,,]^2)/0.55) + 0.0308)
-    out[i-1, 8] <- min(  ((x[i,,]^2)/0.55) + 0.0308)
+    out[i-1, 7] <- max(x[i,,])
+    out[i-1, 8] <- min(x[i,,])
     out[i-1, 9] <- var(x[i,,])
     
     }
   
-  
+ convert_cols <- c('forecast_mean_chl', 'forecast_median_chl', 'forecast_sd_chl', 'forecast_CI95_upper', 
+                   'forecast_CI95_lower', 'forecast_max', 'forecast_min', 'forecast_variance')
+ # convert out of CTD units and into EXO units, and un-sqrt transform
+ out[, which(colnames(out) %in% convert_cols)] <- (((out[, which(colnames(out) %in% convert_cols)]) - 0.25)/0.6)^2
+ 
   if(timestep_numeric==1){
     for (i in 2:nsteps) {
       out[i-1, 10] <- chla_obs[[1]][i,1] 
@@ -817,10 +846,10 @@ model {
     if(!is.na(x[1,1,])){
       pdf(file = forecast_plot_output_location )
       x_axis <-   forecast_sequence
-      plot(x_axis, ((x[,1,]^2)/0.55 +0.0308), type = 'o',ylim = range(c((min(out[,8], out[,8], na.rm = TRUE)), max(out[,7], out[,10], na.rm = TRUE))) # once catwalk data cleaning script is running, can change this to include: out[1,10], out[2,10]
+      plot(x_axis, ((x[,1,]^2)/CTD_EXO_slope +CTD_EXO_intercept), type = 'o',ylim = range(c((min(out[,8], out[,8], na.rm = TRUE)), max(out[,7], out[,10], na.rm = TRUE))) # once catwalk data cleaning script is running, can change this to include: out[1,10], out[2,10]
            , xlab = "Date", ylab = "Chla (ug/L)")
       for(m in 2:length(x[1,,1])){
-        points(x_axis, ((x[,m,]^2)/0.55 + 0.0308), type = 'o')  
+        points(x_axis, ((x[,m,]^2)/CTD_EXO_slope + CTD_EXO_intercept), type = 'o')  
       }
       for(j in 1:nrow(out)){
         points(out[j,1], (out[j,2]), col = 'orange', pch = 16, cex = 2)  
