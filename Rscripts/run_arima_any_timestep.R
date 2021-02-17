@@ -702,7 +702,7 @@ y[1] ~ dnorm(latent.chl[1], tau_obs)
   
   
   CTD_EXO_slope <- 0.6
-  CTD_EXO_intercept <- -0.25
+  CTD_EXO_intercept <- 0.25
   
   for (i in 2:nsteps) {
     error_upper <-  qnorm(0.975, mean = mean(x[i,,]), sd =sd((x[i,,])) )
