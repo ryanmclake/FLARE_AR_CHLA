@@ -728,7 +728,7 @@ y[1] ~ dnorm(latent.chl[1], tau_obs)
  convert_cols <- c('forecast_mean_chl', 'forecast_median_chl', 'forecast_sd_chl', 'forecast_CI95_upper', 
                    'forecast_CI95_lower', 'forecast_max', 'forecast_min', 'forecast_variance')
  # convert out of CTD units and into EXO units, and un-sqrt transform
- out[, which(colnames(out) %in% convert_cols)] <- (((out[, which(colnames(out) %in% convert_cols)]) - 0.25)/0.6)^2
+ out[, which(colnames(out) %in% convert_cols)] <- (((out[, which(colnames(out) %in% convert_cols)]) - CTD_EXO_intercept)/CTD_EXO_slope)^2
  
   if(timestep_numeric==1){
     for (i in 2:nsteps) {
@@ -841,15 +841,14 @@ y[1] ~ dnorm(latent.chl[1], tau_obs)
                                             "ensemble_plots/",
                                             forecast_plot_name) 
     
-    
-    
+
     if(!is.na(x[1,1,])){
       pdf(file = forecast_plot_output_location )
       x_axis <-   forecast_sequence
-      plot(x_axis, ((x[,1,]^2)/CTD_EXO_slope +CTD_EXO_intercept), type = 'o',ylim = range(c((min(out[,8], out[,8], na.rm = TRUE)), max(out[,7], out[,10], na.rm = TRUE))) # once catwalk data cleaning script is running, can change this to include: out[1,10], out[2,10]
+      plot(x_axis, ((x[,1,] - CTD_EXO_intercept)/CTD_EXO_slope)^2, type = 'o',ylim = range(c((min(out[,8], out[,8], na.rm = TRUE)), max(out[,7], out[,10], na.rm = TRUE))) # once catwalk data cleaning script is running, can change this to include: out[1,10], out[2,10]
            , xlab = "Date", ylab = "Chla (ug/L)")
       for(m in 2:length(x[1,,1])){
-        points(x_axis, ((x[,m,]^2)/CTD_EXO_slope + CTD_EXO_intercept), type = 'o')  
+        points(x_axis, ((x[,m,] - CTD_EXO_intercept)/CTD_EXO_slope)^2, type = 'o')  
       }
       for(j in 1:nrow(out)){
         points(out[j,1], (out[j,2]), col = 'orange', pch = 16, cex = 2)  
