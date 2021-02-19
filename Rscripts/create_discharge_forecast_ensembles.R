@@ -1,6 +1,6 @@
 
 
-create_inflow_outflow_file <- function(full_time_local,
+create_inflow_outflow_file <- function(full_time_day_local,
                                        working_directory,
                                        input_file_tz = 'EST5EDT', 
                                        start_forecast_step,
@@ -13,7 +13,7 @@ create_inflow_outflow_file <- function(full_time_local,
                                        forecast_days,
                                        inflow_process_uncertainty){
   
-  full_time_day_local <- as_date(full_time_local)
+  full_time_day_local <- as_date(full_time_day_local)
   
   inflow <- read_csv(inflow_file1)
   #wetland <- read_csv(inflow_file2)
@@ -41,7 +41,7 @@ create_inflow_outflow_file <- function(full_time_local,
                                col_types = col_types) %>% 
       mutate(time = as_date(time)) %>% 
       group_by(time) %>% 
-      summarize(Rain = mean(Rain, na.rm = TRUE),
+      dplyr::summarize(Rain = mean(Rain, na.rm = TRUE),
                 AirTemp = mean(AirTemp, na.rm = TRUE)) %>% 
       mutate(ensemble = m-1) %>% 
       mutate(AirTempMean = roll_mean(AirTemp, n = 5, align = "right",fill=NA),
