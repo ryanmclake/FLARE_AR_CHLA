@@ -6,13 +6,14 @@
 if (!"mvtnorm" %in% installed.packages()) install.packages("mvtnorm")
 if (!"ncdf4" %in% installed.packages()) install.packages("ncdf4")
 if (!"lubridate" %in% installed.packages()) install.packages("lubridate")
-if (!"glmtools" %in% installed.packages()) install.packages("glmtools",
-                                                            repos=c("http://cran.rstudio.com",
-                                                                    "http://owi.usgs.gov/R"))
 if (!"RCurl" %in% installed.packages()) install.packages("RCurl")
 if (!"testit" %in% installed.packages()) install.packages("testit")
 if (!"imputeTS" %in% installed.packages()) install.packages("imputeTS")
 if (!"tidyverse" %in% installed.packages()) install.packages("tidyverse")
+if (!"RcppRoll" %in% installed.packages()) install.packages("RcppRoll")
+if (!"rjags" %in% installed.packages()) install.packages("rjags")
+if (!"PerformanceAnalytics" %in% installed.packages()) install.packages("PerformanceAnalytics")
+
 
 
 library(mvtnorm)
@@ -29,10 +30,10 @@ library(RcppRoll)
 
 data_location <-  "C:/Users/wwoel/Desktop/FLARE_AR_CHLA/SCCData"
 folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
-timestep <- '7day' # character definition of the timestep
-timestep_numeric <- 7
-timestep_interval <- 7 # the interval in between timesteps, e.g. 4day would be 4; daily would be 1; weekly would be 7
-max_timestep <- 2 #maximum number of timesteps that can be propagated to the max time horizon (e.g., daily is 14, weekly is 2)
+timestep <- '14day' # character definition of the timestep
+timestep_numeric <- 14
+timestep_interval <- 14 # the interval in between timesteps, e.g. 4day would be 4; daily would be 1; weekly would be 7
+max_timestep <- 1 #maximum number of timesteps that can be propagated to the max time horizon (e.g., daily is 14, weekly is 2)
 max_horizon <- 14 # maximum number of days that are propagated in this forecast (e.g. daily timestep has max_horizon = 14)
 sim_name <- 'update_bayes_method_Feb_2021'
 forecast_location <- paste0(folder, "/FCR_forecasts", '/', timestep, '/', sim_name)
@@ -53,7 +54,7 @@ local_tzone <- "EST5EDT"
 include_wq <<- FALSE
 use_future_inflow <<- TRUE
 
-#set up ensembles
+#set up ensemblesa
 n_ds_members <- 1
 n_met_members <- 21
 n_discharge_members <- 21
@@ -62,7 +63,7 @@ num_forecast_periods <- 365 # number of times the script will loop through autom
 
 
 # initialize forecast time
-forecast_start_day <-"2020-02-06 00:00:00" # day the forecast initialized
+forecast_start_day <-"2020-06-10 00:00:00" # day the forecast initialized
 start_day <- forecast_start_day 
 start_day <- as.POSIXct(start_day, format = "%Y-%m-%d %H:%M:%S")
 hist_days <- 1

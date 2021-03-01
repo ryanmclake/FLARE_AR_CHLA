@@ -12,7 +12,10 @@ File are organized into the following folders:
 `FCR_forecasts`--for storing forecast output. organized into folders by timestep (e.g., '1day' for forecasts run on a daily timestep), and then by simulation name
 `ARIMA_working`--working folder for files created within a forecast run
 
+# Info about installing JAGS on a Mac
+
 # Setting up SCCData data repositories
+These repositories need to be updated to new location
 Rename the `SCCData_temp` folder to just `SCCData` 
 Define your 'data_location' directory to be the `SCCData` folder and run the following commands at the command line:
 `setwd(data_location)`
