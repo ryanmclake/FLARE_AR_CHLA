@@ -403,7 +403,7 @@ run_arima <- function(
               working_arima)
   
   start_forecast_step <- hist_days + 1
-  create_inflow_outflow_file(full_time_local = full_time_day_local,
+  create_inflow_outflow_file(full_time_day_local = full_time_day_local,
                              working_directory = working_arima,
                              input_file_tz = 'EST5EDT', 
                              start_forecast_step = start_forecast_step,
