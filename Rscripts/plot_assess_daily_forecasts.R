@@ -12,9 +12,10 @@ timestep_numeric <- 1 # maybe timestep_numeric and timestep_interval are actuall
 timestep_interval <- 1 # the interval in between timesteps, e.g. 4day would be 4; daily would be 1; weekly would be 7
 max_timestep <- 14 #maximum number of timesteps that can be propagated to the max time horizon
 max_horizon <- 14 # maximum number of days that are propagated in this forecast (e.g. daily timestep has max_horizon = 16)
-sim_name <- 'update_bayes_method_Oct_2020'
+sim_name <- 'update_bayes_method_Feb_2021'
 forecast_folder <- paste0(folder, "/FCR_forecasts", '/', timestep, '/', sim_name)
-null_folder <- paste0(folder, '/FCR_forecasts/', timestep, '/null_daily')
+null_sim_name <- 'null_daily_01Mar21'
+null_folder <- paste0(folder, '/FCR_forecasts/', timestep, "/", null_sim_name)
 bloom_threshold <- 17.1
 
 setwd(forecast_folder)
@@ -41,12 +42,12 @@ stuff$forecast_run_day <- as.Date(stuff$forecast_run_day, "%Y-%m-%d")
 stuff <- stuff[stuff$day_in_future<15,]
 
 # bring in the null model data
-myfiles_null <- list.files(path = paste0(folder, '/FCR_forecasts/1day/null_daily'), pattern = paste0('*', 'null_summary', ".csv"))
-dataset_null <- read.csv(paste0(folder, '/FCR_forecasts/1day/null_daily', "/", myfiles_null[1]))
+myfiles_null <- list.files(path = null_folder, pattern = paste0('*', 'null_summary', ".csv"))
+dataset_null <- read.csv(paste0(null_folder, "/", myfiles_null[1]))
 
 # read in files
 for (i in 2:length(myfiles_null)) {
-  temp <- read.csv(paste0(folder, '/FCR_forecasts/1day/null_daily', "/", myfiles_null[i]))
+  temp <- read.csv(paste0(null_folder, "/", myfiles_null[i]))
   dataset_null <- rbind(dataset_null, temp)
   }
 dataset_null$forecast_run_day <- as.Date(dataset_null$forecast_run_day)
@@ -67,7 +68,7 @@ for (i in 1:max_timestep) {
 
 for (i in 1:max_timestep) { 
   temp <- dataset_null[dataset_null$timestep==i,]
-  write.csv(temp, paste0(folder, '/FCR_forecasts/1day/null_daily/day_', i, '_null.csv'), row.names = FALSE)
+  write.csv(temp, paste0(null_folder, "/day_", i, '_null.csv'), row.names = FALSE)
 }
 
 ########################################################################################################################################################################
@@ -81,6 +82,9 @@ metrics_overtime <- array(NA, dim = c(max_timestep,13))
 colnames(metrics_overtime) <- c('day_in_future','RMSE_null', 'RMSE_forecast',"RMSE_null_nonbloom", 'RMSE_forecast_nonbloom', 
                                 'R2_null', 'R2_forecast',"R2_null_nonbloom", 'R2_forecast_nonbloom', 
                                 'RMSE_null_bloom', 'RMSE_forecast_bloom', 'R2_null_bloom', 'R2_forecasT_bloom')
+
+
+
 for (i in 1:max_timestep) {
   # read in csv of each forecast horizon
   temp <- read.csv(paste0(forecast_folder, '/day_', i, '.csv'))
@@ -88,7 +92,7 @@ for (i in 1:max_timestep) {
   temp$forecast_run_day <- as.Date(temp$forecast_run_day)
   temp <- na.omit(temp)
   
-  temp_null <- read.csv(paste0(folder, '/FCR_forecasts/1day/null_daily/day_', i, '_null.csv'))
+  temp_null <- read.csv(paste0(null_folder, '/day_', i, '_null.csv'))
   temp_null$forecast_run_day <- as.Date(temp_null$forecast_run_day)
   #temp_null <- na.omit(temp_null)
   
@@ -257,7 +261,7 @@ for(i in 1:14){
 
 
 # a messy plot with different conditions on one plot
-plot(metrics_overtime$day_in_future, metrics_overtime$RMSE_null, col = 'red', ylim = c(0,11), xlab = 'forecast horizon', ylab = 'RMSE')
+plot(metrics_overtime$day_in_future, metrics_overtime$RMSE_null, col = 'red', ylim = c(0,18), xlab = 'forecast horizon', ylab = 'RMSE')
 points(metrics_overtime$day_in_future, metrics_overtime$RMSE_forecast, col = 'blue')
 points(metrics_overtime$day_in_future, metrics_overtime$RMSE_forecast_nonbloom, col = 'orange')
 points(metrics_overtime$day_in_future, metrics_overtime$RMSE_null_nonbloom, col = 'purple')

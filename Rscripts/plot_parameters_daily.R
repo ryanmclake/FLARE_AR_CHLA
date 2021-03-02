@@ -9,7 +9,7 @@ reference_tzone <- "GMT"
 #set the location of the forecasts
 folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
 timestep <- '1day'
-sim_name <- 'update_bayes_method_Oct_2020'
+sim_name <- 'update_bayes_method_Feb_2021'
 forecast_folder <- paste0(folder, "/FCR_forecasts", '/', timestep, '/', sim_name)
 
 # code to read in the individual forecast files named for the day on which the forecast is made
@@ -24,12 +24,12 @@ for (i in 2:length(myfiles)) {
 
 colnames(dataset) <- c('latent_chl', 'intercept', 'chl_parm', 'discharge_parm', 'sw_parm', 'error_term')
 
-# these plots are of all the ensemble members and aren't really that useful
-plot(dataset$intercept)
-plot(dataset$chl_parm)
-plot(dataset$rh_parm)
-plot(dataset$discharge_parm)
-plot(dataset$error_term)
+## these plots are of all the ensemble members and aren't really that useful
+#plot(dataset$intercept)
+#plot(dataset$chl_parm)
+#plot(dataset$rh_parm)
+#plot(dataset$discharge_parm)
+#plot(dataset$error_term)
 
 
 myfiles_forecast <- list.files(path = forecast_folder, pattern = paste0('*', timestep, ".csv"))
@@ -63,7 +63,7 @@ xmax<-max(parms$forecast_date,na.rm=T)
 xseq<-seq.Date(xmin,xmax,by='1 month')
 
 
-png('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/daily_parameter_timeseries.png', width = 1100, height = 800)
+png('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/daily_parameter_timeseries_Feb21.png', width = 1100, height = 800)
 par(mfrow = c(2,3), mar=c(9,7,4,1)+.1)
 plot(parms$forecast_run_day, parms$par1, xlab = '', ylab = 'Intercept par', type = 'l', axes = F, cex.lab = 3)
 axis(2, cex.axis = 3, cex.lab = 5)

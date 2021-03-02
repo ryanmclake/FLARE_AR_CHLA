@@ -5,17 +5,18 @@ library(scales)
 
 folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
 
-daily <- read.csv(paste0(folder, '/FCR_forecasts/1day/update_bayes_method_Oct_2020/ForecastMetrics_1day.csv'))
-seven_day <- read.csv(paste0(folder, '/FCR_forecasts/7day/null_weekly/ForecastMetrics_7day.csv'))
-fourteen_day <- read.csv(paste0(folder, '/FCR_forecasts/14day/null_fortnightly/ForecastMetrics_14day.csv'))
+sim_name <- 'update_bayes_method_Feb_2021'
+daily <- read.csv(paste0(folder, '/FCR_forecasts/1day/', sim_name, '/ForecastMetrics_1day.csv'))
+seven_day <- read.csv(paste0(folder, '/FCR_forecasts/7day/', sim_name, '/ForecastMetrics_7day.csv'))
+fourteen_day <- read.csv(paste0(folder, '/FCR_forecasts/14day/', sim_name, '/ForecastMetrics_14day.csv'))
 
 par(mar = c(5,5,4,2), mfrow = c(2,2))
-plot(daily$day_in_future, daily$RMSE_forecast, col = 'blue', cex = 3, ylim = c(0,11), xlim = c(0,14), main = 'Full-Year',  cex.axis = 2, cex.main = 2, cex.lab = 2, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
+plot(daily$day_in_future, daily$RMSE_forecast, col = 'blue', cex = 3, ylim = c(0,15), xlim = c(0,14), main = 'Full-Year',  cex.axis = 2, cex.main = 2, cex.lab = 2, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
 points(seven_day$day_in_future, seven_day$RMSE_forecast,  col = 'blue', pch = 15, cex = 3)
 points(fourteen_day$day_in_future, fourteen_day$RMSE_forecast, col = 'blue', pch = 24, cex = 3)
 legend('topleft', c('1 day', '7 day', '14 day' ), cex = 1.6, col = c('blue', 'blue', 'blue'),  pch = c( 1,  15,  17), bty = 'n')
 
-plot(daily$day_in_future, daily$RMSE_forecast_nonbloom, col = 'blue', cex = 3, ylim = c(0,7), main = 'Non-bloom',  cex.axis = 2, cex.main = 2, cex.lab = 2, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
+plot(daily$day_in_future, daily$RMSE_forecast_nonbloom, col = 'blue', cex = 3, ylim = c(0,15), main = 'Non-bloom',  cex.axis = 2, cex.main = 2, cex.lab = 2, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
 points(seven_day$day_in_future, seven_day$RMSE_forecast_nonbloom,  col = 'blue', pch = 15, cex = 3)
 points(fourteen_day$day_in_future, fourteen_day$RMSE_forecast_nonbloom, col = 'blue', pch = 24, cex = 3)
 
@@ -71,7 +72,8 @@ metrics_overtime$daily_nonbloom_null <- daily[1:14,4]
 
 # and the bloom statistics
 # a messy plot with different conditions on one plot
-plot(metrics_overtime$day_in_future,   metrics_overtime$daily_null, col = 'red', ylim = c(0,11), xlab = 'forecast horizon', ylab = 'RMSE')
+par(mfrow = c(1,1))
+plot(metrics_overtime$day_in_future,   metrics_overtime$daily_null, col = 'red', ylim = c(0,15), xlab = 'forecast horizon', ylab = 'RMSE')
 points(metrics_overtime$day_in_future, metrics_overtime$daily, col = 'blue')
 points(metrics_overtime$day_in_future, metrics_overtime$daily_nonbloom, col = 'orange')
 points(metrics_overtime$day_in_future, metrics_overtime$daily_nonbloom_null, col = 'purple')
@@ -84,9 +86,9 @@ legend('topleft', c('null', 'forecast', 'null nonbloom', 'forecast nonbloom'), c
 
 ##################
 # multi-panel figure
-png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/RMSE_fig_1day7day14dayforecasts/RMSE_all_conditions_RWnull.png'), width = 1100, height = 800)
+png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/RMSE_fig_1day7day14dayforecasts/RMSE_all_conditions_Feb21.png'), width = 1100, height = 800)
 par(mar = c(5,5,4,2), mfrow = c(2,2))
-plot(metrics_overtime$day_in_future, metrics_overtime$daily_nonbloom_null, col = 'red',  ylim = c(0,11), xlim = c(0,14), main = 'Non-Bloom', cex.main = 2, cex.axis = 2, cex.lab = 2, cex = 3, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
+plot(metrics_overtime$day_in_future, metrics_overtime$daily_nonbloom_null, col = 'red',  ylim = c(0,15), xlim = c(0,14), main = 'Non-Bloom', cex.main = 2, cex.axis = 2, cex.lab = 2, cex = 3, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
 points(metrics_overtime$day_in_future, metrics_overtime$daily_nonbloom, col = 'blue', cex = 3)
 points(metrics_overtime$day_in_future, metrics_overtime$weekly_nonbloom,  col = 'blue', pch = 0, cex = 3)
 points(metrics_overtime$day_in_future, metrics_overtime$weekly_nonbloom_null,  col = 'red', pch = 0, cex = 3)
@@ -103,7 +105,7 @@ points(metrics_overtime$day_in_future, metrics_overtime$fortnightly_bloom, col =
 points(metrics_overtime$day_in_future, metrics_overtime$fortnightly_bloom_null, col = 'red', pch = 2, cex = 3)
 
 par(mar = c(5,5,4,2))
-plot(metrics_overtime$day_in_future, metrics_overtime$daily_null, col = 'red', xlim = c(0,14), ylim = c(0,11), main = '1.5 Years',  cex.axis = 2, cex.main = 2, cex.lab = 2, cex = 3, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
+plot(metrics_overtime$day_in_future, metrics_overtime$daily_null, col = 'red', xlim = c(0,14), ylim = c(0,15), main = '1.5 Years',  cex.axis = 2, cex.main = 2, cex.lab = 2, cex = 3, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
 points(metrics_overtime$day_in_future, metrics_overtime$daily, col = 'blue', cex = 3)
 points(metrics_overtime$day_in_future, metrics_overtime$weekly,  col = 'blue', pch = 0, cex = 3)
 points(metrics_overtime$day_in_future, metrics_overtime$weekly_null,  col = 'red', pch = 0, cex = 3)
@@ -114,7 +116,7 @@ dev.off()
 
 ##################
 # just forecasts (no null)
-png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/fortnight_forecasts/RMSE_just_forecasts.png'), width = 1100, height = 800)
+png(paste0('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/fortnight_forecasts/RMSE_just_forecasts_Feb21.png'), width = 1100, height = 800)
 par(mar = c(5,5,4,2), mfrow = c(2,2))
 plot(metrics_overtime$day_in_future, metrics_overtime$daily, col = 'blue', cex = 3, xlim = c(0,14), ylim = c(0,11), main = 'Full-Year',  cex.axis = 2, cex.main = 2, cex.lab = 2, xlab = 'Forecast horizon (days)', ylab = 'RMSE (μg/L)')
 points(metrics_overtime$day_in_future, metrics_overtime$weekly,  col = 'blue', pch = 15, cex = 3)
@@ -137,4 +139,4 @@ dev.off()
 
 metrics_RMSE <- metrics_overtime#[,c(1,3,2, 5, 4, 20,21,10,14,12,16,18,19)] #select the values wanted for manuscript figure in the right order
 metrics_RMSE <- metrics_RMSE[1:14,]
-write.csv(metrics_RMSE, paste0(folder, '/FCR_forecasts/metrics_RMSE.csv'), row.names = FALSE)
+write.csv(metrics_RMSE, paste0(folder, '/FCR_forecasts/metrics_RMSE_Feb21.csv'), row.names = FALSE)

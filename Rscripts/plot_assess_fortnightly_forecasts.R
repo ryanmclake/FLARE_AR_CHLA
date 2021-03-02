@@ -14,7 +14,8 @@ max_timestep <- 1 #maximum number of timesteps that can be propagated to the max
 max_horizon <- 14 # maximum number of days that are propagated in this forecast (e.g. daily timestep has max_horizon = 16)
 sim_name <- 'update_bayes_method_Oct_2020'
 forecast_folder <- paste0(folder, "/FCR_forecasts", '/', timestep, '/', sim_name)
-null_folder <- paste0(folder, '/FCR_forecasts/', timestep, '/null_fortnightly')
+null_sim_name <- 'null_fortnightly_01Mar21'
+null_folder <- paste0(folder, '/FCR_forecasts/', timestep, "/", null_sim_name)
 bloom_threshold <- 17.1
 
 setwd(forecast_folder)
@@ -42,10 +43,11 @@ stuff$forecast_run_day <- as.Date(stuff$forecast_run_day, "%Y-%m-%d")
 myfiles_null <- list.files(path = null_folder, pattern = paste0('*', 'null_summary', ".csv"))
 dataset_null <- read.csv(paste0(null_folder, "/", myfiles_null[1]))
 
+# read in files
 for (i in 2:length(myfiles_null)) {
-  temp <- read.csv(paste0(null_folder,"/", myfiles_null[i]))
+  temp <- read.csv(paste0(null_folder, "/", myfiles_null[i]))
   dataset_null <- rbind(dataset_null, temp)
-  }
+}
 dataset_null$forecast_run_day <- as.Date(dataset_null$forecast_run_day)
 
 #remove spin up dates, so anything before Dec 31, 2018
@@ -167,7 +169,7 @@ for (i in 1:max_timestep) {
 
 metrics_overtime[,1] <-   seq(timestep_numeric, max_horizon, by = timestep_interval)
 metrics_overtime <- as.data.frame(metrics_overtime)
-write.csv(metrics_overtime, paste0(null_folder, '/ForecastMetrics_', timestep, '.csv'), row.names = FALSE)
+write.csv(metrics_overtime, paste0(forecast_folder, '/ForecastMetrics_', timestep, '.csv'), row.names = FALSE)
 
 
 #################################################################################################################################################################################
