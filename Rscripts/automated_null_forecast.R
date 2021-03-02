@@ -1,4 +1,11 @@
-
+library(mvtnorm)
+library(lubridate)
+library(RCurl)
+library(testit)
+library(imputeTS)
+library(tidyverse)
+library(modelr)
+library(RcppRoll)
 
 
 folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
@@ -11,12 +18,12 @@ n_met_members <- 21
 n_discharge_members <- 21
 nmembers <- n_ds_members*n_met_members*n_discharge_members
 
-timestep <- '14day'
-timestep_numeric <- 14
-timestep_interval <- 14
-max_timestep <- 1 #max propagations of the timestep: daily = 14, weekly = 2, fortnightly = 1
+timestep <- '1day'
+timestep_numeric <- 1
+timestep_interval <- 1
+max_timestep <- 14 #max propagations of the timestep: daily = 14, weekly = 2, fortnightly = 1
 max_horizon <- 14 # maximum number of days that are propagated in this forecast (e.g. daily timestep has max_horizon = 14)
-sim_name <- 'null_daily_12Feb21'
+sim_name <- 'null_daily_01Mar21'
 forecast_location <- paste0(folder, '/FCR_forecasts/', timestep, '/', sim_name)
 
 start_day <- forecast_start_day 
