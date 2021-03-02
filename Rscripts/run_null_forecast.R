@@ -155,6 +155,7 @@ y[1] ~ dnorm(latent.chl[1], tau_obs)
                                    file_name_forecast_start_month, "_", 
                                    file_name_forecast_start_day, "_", 
                                    "null_summary.csv")
+  dir.create(forecast_location)  
   write.csv(null_save, paste0(forecast_location, '/',  null_summary_file_name), row.names = FALSE)
   
 
