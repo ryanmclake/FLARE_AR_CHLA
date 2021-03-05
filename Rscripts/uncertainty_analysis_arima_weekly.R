@@ -6,19 +6,25 @@ library(lubridate)
 library(Metrics)
 reference_tzone <- "GMT"
 
-#set the location of the forecasts
+# define specs for the timestep and simulation
+timestep <- '7day' # character definition of the timestep
+timestep_numeric <- 7 # maybe timestep_numeric and timestep_interval are actually the same thing and not both needed -_-
+timestep_interval <- 7 # the interval in between timesteps, e.g. 4day would be 4; daily would be 1; weekly would be 7
+max_timestep <- 2 #maximum number of timesteps that can be propagated to the max time horizon
+max_horizon <- 14 # maximum number of days that are propagated in this forecast (e.g. daily timestep has max_horizon = 16)
+sim_name <- 'Mar2021_UC'
 folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
-forecast_folder <- paste0(folder, '/FCR_forecasts/7day/update_bayes_method_Oct_2020')
-
+forecast_folder <- paste0(folder, "/FCR_forecasts", '/', timestep, '/', sim_name)
+bloom_threshold <- 17.1
 # uncert_mode = 1, normal forecast run
 myfiles_forecast <- list.files(path = forecast_folder, pattern = paste0('*7day', ".csv"))
-dataset_forecast <- read.csv(paste0(forecast_folder, "/", myfiles_forecast[1]))
+dataset <- read.csv(paste0(forecast_folder, "/", myfiles_forecast[1]))
 
 
 # read in files
 for (i in 2:length(myfiles_forecast)) {
   temp_2 <- read.csv(paste0(forecast_folder,"/", myfiles_forecast[i]))
-  dataset_forecast <- rbind(dataset_forecast, temp_2)
+  dataset <- rbind(dataset, temp_2)
 }
 
 # some data arranging
