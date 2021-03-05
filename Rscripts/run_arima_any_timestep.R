@@ -617,23 +617,23 @@ y[1] ~ dnorm(latent.chl[1], tau_obs)
       ensemble_pars[j, 4] <- mean(samples[[1]][,4])
       ensemble_pars[j, 5] <- mean(samples[[1]][,5])
       ensemble_pars[j, 6] <- mean(samples[[1]][,6])
-    }else if(uncert_mode==5){
+    }else if(uncert_mode==5){ # parameter
       p <- sample(seq(1,length(samples[[1]][,1])), 1, replace = TRUE) 
-      ensemble_pars[j, 1] <- mean(samples[[1]][,1])
-      ensemble_pars[j, 2] <- samples[[1]][p,2]
+      ensemble_pars[j, 1] <- mean(samples[[1]][,1]) # mean IC
+      ensemble_pars[j, 2] <- samples[[1]][p,2] # sample all four parameters
       ensemble_pars[j, 3] <- samples[[1]][p,3]
       ensemble_pars[j, 4] <- samples[[1]][p,4]
       ensemble_pars[j, 5] <- samples[[1]][p,5]
-      ensemble_pars[j, 6] <- mean(samples[[1]][,6])
-    }else if(uncert_mode==3){
-      ensemble_pars[j, 1] <- mean(samples[[1]][,1])
+      ensemble_pars[j, 6] <- mean(samples[[1]][,6]) # mean sd process
+    }else if(uncert_mode==3){ # weather
+      ensemble_pars[j, 1] <- mean(samples[[1]][,1]) # mean for all here (IC, params, process)
       ensemble_pars[j, 2] <- mean(samples[[1]][,2])
       ensemble_pars[j, 3] <- mean(samples[[1]][,3])
       ensemble_pars[j, 4] <- mean(samples[[1]][,4])
       ensemble_pars[j, 5] <- mean(samples[[1]][,5])
       ensemble_pars[j, 6] <- mean(samples[[1]][,6])
-    }else if(uncert_mode==6){
-      ensemble_pars[j, 1] <- mean(samples[[1]][,1])
+    }else if(uncert_mode==6){ #discharge
+      ensemble_pars[j, 1] <- mean(samples[[1]][,1]) # mean for all here (IC, params, process)
       ensemble_pars[j, 2] <- mean(samples[[1]][,2])
       ensemble_pars[j, 3] <- mean(samples[[1]][,3])
       ensemble_pars[j, 4] <- mean(samples[[1]][,4])
@@ -726,11 +726,20 @@ y[1] ~ dnorm(latent.chl[1], tau_obs)
     }
   
  convert_cols <- c('forecast_mean_chl', 'forecast_median_chl', 'forecast_sd_chl', 'forecast_CI95_upper', 
-                   'forecast_CI95_lower', 'forecast_max', 'forecast_min', 'forecast_variance')
+                   'forecast_CI95_lower', 'forecast_max', 'forecast_min')
+
  # convert out of CTD units and into EXO units, and un-sqrt transform
- out[, which(colnames(out) %in% convert_cols)] <- (((out[, which(colnames(out) %in% convert_cols)]) - CTD_EXO_intercept)/CTD_EXO_slope)^2
+ #out[, which(colnames(out) %in% convert_cols)] <- (((out[, which(colnames(out) %in% convert_cols)]) - CTD_EXO_intercept)/CTD_EXO_slope)^2
+ # transform out of sqrt units, data already in EXO units, which is what we want for visualization and comparison to obs (EXO)
+ out[, which(colnames(out) %in% convert_cols)] <- (out[, which(colnames(out) %in% convert_cols)])^2
+
+ #plot(out$forecast_date, out$forecast_variance, main = 'untransform and then retransform')
+ #plot(out$forecast_date, out$forecast_mean_chl, ylim = c(0,15))
+ #points(out$forecast_date,out$forecast_CI95_upper, type = 'l')
+ #points(out$forecast_date,out$forecast_CI95_lower, type = 'l')
+ #points(col = 'red', out$forecast_date,out$obs_chl_EXO, type = 'l')
  
-  if(timestep_numeric==1){
+ if(timestep_numeric==1){
     for (i in 2:nsteps) {
       out[i-1, 10] <- chla_obs[[1]][i,1] 
       
