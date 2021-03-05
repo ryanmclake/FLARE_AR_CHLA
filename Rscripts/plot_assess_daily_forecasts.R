@@ -12,7 +12,7 @@ timestep_numeric <- 1 # maybe timestep_numeric and timestep_interval are actuall
 timestep_interval <- 1 # the interval in between timesteps, e.g. 4day would be 4; daily would be 1; weekly would be 7
 max_timestep <- 14 #maximum number of timesteps that can be propagated to the max time horizon
 max_horizon <- 14 # maximum number of days that are propagated in this forecast (e.g. daily timestep has max_horizon = 16)
-sim_name <- 'update_bayes_method_Feb_2021'
+sim_name <- 'Mar2021_UC'
 forecast_folder <- paste0(folder, "/FCR_forecasts", '/', timestep, '/', sim_name)
 null_sim_name <- 'null_daily_01Mar21'
 null_folder <- paste0(folder, '/FCR_forecasts/', timestep, "/", null_sim_name)
@@ -257,6 +257,37 @@ for(i in 1:14){
   dev.off()
 }
 
+## plots of null vs. obs
+
+# read in csv of each forecast horizon
+for(i in 1:14){
+  
+temp <- read.csv(paste0(null_folder, '/day_', i, '_null.csv'))
+temp$date <- as.Date(temp$date)
+
+png(paste0(forecast_folder, '/', timestep, '_Null_Day', i, '.png'), width = 1100, height = 800)
+print(ggplot(temp, aes(date, mean)) +
+        geom_line(size = 2) +
+        #geom_text(x = as.Date('2020-06-10'), y = max(temp$upper_CI, na.rm = TRUE), size = 15, label = paste0('RMSE = ', round(metrics_overtime[i,3], digits = 1))) + 
+        geom_point(aes(date, chla_ugL), size = 4, stroke = 0, shape = 19, color = 'dodgerblue4') +
+        geom_ribbon(aes(ymin = lower_CI, ymax = upper_CI), fill = 'grey1', linetype = 2, alpha = 0.2) +
+        xlab('Date') +
+        ylab('Chlorophyll a (μg/L)') +
+        ggtitle(paste0('Daily Forecast, Day ', i)) +
+        scale_x_date(labels = date_format('%b')) +
+        theme_bw() +
+        theme(axis.text.x = element_text(size = 45),
+              axis.text.y = element_text(size = 50),
+              axis.title.x = element_text(size =45),
+              axis.title.y = element_text(size = 45),
+              legend.title = element_text(size = 35),
+              legend.text = element_text(size = 30),
+              panel.grid.major = element_blank(),
+              legend.position = 'right',
+              panel.grid.minor = element_blank(),
+              plot.title = element_text(size = 50)))
+dev.off()
+}
 
 
 
