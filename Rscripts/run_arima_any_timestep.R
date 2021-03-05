@@ -35,6 +35,12 @@ run_arima <- function(
   
   dir.create(forecast_location)  
   dir.create(paste0(forecast_location, '/ensemble_plots'))
+  dir.create(paste0(forecast_location, '/uncertainty_2_process'))
+  dir.create(paste0(forecast_location, '/uncertainty_3_weather'))
+  dir.create(paste0(forecast_location, '/uncertainty_4_initial_condition'))
+  dir.create(paste0(forecast_location, '/uncertainty_5_parameter'))
+  dir.create(paste0(forecast_location, '/uncertainty_6_discharge'))
+  
   
   ################################################
   ### LOAD R FUNCTIONS
@@ -149,7 +155,7 @@ run_arima <- function(
     dir.create(paste0(forecast_location, '/uncertainty_6_discharge'))
     }
     
-    
+  
   ####################################################
   #### STEP 3: CREATE TIME VECTORS
   ####################################################
@@ -592,285 +598,342 @@ y[1] ~ dnorm(latent.chl[1], tau_obs)
   # IC_forecast, beta 1, beta2, beta3, beta4, sd_process
   
   # for loop to sample from distribution of each parameter value
-  for(j in 1:nmembers){
-    if(uncert_mode==1){ #all vary
-      p <- sample(seq(1,length(samples[[1]][,1])), 1, replace = TRUE) 
-      ensemble_pars[j, 1] <- samples[[1]][p,1]
-      ensemble_pars[j, 2] <- samples[[1]][p,2]
-      ensemble_pars[j, 3] <- samples[[1]][p,3]
-      ensemble_pars[j, 4] <- samples[[1]][p,4]
-      ensemble_pars[j, 5] <- samples[[1]][p,5]
-      ensemble_pars[j, 6] <- samples[[1]][p,6]
-    }else if(uncert_mode==2){ #only process varies
-      p <- sample(seq(1,length(samples[[1]][,1])), 1, replace = TRUE) 
-      ensemble_pars[j, 1] <- mean(samples[[1]][,1])
-      ensemble_pars[j, 2] <- mean(samples[[1]][,2])
-      ensemble_pars[j, 3] <- mean(samples[[1]][,3])
-      ensemble_pars[j, 4] <- mean(samples[[1]][,4])
-      ensemble_pars[j, 5] <- mean(samples[[1]][,5])     
-      ensemble_pars[j, 6] <- samples[[1]][p,6]
-    }else if(uncert_mode==4){ #only initial conditions vary
-      p <- sample(seq(1,length(samples[[1]][,1])), 1, replace = TRUE)
-      ensemble_pars[j, 1] <- samples[[1]][p,1]
-      ensemble_pars[j, 2] <- mean(samples[[1]][,2])
-      ensemble_pars[j, 3] <- mean(samples[[1]][,3])
-      ensemble_pars[j, 4] <- mean(samples[[1]][,4])
-      ensemble_pars[j, 5] <- mean(samples[[1]][,5])
-      ensemble_pars[j, 6] <- mean(samples[[1]][,6])
-    }else if(uncert_mode==5){ # parameter
-      p <- sample(seq(1,length(samples[[1]][,1])), 1, replace = TRUE) 
-      ensemble_pars[j, 1] <- mean(samples[[1]][,1]) # mean IC
-      ensemble_pars[j, 2] <- samples[[1]][p,2] # sample all four parameters
-      ensemble_pars[j, 3] <- samples[[1]][p,3]
-      ensemble_pars[j, 4] <- samples[[1]][p,4]
-      ensemble_pars[j, 5] <- samples[[1]][p,5]
-      ensemble_pars[j, 6] <- mean(samples[[1]][,6]) # mean sd process
-    }else if(uncert_mode==3){ # weather
-      ensemble_pars[j, 1] <- mean(samples[[1]][,1]) # mean for all here (IC, params, process)
-      ensemble_pars[j, 2] <- mean(samples[[1]][,2])
-      ensemble_pars[j, 3] <- mean(samples[[1]][,3])
-      ensemble_pars[j, 4] <- mean(samples[[1]][,4])
-      ensemble_pars[j, 5] <- mean(samples[[1]][,5])
-      ensemble_pars[j, 6] <- mean(samples[[1]][,6])
-    }else if(uncert_mode==6){ #discharge
-      ensemble_pars[j, 1] <- mean(samples[[1]][,1]) # mean for all here (IC, params, process)
-      ensemble_pars[j, 2] <- mean(samples[[1]][,2])
-      ensemble_pars[j, 3] <- mean(samples[[1]][,3])
-      ensemble_pars[j, 4] <- mean(samples[[1]][,4])
-      ensemble_pars[j, 5] <- mean(samples[[1]][,5])
-      ensemble_pars[j, 6] <- mean(samples[[1]][,6])
+  for(m in 1:6){
+    uncert_mode <- m
+    if( uncert_mode == 1){ # all sources of uncertainty are turned on aka normal run
+      #All sources of uncertainty and data used to constrain 
+      #SOURCES OF uncertainty
+      process_uncertainty <- TRUE
+      weather_uncertainty <- TRUE
+      initial_condition_uncertainty <- TRUE
+      parameter_uncertainty <- TRUE
+      met_downscale_uncertainty <- TRUE
+      driver_uncertainty_discharge <- TRUE
+    }else if( uncert_mode == 2){ # isolate process uncertainty (ie, all other sources of uncertainty turned off)
+      process_uncertainty <- TRUE
+      weather_uncertainty <- FALSE
+      initial_condition_uncertainty <- FALSE
+      parameter_uncertainty <- FALSE
+      met_downscale_uncertainty <- FALSE
+      driver_uncertainty_discharge <- FALSE
+      dir.create(paste0(forecast_location, '/uncertainty_2_process'))
+    }else if( uncert_mode == 3){ # isolate weather uncertainty (ie, all other sources of uncertainty turned off)
+      process_uncertainty <- FALSE
+      weather_uncertainty <- TRUE
+      initial_condition_uncertainty <- FALSE
+      parameter_uncertainty <- FALSE
+      met_downscale_uncertainty <- FALSE
+      driver_uncertainty_discharge <- FALSE  
+      dir.create(paste0(forecast_location, '/uncertainty_3_weather'))
+    } else if(uncert_mode == 4) { # isolate initial condition uncertainty (ie, all other sources of uncertainty turned off)
+      process_uncertainty <- FALSE
+      weather_uncertainty <- FALSE
+      initial_condition_uncertainty <- TRUE
+      parameter_uncertainty <- FALSE
+      met_downscale_uncertainty <- FALSE
+      driver_uncertainty_discharge <- FALSE
+      dir.create(paste0(forecast_location, '/uncertainty_4_initial_condition'))
+    } else if(uncert_mode == 5){ # isolate parameter uncertainty (ie, all other sources of uncertainty turned off)
+      process_uncertainty <- FALSE
+      weather_uncertainty <- FALSE
+      initial_condition_uncertainty <- FALSE
+      parameter_uncertainty <- TRUE
+      met_downscale_uncertainty <- FALSE
+      driver_uncertainty_discharge <- FALSE
+      dir.create(paste0(forecast_location, '/uncertainty_5_parameter'))
+    } else if(uncert_mode == 6){ # isolate discharge uncertainty (ie, all other sources of uncertainty turned off)
+      process_uncertainty <- FALSE
+      weather_uncertainty <- FALSE
+      initial_condition_uncertainty <- FALSE
+      parameter_uncertainty <- FALSE
+      met_downscale_uncertainty <- FALSE
+      driver_uncertainty_discharge <- TRUE
+      dir.create(paste0(forecast_location, '/uncertainty_6_discharge'))
     }
-  }  
-  
-  
-  # the model! performed in sqrt transformed CTD units
+    
+    
+    
+    for(j in 1:nmembers){
+      if(uncert_mode==1){ #all vary
+        p <- sample(seq(1,length(samples[[1]][,1])), 1, replace = TRUE) 
+        ensemble_pars[j, 1] <- samples[[1]][p,1]
+        ensemble_pars[j, 2] <- samples[[1]][p,2]
+        ensemble_pars[j, 3] <- samples[[1]][p,3]
+        ensemble_pars[j, 4] <- samples[[1]][p,4]
+        ensemble_pars[j, 5] <- samples[[1]][p,5]
+        ensemble_pars[j, 6] <- samples[[1]][p,6]
+      }else if(uncert_mode==2){ #only process varies
+        p <- sample(seq(1,length(samples[[1]][,1])), 1, replace = TRUE) 
+        ensemble_pars[j, 1] <- mean(samples[[1]][,1])
+        ensemble_pars[j, 2] <- mean(samples[[1]][,2])
+        ensemble_pars[j, 3] <- mean(samples[[1]][,3])
+        ensemble_pars[j, 4] <- mean(samples[[1]][,4])
+        ensemble_pars[j, 5] <- mean(samples[[1]][,5])     
+        ensemble_pars[j, 6] <- samples[[1]][p,6]
+      }else if(uncert_mode==4){ #only initial conditions vary
+        p <- sample(seq(1,length(samples[[1]][,1])), 1, replace = TRUE)
+        ensemble_pars[j, 1] <- samples[[1]][p,1]
+        ensemble_pars[j, 2] <- mean(samples[[1]][,2])
+        ensemble_pars[j, 3] <- mean(samples[[1]][,3])
+        ensemble_pars[j, 4] <- mean(samples[[1]][,4])
+        ensemble_pars[j, 5] <- mean(samples[[1]][,5])
+        ensemble_pars[j, 6] <- mean(samples[[1]][,6])
+      }else if(uncert_mode==5){ # parameter
+        p <- sample(seq(1,length(samples[[1]][,1])), 1, replace = TRUE) 
+        ensemble_pars[j, 1] <- mean(samples[[1]][,1]) # mean IC
+        ensemble_pars[j, 2] <- samples[[1]][p,2] # sample all four parameters
+        ensemble_pars[j, 3] <- samples[[1]][p,3]
+        ensemble_pars[j, 4] <- samples[[1]][p,4]
+        ensemble_pars[j, 5] <- samples[[1]][p,5]
+        ensemble_pars[j, 6] <- mean(samples[[1]][,6]) # mean sd process
+      }else if(uncert_mode==3){ # weather
+        ensemble_pars[j, 1] <- mean(samples[[1]][,1]) # mean for all here (IC, params, process)
+        ensemble_pars[j, 2] <- mean(samples[[1]][,2])
+        ensemble_pars[j, 3] <- mean(samples[[1]][,3])
+        ensemble_pars[j, 4] <- mean(samples[[1]][,4])
+        ensemble_pars[j, 5] <- mean(samples[[1]][,5])
+        ensemble_pars[j, 6] <- mean(samples[[1]][,6])
+      }else if(uncert_mode==6){ #discharge
+        ensemble_pars[j, 1] <- mean(samples[[1]][,1]) # mean for all here (IC, params, process)
+        ensemble_pars[j, 2] <- mean(samples[[1]][,2])
+        ensemble_pars[j, 3] <- mean(samples[[1]][,3])
+        ensemble_pars[j, 4] <- mean(samples[[1]][,4])
+        ensemble_pars[j, 5] <- mean(samples[[1]][,5])
+        ensemble_pars[j, 6] <- mean(samples[[1]][,6])
+      }
+    }  
+    
+    
+    # the model! performed in sqrt transformed CTD units
     for (i in 2:nsteps) {
       met_index <- 1
-    for(j in 1:nmembers){  
-      if(process_uncertainty == TRUE){
-        added_process_uncertainty =  rnorm(1, 0,ensemble_pars[j, 6])
-      }else{
-        added_process_uncertainty = 0.0
-      }
-      if(initial_condition_uncertainty == TRUE){
-        x[1,j,] <- ensemble_pars[j,1]
-      }else{
-        x[1,,] <- mean(ensemble_pars[,1])
-        #x[1,,] <- sqrt(chla_obs[[1]][1,1]*0.55 - 0.0308)  # convert to sqrt and CTD units
-      }
-      if(driver_uncertainty_discharge == TRUE){
-        curr_discharge = rnorm(1, discharge_forecast[i,met_index+1], 0.00965) #sd from QT's discharge forecasts, met_index+1 bc the first col is time
-      }else{
-        curr_discharge = discharge_forecast[i,2] # if not discharge uncertainty, use just one of the discharge ensembles
-      }
-      if(weather_uncertainty == TRUE){
-        curr_shortwave = sw_forecast[i,met_index]
-      }else{
-        curr_shortwave = sw_forecast[i]
-      }
-      x[i,j,] <- ensemble_pars[j, 2] + ensemble_pars[j, 3]*x[i-1,j,] + ensemble_pars[j, 4]*curr_discharge + ensemble_pars[j, 5]*curr_shortwave + added_process_uncertainty
-      met_index = met_index + 1
-      if(met_index > n_met_members){
-        met_index <- 1
+      for(j in 1:nmembers){  
+        if(process_uncertainty == TRUE){
+          added_process_uncertainty =  rnorm(1, 0,ensemble_pars[j, 6])
+        }else{
+          added_process_uncertainty = 0.0
+        }
+        if(initial_condition_uncertainty == TRUE){
+          x[1,j,] <- ensemble_pars[j,1]
+        }else{
+          x[1,,] <- mean(ensemble_pars[,1])
+          #x[1,,] <- sqrt(chla_obs[[1]][1,1]*0.55 - 0.0308)  # convert to sqrt and CTD units
+        }
+        if(driver_uncertainty_discharge == TRUE){
+          curr_discharge = rnorm(1, discharge_forecast[i,met_index+1], 0.00965) #sd from QT's discharge forecasts, met_index+1 bc the first col is time
+        }else{
+          curr_discharge = discharge_forecast[i,2] # if not discharge uncertainty, use just one of the discharge ensembles
+        }
+        if(weather_uncertainty == TRUE){
+          curr_shortwave = sw_forecast[i,met_index]
+        }else{
+          curr_shortwave = sw_forecast[i]
+        }
+        x[i,j,] <- ensemble_pars[j, 2] + ensemble_pars[j, 3]*x[i-1,j,] + ensemble_pars[j, 4]*curr_discharge + ensemble_pars[j, 5]*curr_shortwave + added_process_uncertainty
+        met_index = met_index + 1
+        if(met_index > n_met_members){
+          met_index <- 1
+        }
       }
     }
-    }
-  
-  
-  
- 
-  # create the output dataframe for archiving the forecast statistics (mean, sd, 95% CI, and obs chl)
-  out <- data.frame("forecast_date" = forecast_sequence[-1], 
-                    "forecast_mean_chl" =rep(NA) , 
-                    "forecast_median_chl" = rep(NA),
-                    "forecast_sd_chl" = rep(NA), 
-                    "forecast_CI95_upper" = rep(NA),
-                    "forecast_CI95_lower" = rep(NA), 
-                    "forecast_max" = rep(NA), 
-                    "forecast_min" = rep(NA), 
-                    "forecast_variance" = rep(NA),
-                    "obs_chl_EXO" = rep(NA), 
-                    "forecast_run_day" = start_day, 
-                    "day_in_future" = rep(NA),
-                    'par1' = rep(NA),
-                    'par2' = rep(NA),
-                    'par3'= rep(NA),
-                    'par4'= rep(NA),
-                    'par5' = rep(NA)
-  )
-  
-  
-  
-  CTD_EXO_slope <- 0.6
-  CTD_EXO_intercept <- 0.25
-  
-  for (i in 2:nsteps) {
-    error_upper <-  qnorm(0.975, mean = mean(x[i,,]), sd =sd((x[i,,])) )
-    #error_upper <- (error_upper^2)/CTD_EXO_slope + CTD_EXO_intercept
-    #error_upper <- ((error_upper + CTD_EXO_intercept)/CTD_EXO_slope)^2
-    error_lower <- qnorm(0.025, mean = mean(x[i,,]), sd =sd((x[i,,])) )
-    #error_lower <- (error_lower^2)/CTD_EXO_slope + CTD_EXO_intercept
     
-    #out[i-1, 2] <- mean(    ((x[i,,]^2)/CTD_EXO_slope) + CTD_EXO_intercept)
-    #out[i-1, 3] <- median(    ((x[i,,]^2)/CTD_EXO_slope) + CTD_EXO_intercept)
-    #out[i-1, 4] <- sd(    ((x[i,,]^2)/CTD_EXO_slope) + CTD_EXO_intercept)
-    out[i-1, 2] <- mean(x[i,,])
-    out[i-1, 3] <- median(x[i,,])
-    out[i-1, 4] <- sd(x[i,,])
-    out[i-1, 5] <- error_upper 
-    out[i-1, 6] <- error_lower
-    out[i-1, 7] <- max(x[i,,])
-    out[i-1, 8] <- min(x[i,,])
-    out[i-1, 9] <- var(x[i,,])
     
-    }
-  
- convert_cols <- c('forecast_mean_chl', 'forecast_median_chl', 'forecast_sd_chl', 'forecast_CI95_upper', 
-                   'forecast_CI95_lower', 'forecast_max', 'forecast_min')
-
- # convert out of CTD units and into EXO units, and un-sqrt transform
- #out[, which(colnames(out) %in% convert_cols)] <- (((out[, which(colnames(out) %in% convert_cols)]) - CTD_EXO_intercept)/CTD_EXO_slope)^2
- # transform out of sqrt units, data already in EXO units, which is what we want for visualization and comparison to obs (EXO)
- out[, which(colnames(out) %in% convert_cols)] <- (out[, which(colnames(out) %in% convert_cols)])^2
-
- #plot(out$forecast_date, out$forecast_variance, main = 'untransform and then retransform')
- #plot(out$forecast_date, out$forecast_mean_chl, ylim = c(0,15))
- #points(out$forecast_date,out$forecast_CI95_upper, type = 'l')
- #points(out$forecast_date,out$forecast_CI95_lower, type = 'l')
- #points(col = 'red', out$forecast_date,out$obs_chl_EXO, type = 'l')
- 
- if(timestep_numeric==1){
+    
+    
+    # create the output dataframe for archiving the forecast statistics (mean, sd, 95% CI, and obs chl)
+    out <- data.frame("forecast_date" = forecast_sequence[-1], 
+                      "forecast_mean_chl" =rep(NA) , 
+                      "forecast_median_chl" = rep(NA),
+                      "forecast_sd_chl" = rep(NA), 
+                      "forecast_CI95_upper" = rep(NA),
+                      "forecast_CI95_lower" = rep(NA), 
+                      "forecast_max" = rep(NA), 
+                      "forecast_min" = rep(NA), 
+                      "forecast_variance" = rep(NA),
+                      "obs_chl_EXO" = rep(NA), 
+                      "forecast_run_day" = start_day, 
+                      "day_in_future" = rep(NA),
+                      'par1' = rep(NA),
+                      'par2' = rep(NA),
+                      'par3'= rep(NA),
+                      'par4'= rep(NA),
+                      'par5' = rep(NA)
+    )
+    
+    
+    
+    CTD_EXO_slope <- 0.6
+    CTD_EXO_intercept <- 0.25
+    
     for (i in 2:nsteps) {
-      out[i-1, 10] <- chla_obs[[1]][i,1] 
+      error_upper <-  qnorm(0.975, mean = mean(x[i,,]), sd =sd((x[i,,])) )
+      #error_upper <- (error_upper^2)/CTD_EXO_slope + CTD_EXO_intercept
+      #error_upper <- ((error_upper + CTD_EXO_intercept)/CTD_EXO_slope)^2
+      error_lower <- qnorm(0.025, mean = mean(x[i,,]), sd =sd((x[i,,])) )
+      #error_lower <- (error_lower^2)/CTD_EXO_slope + CTD_EXO_intercept
+      
+      #out[i-1, 2] <- mean(    ((x[i,,]^2)/CTD_EXO_slope) + CTD_EXO_intercept)
+      #out[i-1, 3] <- median(    ((x[i,,]^2)/CTD_EXO_slope) + CTD_EXO_intercept)
+      #out[i-1, 4] <- sd(    ((x[i,,]^2)/CTD_EXO_slope) + CTD_EXO_intercept)
+      out[i-1, 2] <- mean(x[i,,])
+      out[i-1, 3] <- median(x[i,,])
+      out[i-1, 4] <- sd(x[i,,])
+      out[i-1, 5] <- error_upper 
+      out[i-1, 6] <- error_lower
+      out[i-1, 7] <- max(x[i,,])
+      out[i-1, 8] <- min(x[i,,])
+      out[i-1, 9] <- var(x[i,,])
       
     }
+    
+    convert_cols <- c('forecast_mean_chl', 'forecast_median_chl', 'forecast_sd_chl', 'forecast_CI95_upper', 
+                      'forecast_CI95_lower', 'forecast_max', 'forecast_min')
+    
+    # convert out of CTD units and into EXO units, and un-sqrt transform
+    out[, which(colnames(out) %in% convert_cols)] <- (((out[, which(colnames(out) %in% convert_cols)]) - CTD_EXO_intercept)/CTD_EXO_slope)^2
+    # transform out of sqrt units, data already in EXO units, which is what we want for visualization and comparison to obs (EXO)
+    #out[, which(colnames(out) %in% convert_cols)] <- (out[, which(colnames(out) %in% convert_cols)])^2
+    
+    #plot(out$forecast_date, out$forecast_variance, main = 'untransform and then retransform')
+    #plot(out$forecast_date, out$forecast_mean_chl, ylim = c(0,15))
+    #points(out$forecast_date,out$forecast_CI95_upper, type = 'l')
+    #points(out$forecast_date,out$forecast_CI95_lower, type = 'l')
+    #points(col = 'red', out$forecast_date,out$obs_chl_EXO, type = 'l')
+    
+    if(timestep_numeric==1){
+      for (i in 2:nsteps) {
+        out[i-1, 10] <- chla_obs[[1]][i,1] 
+        
+      }
     }else if(timestep_numeric==7){
-    out[1:2, 10] <- chla_obs[[1]][c(8,15),1] 
-  }else if(timestep_numeric==14){
-    out[1, 10] <- chla_obs[[1]][15,1] 
+      out[1:2, 10] <- chla_obs[[1]][c(8,15),1] 
+    }else if(timestep_numeric==14){
+      out[1, 10] <- chla_obs[[1]][15,1] 
+      
+    }
     
-  }
-  
-  
-  out[,12] <- seq(timestep_numeric, max_horizon, by = timestep_interval)
-  out[,13] <- mean(ensemble_pars[,2])
-  out[,14]<-  mean(ensemble_pars[,3])
-  out[,15]<-  mean(ensemble_pars[,4])
-  out[,16]<-  mean(ensemble_pars[,5])
-  out[,17]<-  mean(ensemble_pars[,6])
-  
-  
-  
-  
-  setwd(folder)
-  
-  # create a single csv for each forecast that is named with day the forecast is run
-  if(day(forecast_start_day) < 10){
-    file_name_forecast_start_day <- paste0("0",day(forecast_start_day))
-  }else{
-    file_name_forecast_start_day <- day(forecast_start_day) 
-  }
-  
-  if(month(forecast_start_day) < 10){
-    file_name_forecast_start_month <- paste0("0",month(forecast_start_day))
-  }else{
-    file_name_forecast_start_month <- month(forecast_start_day) 
-  }
-  
-  forecast_file_name <- paste0(year(forecast_start_day), "_", 
-                               file_name_forecast_start_month, "_", 
-                               file_name_forecast_start_day, "_", 
-                               "chla_", timestep,  ".csv")
-  #some conditional statements to archive the forecast in a different location if doing an uncertainty analysis
-  
-  if(uncert_mode==1){
-    forecast_output_location <- paste0(forecast_location,  "/",
-                                       
-                                       forecast_file_name)
-  }else if(uncert_mode==2){
-    forecast_output_location <- paste0(forecast_location,  "/",
-                                       "uncertainty_2_process/",
-                                       forecast_file_name)
-  }else if(uncert_mode==3){
-    forecast_output_location <- paste0(forecast_location,  "/",
-                                       "uncertainty_3_weather/",
-                                       forecast_file_name)
-  }else if(uncert_mode==4){ forecast_output_location <- paste0(forecast_location,  "/",
-                                                               "uncertainty_4_initial_condition/",
-                                                               forecast_file_name)
-  }else if(uncert_mode==5){ forecast_output_location <- paste0(forecast_location,  "/",
-                                                               "uncertainty_5_parameter/",
-                                                               forecast_file_name)
-  }else if(uncert_mode==6){ forecast_output_location <- paste0(forecast_location,  "/",
-                                                               "uncertainty_6_discharge/",
-                                                               forecast_file_name)
-  }
-  
-  
-  write.csv(out, forecast_output_location, row.names = FALSE)
-  
-  # now archive the parameter values for the forecasts
-  parms_file_name <- paste0(year(forecast_start_day), "_", 
-                            file_name_forecast_start_month, "_", 
-                            file_name_forecast_start_day, "_",
-                            'ensemble_parameters.csv')
-  if(uncert_mode==1){
-    parms_output_location <- paste0(forecast_location,  "/",
-                                    parms_file_name)
-  }else if(uncert_mode==2){
-    parms_output_location <- paste0(forecast_location,  "/",
-                                    "uncertainty_2_process/",
-                                    parms_file_name)
-  }else if(uncert_mode==3){
-    parms_output_location <- paste0(forecast_location,  "/",
-                                    "uncertainty_3_weather/",
-                                    parms_file_name)
-  }else if(uncert_mode==4){ parms_output_location <- paste0(forecast_location,  "/",
-                                                            "uncertainty_4_initial_condition/",
-                                                            parms_file_name)
-  }else if(uncert_mode==5){ parms_output_location <- paste0(forecast_location,  "/",
-                                                            "uncertainty_5_parameter/",
-                                                            parms_file_name)
-  }else if(uncert_mode==6){ parms_output_location <- paste0(forecast_location,  "/",
-                                                            "uncertainty_6_discharge/",
-                                                            parms_file_name)
-  }
-  
-  
-  
-  write.csv(ensemble_pars, parms_output_location, row.names = FALSE)
-  
-  # and make a simple plot to archive the ensemble spread
-  if(uncert_mode==1){
-    forecast_plot_name <-  paste0(year(forecast_start_day), "_", 
-                                  file_name_forecast_start_month, "_", 
-                                  file_name_forecast_start_day, "_", 
-                                  "chla_", timestep, ".pdf")
-    forecast_plot_output_location <- paste0(forecast_location,  "/",
-                                            "ensemble_plots/",
-                                            forecast_plot_name) 
     
-
-    if(!is.na(x[1,1,])){
-      pdf(file = forecast_plot_output_location )
-      x_axis <-   forecast_sequence
-      plot(x_axis, ((x[,1,] - CTD_EXO_intercept)/CTD_EXO_slope)^2, type = 'o',ylim = range(c((min(out[,8], out[,8], na.rm = TRUE)), max(out[,7], out[,10], na.rm = TRUE))) # once catwalk data cleaning script is running, can change this to include: out[1,10], out[2,10]
-           , xlab = "Date", ylab = "Chla (ug/L)")
-      for(m in 2:length(x[1,,1])){
-        points(x_axis, ((x[,m,] - CTD_EXO_intercept)/CTD_EXO_slope)^2, type = 'o')  
-      }
-      for(j in 1:nrow(out)){
-        points(out[j,1], (out[j,2]), col = 'orange', pch = 16, cex = 2)  
-      }
-      for(j in 1:nrow(out)){
-        points(out[j,1], (out[j,10]), col = 'red', pch = 16, cex = 2)  
-      }
+    out[,12] <- seq(timestep_numeric, max_horizon, by = timestep_interval)
+    out[,13] <- mean(ensemble_pars[,2])
+    out[,14]<-  mean(ensemble_pars[,3])
+    out[,15]<-  mean(ensemble_pars[,4])
+    out[,16]<-  mean(ensemble_pars[,5])
+    out[,17]<-  mean(ensemble_pars[,6])
+    
+    
+    
+    
+    setwd(folder)
+    
+    # create a single csv for each forecast that is named with day the forecast is run
+    if(day(forecast_start_day) < 10){
+      file_name_forecast_start_day <- paste0("0",day(forecast_start_day))
+    }else{
+      file_name_forecast_start_day <- day(forecast_start_day) 
+    }
+    
+    if(month(forecast_start_day) < 10){
+      file_name_forecast_start_month <- paste0("0",month(forecast_start_day))
+    }else{
+      file_name_forecast_start_month <- month(forecast_start_day) 
+    }
+    
+    forecast_file_name <- paste0(year(forecast_start_day), "_", 
+                                 file_name_forecast_start_month, "_", 
+                                 file_name_forecast_start_day, "_", 
+                                 "chla_", timestep,  ".csv")
+    #some conditional statements to archive the forecast in a different location if doing an uncertainty analysis
+    
+    if(uncert_mode==1){
+      forecast_output_location <- paste0(forecast_location,  "/",
+                                         
+                                         forecast_file_name)
+    }else if(uncert_mode==2){
+      forecast_output_location <- paste0(forecast_location,  "/",
+                                         "uncertainty_2_process/",
+                                         forecast_file_name)
+    }else if(uncert_mode==3){
+      forecast_output_location <- paste0(forecast_location,  "/",
+                                         "uncertainty_3_weather/",
+                                         forecast_file_name)
+    }else if(uncert_mode==4){ forecast_output_location <- paste0(forecast_location,  "/",
+                                                                 "uncertainty_4_initial_condition/",
+                                                                 forecast_file_name)
+    }else if(uncert_mode==5){ forecast_output_location <- paste0(forecast_location,  "/",
+                                                                 "uncertainty_5_parameter/",
+                                                                 forecast_file_name)
+    }else if(uncert_mode==6){ forecast_output_location <- paste0(forecast_location,  "/",
+                                                                 "uncertainty_6_discharge/",
+                                                                 forecast_file_name)
+    }
+    
+    
+    write.csv(out, forecast_output_location, row.names = FALSE)
+    
+    # now archive the parameter values for the forecasts
+    parms_file_name <- paste0(year(forecast_start_day), "_", 
+                              file_name_forecast_start_month, "_", 
+                              file_name_forecast_start_day, "_",
+                              'ensemble_parameters.csv')
+    if(uncert_mode==1){
+      parms_output_location <- paste0(forecast_location,  "/",
+                                      parms_file_name)
+    }else if(uncert_mode==2){
+      parms_output_location <- paste0(forecast_location,  "/",
+                                      "uncertainty_2_process/",
+                                      parms_file_name)
+    }else if(uncert_mode==3){
+      parms_output_location <- paste0(forecast_location,  "/",
+                                      "uncertainty_3_weather/",
+                                      parms_file_name)
+    }else if(uncert_mode==4){ parms_output_location <- paste0(forecast_location,  "/",
+                                                              "uncertainty_4_initial_condition/",
+                                                              parms_file_name)
+    }else if(uncert_mode==5){ parms_output_location <- paste0(forecast_location,  "/",
+                                                              "uncertainty_5_parameter/",
+                                                              parms_file_name)
+    }else if(uncert_mode==6){ parms_output_location <- paste0(forecast_location,  "/",
+                                                              "uncertainty_6_discharge/",
+                                                              parms_file_name)
+    }
+    
+    
+    
+    write.csv(ensemble_pars, parms_output_location, row.names = FALSE)
+    
+    # and make a simple plot to archive the ensemble spread
+    if(uncert_mode==1){
+      forecast_plot_name <-  paste0(year(forecast_start_day), "_", 
+                                    file_name_forecast_start_month, "_", 
+                                    file_name_forecast_start_day, "_", 
+                                    "chla_", timestep, ".pdf")
+      forecast_plot_output_location <- paste0(forecast_location,  "/",
+                                              "ensemble_plots/",
+                                              forecast_plot_name) 
       
       
-      legend('topleft', c('observed chla', 'forecast ensembles', 'forecast mean'), col = c('red', 'black', 'orange'), pch = c(16, 1,16), lty = c(0,1,0), bty = 'n')
-      dev.off()}
-    
+      if(!is.na(x[1,1,])){
+        pdf(file = forecast_plot_output_location )
+        x_axis <-   forecast_sequence
+        plot(x_axis, ((x[,1,] - CTD_EXO_intercept)/CTD_EXO_slope)^2, type = 'o',ylim = range(c((min(out[,8], out[,8], na.rm = TRUE)), max(out[,7], out[,10], na.rm = TRUE))) # once catwalk data cleaning script is running, can change this to include: out[1,10], out[2,10]
+             , xlab = "Date", ylab = "Chla (ug/L)")
+        for(m in 2:length(x[1,,1])){
+          points(x_axis, ((x[,m,] - CTD_EXO_intercept)/CTD_EXO_slope)^2, type = 'o')  
+        }
+        for(j in 1:nrow(out)){
+          points(out[j,1], (out[j,2]), col = 'orange', pch = 16, cex = 2)  
+        }
+        for(j in 1:nrow(out)){
+          points(out[j,1], (out[j,10]), col = 'red', pch = 16, cex = 2)  
+        }
+        
+        
+        legend('topleft', c('observed chla', 'forecast ensembles', 'forecast mean'), col = c('red', 'black', 'orange'), pch = c(16, 1,16), lty = c(0,1,0), bty = 'n')
+        dev.off()}
+      
+    }
   }
+  
 }
 
   
