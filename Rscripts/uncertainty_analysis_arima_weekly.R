@@ -18,13 +18,13 @@ forecast_folder <- paste0(folder, "/FCR_forecasts", '/', timestep, '/', sim_name
 bloom_threshold <- 17.1
 # uncert_mode = 1, normal forecast run
 myfiles_forecast <- list.files(path = forecast_folder, pattern = paste0('*7day', ".csv"))
-dataset <- read.csv(paste0(forecast_folder, "/", myfiles_forecast[1]))
+dataset_forecast <- read.csv(paste0(forecast_folder, "/", myfiles_forecast[1]))
 
 
 # read in files
 for (i in 2:length(myfiles_forecast)) {
   temp_2 <- read.csv(paste0(forecast_folder,"/", myfiles_forecast[i]))
-  dataset <- rbind(dataset, temp_2)
+  dataset_forecast <- rbind(dataset_forecast, temp_2)
 }
 
 # some data arranging
@@ -333,9 +333,9 @@ dev.off()
 png(paste0(forecast_folder, '/LEGEND.png'), width = 800, height = 885)
 ggplot(mean_prop_long, aes(x = day_in_future, y = measurement, fill = variable )) + 
   geom_bar(stat = 'identity', position= 'stack') +
-  scale_fill_manual(labels = c('discharge', 'initial condition', 'parameter', 'process', 'weather') ,
+  scale_fill_manual(labels = c('driver: discharge', 'initial condition', 'parameter', 'process', 'driver: weather') ,
                     values = c('#4472C4', '#92D050', '#660066', '#C55A11', '#FFC000'),
-                    name = 'Uncertainty Type') +
+                    name = 'Uncertainty Source') +
   xlab('Forecast Horizon (days)') +
   ylab('Proportion of Variance') +
   scale_x_discrete(breaks = c(7,14),
