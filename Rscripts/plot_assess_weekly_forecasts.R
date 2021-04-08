@@ -130,7 +130,14 @@ for (i in 1:max_timestep) {
   metrics_overtime[i,6] <- null$coeff_determination
   
   
-  non_bloom <- temp[temp$obs_chl_EXO_on_forecast_date < bloom_threshold, ]
+  # determine the days when blooms occur, then include the previous days within the horizon, i
+  idx <- which(temp$obs_chl_EXO > bloom_threshold)
+  bloom_start <- temp[idx,]
+  bloom_horiz <- temp[idx-i*7,]
+  bloom <- rbind(bloom_start, bloom_horiz)
+  bloom <- bloom[!duplicated(bloom$forecast_date), ]
+  non_bloom <- temp[!temp$forecast_date %in% bloom$forecast_date,]
+  
   non_bloom_forecast <- model_metrics(non_bloom$forecast_mean_chl, non_bloom$obs_chl_EXO_on_forecast_date)
   metrics[1,3] <- non_bloom_forecast$RMSE
   metrics[2,3] <- non_bloom_forecast$NSE
@@ -143,7 +150,6 @@ for (i in 1:max_timestep) {
   metrics_overtime[i,5] <- non_bloom_forecast$RMSE
   metrics_overtime[i,9] <- non_bloom_forecast$coeff_determination
   
-  bloom <- temp[temp$obs_chl_EXO_on_forecast_date > bloom_threshold, ]
   bloom_forecast <- model_metrics(bloom$forecast_mean_chl, bloom$obs_chl_EXO_on_forecast_date)
   metrics_overtime[i,11] <- bloom_forecast$RMSE
   
@@ -174,7 +180,7 @@ for (i in 1:max_timestep) {
 
 metrics_overtime[,1] <-   seq(timestep_numeric, max_horizon, by = timestep_interval)
 metrics_overtime <- as.data.frame(metrics_overtime)
-write.csv(metrics_overtime, paste0(forecast_folder, '/ForecastMetrics_', timestep, '.csv'), row.names = FALSE)
+write.csv(metrics_overtime, paste0(forecast_folder, '/ForecastMetrics_', timestep, '_', Sys.Date(), '.csv'), row.names = FALSE)
 
 
 #################################################################################################################################################################################
