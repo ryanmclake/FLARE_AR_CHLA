@@ -12,7 +12,8 @@ File are organized into the following folders:
 `FCR_forecasts`--for storing forecast output. organized into folders by timestep (e.g., '1day' for forecasts run on a daily timestep), and then by simulation name
 `ARIMA_working`--working folder for files created within a forecast run
 
-# Info about installing JAGS on a Mac
+# Info about installing JAGS 
+JAGS (Just Another Gibbs Sampler) is an independent program for analysis of Bayesian models which is used in thie forecast analysis. The program needs to be installed on your computer before you can run code using the `rjags` package. You can find information on downloading JAGS here: https://mcmc-jags.sourceforge.io/
 
 # Setting up SCCData data repositories
 These repositories need to be updated to new location
