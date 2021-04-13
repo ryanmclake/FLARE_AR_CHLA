@@ -4,13 +4,13 @@ Forecasts can be run on a daily basis and code is configured to be run with dail
 
 
 File are organized into the following folders:
-`training_datasets`--for storing data files which are run as inputs to bayesian model fitting
-`sim_files`--for storing historical observational data at Falling Creek Reservoir
-`SCCData_temp`--for storing NOAA weather forecasts
-`SCCData`--for storing recent observed data at Falling Creek Reservoir (see notes below for how to download these datafiles) 
-`Rscripts`--for storing R scripts needed for data management/QAQC, forecast creation, and analysis
-`FCR_forecasts`--for storing forecast output. organized into folders by timestep (e.g., '1day' for forecasts run on a daily timestep), and then by simulation name
-`ARIMA_working`--working folder for files created within a forecast run
+`training_datasets`--for storing data files which are run as inputs to bayesian model fitting\
+`sim_files`--for storing historical observational data at Falling Creek Reservoir\
+`SCCData_temp`--for storing NOAA weather forecasts\
+`SCCData`--for storing recent observed data at Falling Creek Reservoir (see notes below for how to download these datafiles) \
+`Rscripts`--for storing R scripts needed for data management/QAQC, forecast creation, and analysis\
+`FCR_forecasts`--for storing forecast output. organized into folders by timestep (e.g., '1day' for forecasts run on a daily timestep), and then by simulation name\
+`ARIMA_working`--working folder for files created within a forecast run\
 
 # Info about installing JAGS 
 JAGS (Just Another Gibbs Sampler) is an independent program for analysis of Bayesian models which is used in thie forecast analysis. The program needs to be installed on your computer before you can run code using the `rjags` package. You can find information on downloading JAGS here: https://mcmc-jags.sourceforge.io/
