@@ -1,0 +1,840 @@
+
+  
+    
+      uid=EDI,o=EDI,dc=edirepository,dc=org
+      all
+    
+    
+      uid=carylab6,o=EDI,dc=edirepository,dc=org
+      all
+    
+    
+      uid=ccarey,o=EDI,dc=edirepository,dc=org
+      all
+    
+    
+      public
+      read
+    
+  
+  
+    doi:10.6073/pasta/7140e852f519fe8acd1f86927c0af763
+    Water chemistry time series for Beaverdam Reservoir, Carvins Cove Reservoir, Falling Creek Reservoir, Gatewood Reservoir, and Spring Hollow Reservoir in southwestern Virginia, USA 2013-2017
+    
+      Cayelan Carey
+      Virginia Tech
+      Cayelan@vt.edu
+      https://orcid.org/0000-0001-8835-4476
+    
+    
+      Mary Lofton
+      Virginia Tech
+      melofton@vt.edu
+      https://orcid.org/0000-0003-3270-1330
+    
+    
+      Alexandra Gerling
+      Virginia Tech
+      alexg13@vt.edu
+    
+    
+      Ryan McClure
+      Virginia Tech
+      ryan333@vt.edu
+      https://orcid.org/0000-0001-6370-3852
+    
+    
+      Jonathan Doubek
+      Virginia Tech
+      jpdoubek@vt.edu
+      https://orcid.org/0000-0003-2651-4715
+    
+    
+      Barbara Niederlehner
+      Virginia Tech
+      bniederl@vt.edu
+    
+    
+      Kaitlin Farrell
+      Virginia Tech
+      farrellk@vt.edu
+      https://orcid.org/0000-0002-4709-7749
+    
+    2018-07-11
+    
+      
+  Depth profiles of dissolved organic carbon and total and dissolved
+  nitrogen and phosphorus were sampled from 2013 to 2017 in five
+  drinking water reservoirs in southwestern Virginia, USA. These
+  reservoirs are: Beaverdam Reservoir (Vinton, Virginia), Carvins Cove
+  Reservoir (Roanoke, Virginia), Falling Creek Reservoir (Vinton,
+  Virginia), Gatewood Reservoir (Pulaski, Virginia), and Spring Hollow
+  Reservoir (Salem, Virginia). Beaverdam, Carvins Cove, Falling Creek,
+  and Spring Hollow Reservoirs are owned and operated by the Western
+  Virginia Water Authority as primary or secondary drinking water
+  sources for Roanoke, Virginia, and Gatewood Reservoir is a drinking
+  water source for the Town of Pulaski, Virginia. The dataset consists
+  of depth profiles of water chemistry samples measured at the deepest
+  site of each reservoir adjacent to the dam. Additional water chemistry
+  samples were collected at a gauged weir on Falling Creek Reservoir's
+  primary inflow tributary. The samples were collected approximately
+  fortnightly from March-April, weekly from May-October, and monthly
+  from November-February.
+
+    
+    
+      Carey Lab
+      Virginia Tech
+      Western Virginia Water Authority
+      Falling Creek Reservoir
+      Stream Team
+      carey lab controlled vocabulary
+    
+    
+      Reservoir
+      Lake
+      cuahsi controlled vocabulary
+    
+    
+      Lakes
+      nitrate
+      soluble reactive phosphorus
+      dissolved organic carbon
+      ammonium
+      total nitrogen
+      total phosphorus
+      lter controlled vocabulary
+    
+    
+      
+  This information is released under the Creative Commons license -
+  Attribution - CC BY (https://creativecommons.org/licenses/by/4.0/).
+  The consumer of these data ("Data User" herein) is required
+  to cite it appropriately in any publication that results from its use.
+  The Data User should realize that these data may be actively used by
+  others for ongoing research and that coordination may be necessary to
+  prevent duplicate publication. The Data User is urged to contact the
+  authors of these data if any questions about methodology or results
+  occur. Where appropriate, the Data User is encouraged to consider
+  collaboration or co-authorship with the authors. The Data User should
+  realize that misinterpretation of data may occur if used out of
+  context of the original study. While substantial efforts are made to
+  ensure the accuracy of data and associated documentation, complete
+  accuracy of data sets cannot be guaranteed. All data are made
+  available "as is." The Data User should be aware, however,
+  that data are updated periodically and it is the responsibility of the
+  Data User to check for new versions of the data. The data authors and
+  the repository where these data were obtained shall not be liable for
+  damages resulting from any use or misinterpretation of the data. Thank
+  you.
+
+    
+    
+      
+        Southwestern Virginia, USA, North America
+        
+          -119.95
+          28.53
+          69.0
+          28.38
+        
+      
+      
+        Beaverdam Reservoir is located in Vinton, Virginia, USA
+        
+          -79.824834
+          -79.813848
+          37.322865
+          37.311961
+        
+      
+      
+        Carvins Cove Reservoir is located in Roanoke, Virginia, USA
+        
+          -79.978642
+          -79.944052
+          37.409127
+          37.365345
+        
+      
+      
+        Falling Creek Reservoir is located in Vinton, Virginia, USA
+        
+          -79.839249
+          -79.836009
+          37.309589
+          37.30266
+        
+      
+      
+        Gatewood Reservoir is located in Pulaski, Virginia, USA
+        
+          -80.89188
+          -80.858492
+          37.054358
+          37.03819
+        
+      
+      
+        Spring Hollow Reservoir is located in Salem, Virginia, USA
+        
+          -80.179076
+          -80.170407
+          37.231092
+          37.217594
+        
+      
+      
+        
+          
+            2013-04-04
+          
+          
+            2017-12-11
+          
+        
+      
+    
+    
+      ongoing
+    
+    
+      Cayelan Carey
+      Virginia Tech
+      Cayelan@vt.edu
+      https://orcid.org/0000-0001-8835-4476
+    
+    
+      
+        
+          
+  SAMPLING TIMES Most sampling occurred between the hours of 9:00 and
+  15:00, and are denoted in the DateTime as 12:00. Some sampling
+  occurred outside of these hours, including some overnight sampling;
+  these instances are noted by the actual sampling time within the
+  DateTime column. For more information about nighttime sampling, see
+  Doubek et. al. 2018.
+
+          
+  SAMPLE COLLECTION AND EQUIPMENT
+
+          
+  Total nitrogen (TN) and total phosphorus (TP)
+
+          
+  Unfiltered water samples were collected at specified depths for each
+  reservoir using a 4L Van Dorn water sampler (Wildco, Yulee, Florida,
+  USA). Sample timestamps for samples collected between approximately 9
+  a.m. and 3 p.m. were standardized to noon. Samples collected for
+  projects that required sample collection at specific times of day were
+  standardized to the top of the hour during which they were collected
+  (i.e., a sample timestamp of 16:00 indicates a sample taken between 4
+  and 5 p.m.). Samples were stored in acid-washed 125 mL polypropylene
+  bottles and frozen within 12 hours. Samples were generally analyzed
+  within one year of collection date.
+
+          
+  Soluble reactive phosphorus (SRP), nitrate (NO3), ammonium (NH4) and
+  dissolved organic carbon (DOC)
+
+          
+  Water samples were collected at specified depths for each reservoir
+  using a Van Dorn water sampler and were filtered with a 0.7 _m glass
+  fiber filter (Thomas Scientific GF/F) before being stored in
+  acid-washed 125 mL polypropylene bottles. Sample timestamps for
+  samples collected between approximately 9 a.m. and 3 p.m. were
+  standardized to noon. Samples collected for projects that required
+  sample collection at specific times of day were standardized to the
+  top of the hour during which they were collected (i.e., a sample
+  timestamp of 16:00 indicates a sample taken between 4 and 5 p.m.).
+  Samples were frozen within 12 hours. Samples were generally analyzed
+  within six months of collection date.
+
+          
+  CHEMICAL ANALYSES AND EQUIPMENT
+
+          
+  TN and TP
+
+          
+  Samples were digested with alkaline persulfate (Patton and Kryskalla
+  2003) and then analyzed colorimetrically using flow injection analysis
+  (APHA 2005). TN was analyzed using the cadmium reduction method (APHA
+  1998) and TP was analyzed using the ascorbic acid method (Murphy and
+  Riley 1962) on a Lachat Instruments XYZ Autosampler ASX 520 Series and
+  QuikChem Series 8500 (Lachat ASX 520 Series, Lachat Instruments,
+  Loveland, Colorado, USA).
+
+          
+  SRP, NO3, NH4
+
+          
+  Samples were analyzed colorimetrically using flow injection analysis
+  (APHA 2005). SRP was analyzed using the ascorbic acid method (Murphy
+  and Riley 1962), NO3 was analyzed using the cadmium reduction method
+  (APHA 1998), and NH4 was analyzed using the Berthelot Reaction method
+  (Solorzano 1969, APHA 2005) with a common modification as to the
+  source of the hypochlorite ion as described in Zhang et al. 1997 on a
+  Lachat Instruments XYZ Autosampler ASX 520 Series and QuikChem Series
+  8500 (Lachat ASX 520 Series, Lachat Instruments, Loveland, Colorado,
+  USA).
+
+          
+  DOC
+
+          
+  DOC was analyzed using the persulfate catalytic method (Brenton and
+  Arnett 1993) on a TOCA 1010 from OI Analytical from 2013-2016 (OI
+  Analytical 1010 Total Organic Carbon Analyzer with 1051 autosampler,
+  College Station, TX USA) and on a Vario TOC Cube from Elementar from
+  2016-2017 (vario TOC cube, Elementar Analysensysteme GmbH, Hanau,
+  Germany).
+
+          
+  ADDITIONAL NOTES From 2013 to 2017, multiple whole-ecosystem
+  manipulations were conducted at Falling Creek Reservoir. These
+  manipulations include intermittent operation of hypolimnetic
+  oxygenation and pulsed epilimnetic mixing engineering systems. For a
+  detailed description of the hypolimnetic oxygenation engineered
+  system, see Gerling et al. (2014) and for a detailed description of
+  the epilimnetic mixing engineered system, see Chen et al. (2017).
+  These systems were operated over time following Table 1 in Gerling et
+  al. (2016), Table 1 in Munger et al. (2016), and Table 2 in McClure et
+  al. (2018).
+
+          
+  Chen, S., C. Lei, C.C. Carey, P.A. Gantzer, and J.C. Little. 2017.
+  Predicting hypolimnetic oxygenation and epilimnetic mixing in a
+  shallow eutrophic reservoir using a coupled three-dimensional
+  hydrodynamic model. Water Resources Research. 53: 470-484. DOI:
+  10.1002/2016WR019279
+
+          
+  Gerling, A.B., Browne, R.G., Gantzer, P.A., Mobley, M.H., Little,
+  J.C., and C.C. Carey. 2014. First report of the successful operation
+  of a side stream supersaturation hypolimnetic oxygenation system in a
+  eutrophic, shallow reservoir. Water Research. 67: 129-143. doi:
+  10.1016/j.watres.2014.09.002
+
+          
+  Gerling, A.B., Z.W. Munger, J.P. Doubek, K.D. Hamre, P.A. Gantzer,
+  J.C. Little, and C.C. Carey. 2016. Whole-catchment manipulations of
+  internal and external loading reveal the sensitivity of a century-old
+  reservoir to hypoxia. Ecosystems. 19:555-571. DOI:
+  10.1007/s10021-015-9951-0
+
+          
+  McClure, R.P., K.D. Hamre, B.R. Niederlehner, Z.W. Munger, S. Chen,
+  M.E. Lofton, M.E. Schreiber, and C.C. Carey. 2018 Metalimnetic oxygen
+  minima alter the vertical profiles of carbon dioxide and methane in a
+  managed freshwater reservoir. Science of the Total Environment 636:
+  610-620. DOI: 10.1016/j.scitotenv.2018.04.255
+
+          
+  Munger, Z.W., C.C. Carey, A.B. Gerling, K.D. Hamre, J.P. Doubek, S.D.
+  Klepatzki, R.P. McClure, and M.E. Schreiber. 2016. Effectiveness of
+  hypolimnetic oxygenation for preventing accumulation of Fe and Mn in a
+  drinking water reservoir. Water Research. 106: 1-14. DOI:
+  10.1016/j.watres.2016.09.038.
+
+          
+  REFERENCES
+
+          
+  APHA. 1998. Standard methods for the examination of water and
+  wastewater. 20th edn. Washington, DC: American Public Health
+  Association.
+
+          
+  APHA. 2005. Standard methods for the examination of water and
+  wastewater. 21st edn. Washington, DC: American Public Health
+  Association, American Water Works Association, Water Environment
+  Federation.
+
+          
+  Brenton R, Arnett T. 1993. Method of analysis by the U.S. Geological
+  Survey National Water Quality Laboratory - Determination of dissolved
+  organic carbon by UV-promoted persulfate oxidation and infrared
+  spectrometry. Denver, CO: U.S. Geological Survey.
+
+          
+  Murphy J, Riley JP. 1962. A modified single solution method for the
+  determination of phosphate in natural waters. Anal Chim Acta 27:31.6.
+
+          
+  Patton CJ, Kryskalla JR. 2003. Methods of Analysis by the U.S.
+  Geological Survey National Water Quality Laboratory-Evaluation of
+  Alkaline Persulfate Digestion as an Alternative to Kjeldahl Digestion
+  for Determination of Total and Dissolved Nitrogen and Phosphorus in
+  Water. Denver, CO: U.S. Geological Survey.
+
+          
+  Revesz KM, Doctor DH. 2014. Automated determination of the stable
+  carbon isotopic composition (_13C) of total dissolved inorganic carbon
+  (DIC) and total nonpurgeable dissolved organic carbon (DOC) in aqueous
+  samples: RSIL lab codes 1851 and 1852: U.S. Geological Survey
+  Techniques and Methods, book 10, chap. C20, 38 p., http://
+  dx.doi.org/10.3133/tm10C20.
+
+          
+  Solorzano, L. 1969. Determination of ammonia in natural water by the
+  phenolhypochlorite method. Limnol Oceanogr 14:799-801.
+
+          
+  USEPA. 2004. RSKSOP-175 STANDARD OPERATING PROCEDURE Sample
+  Preparation and Calculations for Dissolved Gas Analysis in Water
+  Samples Using a GC Headspace Equilibration Technique, Revision No.2
+  http://www.epa.gov/region1/info/testmethods/pdfs/RSKsop175v2.pdf
+  Retrieved 20APR2015.
+
+          
+  Zhang, J.Z., Orter, P., Fisher, Ch. J. and Moore, L.D. 1997.
+  Determination of ammonia in estuarine and coastal waters by gas
+  segmented flow colorimetric analysis. Methods for determination of
+  chemical substances in marine and estuarine environmental matrices.
+  2nd ed. EPA/7664-41-7.
+
+        
+      
+    
+    
+      No project title to report
+      
+        Cayelan Carey
+        Cayelan@vt.edu
+        https://orcid.org/0000-0001-8835-4476
+        Principal Investigator
+      
+      Western Virginia Water Authority
+      
+        Dynamics of coupled P-Fe-Mn cycling in drinking water reservoirs and implications for water quality
+        
+          Cayelan Carey
+          Cayelan@vt.edu
+          https://orcid.org/0000-0001-8835-4476
+          Principal Investigator
+        
+        Institute of Critical Technology and Applied Science
+      
+      
+        No project title to report
+        
+          Cayelan Carey
+          Cayelan@vt.edu
+          https://orcid.org/0000-0001-8835-4476
+          Principal Investigator
+        
+        Virginia Tech Global Change Center
+      
+      
+        No project title to report
+        
+          Cayelan Carey
+          Cayelan@vt.edu
+          https://orcid.org/0000-0001-8835-4476
+          Principal Investigator
+        
+        Fralin Life Sciences Institute
+      
+    
+    
+      chemistry.csv
+      Reservoir water chemistry dataset.
+      
+        chemistry.csv
+        155189
+        92151def9ff6f2d7b1491816b926619b
+        
+          
+            1
+            \r\n
+            column
+            
+              ,
+            
+          
+        
+        
+          
+            https://pasta.lternet.edu/package/data/eml/edi/199/4/da174082a3d924e989d3151924f9ef98
+          
+        
+      
+      
+        
+          Reservoir
+          Three-letter code corresponding to sampled reservoir
+          string
+          
+            
+              
+                
+                  
+                    BVR
+                    Beaverdam Reservoir
+                  
+                  
+                    CCR
+                    Carvins Cove Reservoir
+                  
+                  
+                    FCR
+                    Falling Creek Reservoir
+                  
+                  
+                    GWR
+                    Gatewood Reservoir
+                  
+                  
+                    SHR
+                    Spring Hollow Reservoir
+                  
+                
+              
+            
+          
+          
+            NA
+            value is missing
+          
+        
+        
+          Site
+          Sampling site within each reservoir; 50=Deep hole or site nearest to dam in each reservoir, 100=Inflow stream of Falling Creek Reservoir, 20=Upstream pelagic site nearest to inflow stream at Falling Creek Reservoir
+          float
+          
+            
+              
+                dimensionless
+              
+              
+                natural
+                
+                  20
+                  100
+                
+              
+            
+          
+          
+            NA
+            value is missing
+          
+        
+        
+          DateTime
+          Date and time of sampling. All data were collected in the eastern time zone of the U.S.A., with daylight savings time observed
+          date
+          
+            
+              YYYY-MM-DD hh:mm:ss
+            
+          
+          
+            NA
+            value is missing
+          
+        
+        
+          Depth_m
+          Water depth where the sample was collected or sensor reading was measured
+          float
+          
+            
+              
+                meter
+              
+              
+                real
+                
+                  0.1
+                  31
+                
+              
+            
+          
+          
+            NA
+            value is missing
+          
+        
+        
+          TN_ugL
+          Total nitrogen concentration
+          float
+          
+            
+              
+                microgramsPerLiter
+              
+              
+                real
+                
+                  36.6
+                  3680
+                
+              
+            
+          
+          
+            NA
+            value is missing
+          
+        
+        
+          TP_ugL
+          Total phosphorus concentration
+          float
+          
+            
+              
+                microgramsPerLiter
+              
+              
+                real
+                
+                  0
+                  247
+                
+              
+            
+          
+          
+            NA
+            value is missing
+          
+        
+        
+          NH4_ugL
+          Ammonium concentration
+          float
+          
+            
+              
+                microgramsPerLiter
+              
+              
+                real
+                
+                  0
+                  1780
+                
+              
+            
+          
+          
+            NA
+            value is missing
+          
+        
+        
+          NO3NO2_ugL
+          Nitrate-nitrite concentration
+          float
+          
+            
+              
+                microgramsPerLiter
+              
+              
+                real
+                
+                  0
+                  380
+                
+              
+            
+          
+          
+            NA
+            value is missing
+          
+        
+        
+          SRP_ugL
+          Soluble reactive phosphorus concentration
+          float
+          
+            
+              
+                microgramsPerLiter
+              
+              
+                real
+                
+                  0
+                  119
+                
+              
+            
+          
+          
+            NA
+            value is missing
+          
+        
+        
+          DOC_mgL
+          Dissolved organic carbon concentration
+          float
+          
+            
+              
+                milligramsPerLiter
+              
+              
+                real
+                
+                  0.2
+                  18.3
+                
+              
+            
+          
+          
+            NA
+            value is missing
+          
+        
+        
+          Flag_TN
+          Data flag for total nitrogen (TN); 1 = sample not taken, 2 = instrument malfunction, 3 = sample below detection, 4 = negative value set to zero, 5 = demonic intrusion, 6 = non-standard method, 7 = sample run multiple times and values averaged
+          float
+          
+            
+              
+                dimensionless
+              
+              
+                whole
+                
+                  0
+                  67
+                
+              
+            
+          
+          
+            NA
+            value is missing
+          
+        
+        
+          Flag_TP
+          Data flag for total phosphorus (TP); 1 = sample not taken, 2 = instrument malfunction, 3 = sample below detection, 4 = negative value set to zero, 5 = demonic intrusion, 6 = non-standard method, 7 = sample run multiple times and values averaged
+          float
+          
+            
+              
+                dimensionless
+              
+              
+                whole
+                
+                  0
+                  67
+                
+              
+            
+          
+          
+            NA
+            value is missing
+          
+        
+        
+          Flag_NH4
+          Data flag for ammonium (NH4); 1 = sample not taken, 2 = instrument malfunction, 3 = sample below detection, 4 = negative value set to zero, 5 = demonic intrusion, 6 = non-standard method, 7 = sample run multiple times and values averaged
+          float
+          
+            
+              
+                dimensionless
+              
+              
+                whole
+                
+                  0
+                  7
+                
+              
+            
+          
+          
+            NA
+            value is missing
+          
+        
+        
+          Flag_NO3NO2
+          Data flag for nitrate nitrite (NO3NO2); 1 = sample not taken, 2 = instrument malfunction, 3 = sample below detection, 4 = negative value set to zero, 5 = demonic intrusion, 6 = non-standard method, 7 = sample run multiple times and values averaged
+          float
+          
+            
+              
+                dimensionless
+              
+              
+                whole
+                
+                  0
+                  7
+                
+              
+            
+          
+          
+            NA
+            value is missing
+          
+        
+        
+          Flag_SRP
+          Data flag for soluble reactive phosphorus (SRP); 1 = sample not taken, 2 = instrument malfunction, 3 = sample below detection, 4 = negative value set to zero, 5 = demonic intrusion, 6 = non-standard method, 7 = sample run multiple times and values averaged
+          float
+          
+            
+              
+                dimensionless
+              
+              
+                whole
+                
+                  0
+                  7
+                
+              
+            
+          
+          
+            NA
+            value is missing
+          
+        
+        
+          Flag_DOC
+          Data flag for dissolved organic carbon (DOC); 1 = sample not taken, 2 = instrument malfunction, 3 = sample below detection, 4 = negative value set to zero, 5 = demonic intrusion, 6 = non-standard method, 7 = sample run multiple times and values averaged
+          float
+          
+            
+              
+                dimensionless
+              
+              
+                whole
+                
+                  0
+                  6
+                
+              
+            
+          
+          
+            NA
+            value is missing
+          
+        
+      
+      2469
+    
+  

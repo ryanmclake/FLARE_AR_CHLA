@@ -1,0 +1,647 @@
+
+  
+    
+      uid=EDI,o=EDI,dc=edirepository,dc=org
+      all
+    
+    
+      uid=carylab7,o=EDI,dc=edirepository,dc=org
+      all
+    
+    
+      uid=ccarey,o=EDI,dc=edirepository,dc=org
+      all
+    
+    
+      public
+      read
+    
+  
+  
+    doi:10.6073/pasta/2321a0fc2dd813c56de044c4ffd1efdc
+    Time series of high-frequency profiles of depth, temperature, dissolved oxygen, conductivity, specific conductivity, chlorophyll a, turbidity, pH, and oxidation-reduction potential for Beaverdam Reservoir, Carvins Cove Reservoir, Falling Creek Reservoir, Gatewood Reservoir, and Spring Hollow Reservoir in Southwestern Virginia, USA 2013-2017
+    
+      Cayelan Carey
+      Virginia Tech
+      cayelan@vt.edu
+      https://orcid.org/0000-0001-8835-4476
+    
+    
+      Ryan McClure
+      Virginia Tech
+      ryan333@vt.edu
+      https://orcid.org/0000-0001-6370-3852
+    
+    
+      Alexandra Gerling
+      Virginia Tech
+      alexg13@vt.edu
+    
+    
+      Jonathan Doubek
+      Virginia Tech
+      jpdoubek@vt.edu
+      https://orcid.org/0000-0003-2651-4715
+    
+    
+      Shengyang Chen
+      University of Sydney
+      shengyang.chen@sydney.edu.au
+    
+    
+      Mary Lofton
+      Virginia Tech
+      melofton@vt.edu
+      https://orcid.org/0000-0003-3270-1330
+    
+    
+      Kathleen Hamre
+      Virginia Tech
+      kdhamre@vt.edu
+    
+    2018-07-11
+    
+      
+  Depth profiles of depth, temperature, dissolved oxygen, conductivity,
+  specific conductivity, chlorophyll a, turbidity were collected with a
+  CTD (Conductivity, Temperature, and Depth) profiler fitted with a SBE
+  43 Dissolved Oxygen sensor and an ECO Triplet Fluorometer and
+  Backscattering Sensor from 2013 to 2017. In 2017, pH and
+  oxidation-reduction potential (ORP) were also collected with a SBE 27
+  pH and O.R.P. (redox) sensor. CTD profiles were collected in five
+  drinking water reservoirs in southwestern Virginia, USA. All variables
+  are measured every 0.25 seconds, resulting in depth profiles at
+  approximately ten centimeter resolution. The five reservoirs are:
+  Beaverdam Reservoir (Vinton, Virginia), Carvins Cove Reservoir
+  (Roanoke, Virginia), Falling Creek Reservoir (Vinton, Virginia),
+  Gatewood Reservoir (Pulaski, Virginia), and Spring Hollow Reservoir
+  (Salem, Virginia). Beaverdam, Carvins Cove, Falling Creek, and Spring
+  Hollow Reservoirs are owned and operated by the Western Virginia Water
+  Authority as primary or secondary drinking water sources for Roanoke,
+  Virginia, and Gatewood Reservoir is a drinking water source for the
+  Town of Pulaski, Virginia. The dataset consists of CTD depth profiles
+  measured at the deepest site of each reservoir adjacent to the dam as
+  well as other reservoir sites on a transect upstream in Carvins Cove
+  Reservoir and Falling Creek Reservoir. The profiles were collected
+  approximately fortnightly in the spring months, weekly in the summer
+  and early autumn, and monthly in the late autumn and winter.
+
+    
+    
+      Carey Lab
+      Virginia Tech
+      Lake
+      Reservoir
+      High-frequency Sensors
+      Temperature, sensor
+      Oxygen, Dissolved
+      Conductivity
+      Specific conductivity
+      Chlorophyll a
+      Turbidity
+      pH
+      Reduction Potential
+      Western Virginia Water Authority
+      Falling Creek Reservoir
+    
+    
+      
+  This information is released under the Creative Commons license -
+  Attribution - CC BY (https://creativecommons.org/licenses/by/4.0/).
+  The consumer of these data ("Data User" herein) is required
+  to cite it appropriately in any publication that results from its use.
+  The Data User should realize that these data may be actively used by
+  others for ongoing research and that coordination may be necessary to
+  prevent duplicate publication. The Data User is urged to contact the
+  authors of these data if any questions about methodology or results
+  occur. Where appropriate, the Data User is encouraged to consider
+  collaboration or co-authorship with the authors. The Data User should
+  realize that misinterpretation of data may occur if used out of
+  context of the original study. While substantial efforts are made to
+  ensure the accuracy of data and associated documentation, complete
+  accuracy of data sets cannot be guaranteed. All data are made
+  available "as is." The Data User should be aware, however,
+  that data are updated periodically and it is the responsibility of the
+  Data User to check for new versions of the data. The data authors and
+  the repository where these data were obtained shall not be liable for
+  damages resulting from any use or misinterpretation of the data. Thank
+  you.
+
+    
+    
+      
+        Beaverdam Reservoir
+        
+          -79.824834
+          -79.813848
+          37.322865
+          37.311961
+        
+      
+      
+        Carvins Cove Reservoir
+        
+          -79.978642
+          -79.944052
+          37.409127
+          37.365345
+        
+      
+      
+        Falling Creek Reservoir
+        
+          -79.839249
+          -79.836009
+          37.309589
+          37.30266
+        
+      
+      
+        Gatewood Reservoir
+        
+          -80.89188
+          -80.858492
+          37.054358
+          37.03819
+        
+      
+      
+        Spring Hollow Reservoir
+        
+          -80.179076
+          -80.170407
+          37.231092
+          37.217594
+        
+      
+      
+        
+          
+            2013-03-07
+          
+          
+            2017-12-10
+          
+        
+      
+    
+    
+      ongoing
+    
+    
+      Cayelan Carey
+      Virginia Tech
+      cayelan@vt.edu
+      https://orcid.org/0000-0001-8835-4476
+    
+    
+      
+        
+          
+  Depth profiles of multiple water-quality variables were collected from
+  2013 through 2017 using a Conductivity, Temperature and Depth (CTD)
+  profiler from SeaBird Electronics (SBE, Bellevue Washington, USA).
+  Profiles were collected, at minimum, monthly between May to October
+  (usually weekly or subweekly), and bimonthly between November to
+  April. Most CTD casts were collected from 9:00 to 15:00, however, some
+  CTD casts were collected at night.
+
+          
+  The CTD was calibrated by the manufacturer yearly (usually in
+  December-February) according to the standards and practices of SBE and
+  the companies with secondary sensors coupled to the instrument.
+
+          
+  Instruments, manual, and serial numbers used between 2013 - 2017
+  Multiple sensors and instruments were added over time; below we note
+  changes in the CTD software, sensor versions, and provide links to the
+  accompanying instrument manuals.
+
+          
+  Seacat 19Plus V 1.6 SERIAL NO. 4397 2013 - 2016
+  http://www.seabird.com/sites/default/files/documents/19plus_018_0.pdf
+  For CTD processing, refer to the SeaBird Data processing manual.
+  http://www.seabird.com/sites/default/files/documents/SBEDataProcessing_7.26.7.pdf
+
+          
+  SBE 43 Dissolved Oxygen Sensor SERIAL NO. 0434 2013 - 2017
+  http://www.seabird.com/sites/default/files/documents/appnote64Jun13.pdf
+
+          
+  FluoroWetlabECO_AFL_FL_Sensor SERIAL NO. 2496 2013 - 2017 Turbidity
+  Meter WET Labs ECO-NTU SERIAL NO. 2496 2013 - 2017
+  http://www.seabird.com/sites/default/files/documents/manual-ECOMasterben.pdf
+
+          
+  OxidationReductionPotentialSensor SensorID = 41 SERIAL NO. 0363 2017
+  http://www.seabird.com/sites/default/files/documents/appnote18-1Sep14.pdf
+
+          
+  Sea-Bird SBE19plus V2 SERIAL NO. 7809 2017
+  http://www.seabird.com/sites/default/files/documents/19plusV2_015.pdf
+  For CTD processing refer to the SeaBird Data processing manual.
+  http://www.seabird.com/sites/default/files/documents/SBEDataProcessing_7.26.7.pdf
+
+          
+  From 2013 to 2017, multiple whole-ecosystem manipulations were
+  conducted at Falling Creek Reservoir. These manipulations include
+  intermittent operation of hypolimnetic oxygenation and pulsed
+  epilimnetic mixing engineering systems. For a detailed description of
+  the hypolimnetic oxygenation engineered system, see Gerling et al.
+  (2014) and for a detailed description of the epilimnetic mixing
+  engineered system, see Chen et al. (2017). These systems were operated
+  over time following Table 1 in Gerling et al. (2016), Table 1 in
+  Munger et al. (2016), and Table 2 in McClure et al. (2018).
+
+          
+  Chen, S., C. Lei, C.C. Carey, and J.C. Little. 2016. Modelling the
+  effect of artificial mixing on thermal stability and substance
+  transport in a drinking-water reservoir using a 3D hydrodynamic model.
+  Proceedings of the 20th Australasian Fluid Mechanics Conference.
+  Perth, Australia, 5-8 December 2016.
+
+          
+  Chen, S., C. Lei, C.C. Carey, P.A. Gantzer, and J.C. Little. 2017.
+  Predicting hypolimnetic oxygenation and epilimnetic mixing in a
+  shallow eutrophic reservoir using a coupled three-dimensional
+  hydrodynamic model. Water Resources Research. 53: 470-484. DOI:
+  10.1002/2016WR019279
+
+          
+  Gerling, A.B., Browne, R.G., Gantzer, P.A., Mobley, M.H., Little,
+  J.C., and C.C. Carey. 2014. First report of the successful operation
+  of a side stream supersaturation hypolimnetic oxygenation system in a
+  eutrophic, shallow reservoir. Water Research. 67: 129-143. doi:
+  10.1016/j.watres.2014.09.002
+
+          
+  Gerling, A.B., Z.W. Munger, J.P. Doubek, K.D. Hamre, P.A. Gantzer,
+  J.C. Little, and C.C. Carey. 2016. Whole-catchment manipulations of
+  internal and external loading reveal the sensitivity of a century-old
+  reservoir to hypoxia. Ecosystems. 19:555-571. DOI:
+  10.1007/s10021-015-9951-0
+
+          
+  McClure, R.P., K.D. Hamre, B.R. Niederlehner, Z.W. Munger, S. Chen,
+  M.E. Lofton, M.E. Schreiber, and C.C. Carey. 2018 Metalimnetic oxygen
+  minima alter the vertical profiles of carbon dioxide and methane in a
+  managed freshwater reservoir. Science of the Total Environment 636:
+  610-620. DOI: 10.1016/j.scitotenv.2018.04.255
+
+          
+  Munger, Z.W., C.C. Carey, A.B. Gerling, K.D. Hamre, J.P. Doubek, S.D.
+  Klepatzki, R.P. McClure, and M.E. Schreiber. 2016. Effectiveness of
+  hypolimnetic oxygenation for preventing accumulation of Fe and Mn in a
+  drinking water reservoir. Water Research. 106: 1-14. DOI:
+  10.1016/j.watres.2016.09.038.
+
+        
+      
+    
+    
+      No project title to report
+      
+        Cayelan Carey
+        cayelan@vt.edu
+        https://orcid.org/0000-0001-8835-4476
+        Principal Investigator
+      
+      Western Virginia Water Authority
+      
+        Dynamics of coupled P-Fe-Mn cycling in drinking water reservoirs and implications for water quality
+        
+          Cayelan Carey
+          cayelan@vt.edu
+          https://orcid.org/0000-0001-8835-4476
+          Principal Investigator
+        
+        Institute of Critical Technology and Applied Scienc
+      
+      
+        No project title to report
+        
+          Cayelan Carey
+          cayelan@vt.edu
+          https://orcid.org/0000-0001-8835-4476
+          Principal Investigator
+        
+        Virginia Tech Global Change Center
+      
+      
+        No project title to report
+        
+          Cayelan Carey
+          cayelan@vt.edu
+          https://orcid.org/0000-0001-8835-4476
+          Principal Investigator
+        
+        Fralin Life Sciences Institute
+      
+    
+    
+      CTD_Meta_13_17.csv
+      Reservoir CTD dataset
+      
+        CTD_Meta_13_17.csv
+        41321156
+        921e52604fb6d701b626226a63e263ea
+        
+          
+            1
+            \r\n
+            column
+            
+              ,
+              "
+            
+          
+        
+        
+          
+            https://pasta.lternet.edu/package/data/eml/edi/200/4/6f61b748a7318a33b06e659a0dbb818e
+          
+        
+      
+      
+        
+          Reservoir
+          Three-letter code corresponding to sampled reservoir
+          string
+          
+            
+              
+                
+                  
+                    BVR
+                    Beaverdam Reservoir
+                  
+                  
+                    CCR
+                    Carvins Cove Reservoir
+                  
+                  
+                    FCR
+                    Falling Creek Reservoir
+                  
+                  
+                    GWR
+                    Gatewood Reservoir
+                  
+                  
+                    SHR
+                    Spring Hollow Reservoir
+                  
+                
+              
+            
+          
+        
+        
+          Site
+          Sampling site within each reservoir
+          float
+          
+            
+              
+                dimensionless
+              
+              
+                natural
+                
+                  10
+                  50
+                
+              
+            
+          
+        
+        
+          Date
+          Date and time of sampling. All data were collected in the eastern time zone of the U.S.A., with daylight savings time observed
+          date
+          
+            
+              YYYY-MM-DD hh:mm:ss
+            
+          
+        
+        
+          Depth_m
+          Water depth where the sample was collected or sensor reading was measured
+          float
+          
+            
+              
+                meter
+              
+              
+                real
+                
+                  0
+                  63.8
+                
+              
+            
+          
+          
+            NA
+            No data
+          
+        
+        
+          Temp_C
+          Water temperature
+          float
+          
+            
+              
+                celsius
+              
+              
+                real
+                
+                  3.36
+                  30.16
+                
+              
+            
+          
+          
+            NA
+            No data
+          
+        
+        
+          DO_mgL
+          Dissolved oxygen (DO) concentration
+          float
+          
+            
+              
+                milligramsPerLiter
+              
+              
+                real
+                
+                  -0.31
+                  18.57
+                
+              
+            
+          
+          
+            NA
+            No data
+          
+        
+        
+          Cond_uScm
+          Conductivity
+          float
+          
+            
+              
+                microSiemenPerCentimeter
+              
+              
+                real
+                
+                  0.78
+                  658.93
+                
+              
+            
+          
+          
+            NA
+            No data
+          
+        
+        
+          Spec_Cond_uScm
+          Specific conductance; conductivity normalized to 20 degrees celsius
+          float
+          
+            
+              
+                microSiemenPerCentimeter
+              
+              
+                real
+                
+                  4.77
+                  191.09
+                
+              
+            
+          
+          
+            NA
+            No data
+          
+        
+        
+          Chla_ugL
+          Chlorophyll a
+          float
+          
+            
+              
+                microgramsPerLiter
+              
+              
+                real
+                
+                  -0.88
+                  180.25
+                
+              
+            
+          
+          
+            NA
+            No data
+          
+        
+        
+          Turb_NTU
+          Turbidity
+          float
+          
+            
+              
+                dimensionless
+              
+              
+                real
+                
+                  -4.86
+                  1093.38
+                
+              
+            
+          
+          
+            NA
+            No data
+          
+        
+        
+          pH
+          Water pH
+          float
+          
+            
+              
+                dimensionless
+              
+              
+                real
+                
+                  6.06
+                  9.37
+                
+              
+            
+          
+          
+            NA
+            No data
+          
+        
+        
+          ORP_mV
+          Reduction potential
+          float
+          
+            
+              
+                millivolt
+              
+              
+                real
+                
+                  -40.69
+                  390.39
+                
+              
+            
+          
+          
+            NA
+            No data
+          
+        
+      
+      498954
+    
+  
+  
+    
+      
+        
+          microSiemenPerCentimeter
+        
+      
+    
+  

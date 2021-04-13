@@ -1,0 +1,6 @@
+Manifest file for archive_edi.198.3_153556947674828620.zip created on Wed Aug 29 13:04:36 MDT 2018
+Secchi_depth.csv (14009 bytes)
+YSI_PAR_profiles.csv (347811 bytes)
+edi.198.3.xml (43025 bytes)
+edi.198.3.txt (24353 bytes)
+edi.198.3.report.xml (46471 bytes)

@@ -1,0 +1,933 @@
+
+  
+    
+      uid=EDI,o=EDI,dc=edirepository,dc=org
+      all
+    
+    
+      uid=carylab5,o=EDI,dc=edirepository,dc=org
+      all
+    
+    
+      uid=ccarey,o=EDI,dc=edirepository,dc=org
+      all
+    
+    
+      public
+      read
+    
+  
+  
+    doi:10.6073/pasta/3653b16da7d272929c4bba24bdd767c0
+    Secchi depth data and discrete depth profiles of photosynthetically active radiation, temperature, dissolved oxygen, and pH for Beaverdam Reservoir, Carvins Cove Reservoir, Falling Creek Reservoir, Gatewood Reservoir, and Spring Hollow Reservoir in southwestern Virginia, USA 2013-2017
+    
+      Cayelan Carey
+      Virginia Tech
+      Cayelan@vt.edu
+      https://orcid.org/0000-0001-8835-4476
+    
+    
+      Alexandra Gerling
+      Virginia Tech
+      alexg13@vt.edu
+    
+    
+      Jonathan Doubek
+      Virginia Tech
+      jpdoubek@vt.edu
+      https://orcid.org/0000-0003-2651-4715
+    
+    
+      Kathleen Hamre
+      Virginia Tech
+      kdhamre@vt.edu
+    
+    
+      Ryan McClure
+      Virginia Tech
+      ryan333@vt.edu
+      https://orcid.org/0000-0001-6370-3852
+    
+    
+      Mary Lofton
+      Virginia Tech
+      melofton@vt.edu
+      https://orcid.org/0000-0003-3270-1330
+    
+    
+      Kaitlin Farrell
+      Virginia Tech
+      farrellk@vt.edu
+      https://orcid.org/0000-0002-4709-7749
+    
+    2018-07-11
+    
+      
+  Discrete depth profiles of temperature, dissolved oxygen, and pH were
+  collected with a YSI water quality probe and discrete depth profiles
+  of photosynthetically active radiation (PAR) were collected with a
+  LI-COR underwater light meter from 2013 to 2017 in five drinking water
+  reservoirs in southwestern Virginia, USA. Secchi disk depth data
+  complement the PAR data to estimate water transparency. Additional
+  variables measured by the YSI are conductivity and ORP (oxidation
+  reduction potential or redox); all YSI and PAR depth profiles were
+  collected on approximately 1-meter intervals. These reservoirs are:
+  Beaverdam Reservoir (Vinton, Virginia), Carvins Cove Reservoir
+  (Roanoke, Virginia), Falling Creek Reservoir (Vinton, Virginia),
+  Gatewood Reservoir (Pulaski, Virginia), and Spring Hollow Reservoir
+  (Salem, Virginia). Beaverdam, Carvins Cove, Falling Creek, and Spring
+  Hollow Reservoirs are owned and operated by the Western Virginia Water
+  Authority as primary or secondary drinking water sources for Roanoke,
+  Virginia, and Gatewood Reservoir is a drinking water source for the
+  Town of Pulaski, Virginia. The data package consists of two datasets:
+  1) YSI and PAR profiles; 2) Secchi depth data. The YSI and PAR depth
+  profiles and Secchi depths were measured at the deepest site of each
+  reservoir adjacent to the dam (Site 50), as well as at a gauged weir
+  on the primary inflow tributary (Site 100) at Falling Creek Reservoir
+  and other in-reservoir transects in Falling Creek Reservoir (Site 45,
+  30, 20, 10). The samples were collected approximately fortnightly in
+  the spring months (Mar. - May), weekly in the summer and early autumn
+  (Jun. - Sept.), and monthly in the late autumn and winter (Oct. -
+  Feb.).
+
+    
+    
+      Carey Lab
+      Virginia Tech
+      Western Virginia Water Authority
+      Falling Creek Reservoir
+      carey lab controlled vocabulary
+    
+    
+      Reservoir
+      Lake
+      cuahsi controlled vocabulary
+    
+    
+      Lakes
+      water temperature
+      dissolved oxygen
+      pH
+      conductivity
+      lter controlled vocabulary
+    
+    
+      photosynthetically active radiation
+      secchi depth
+      lter conductivity vocabulary
+    
+    
+      
+  This information is released under the Creative Commons license -
+  Attribution - CC BY (https://creativecommons.org/licenses/by/4.0/).
+  The consumer of these data ("Data User" herein) is required
+  to cite it appropriately in any publication that results from its use.
+  The Data User should realize that these data may be actively used by
+  others for ongoing research and that coordination may be necessary to
+  prevent duplicate publication. The Data User is urged to contact the
+  authors of these data if any questions about methodology or results
+  occur. Where appropriate, the Data User is encouraged to consider
+  collaboration or co-authorship with the authors. The Data User should
+  realize that misinterpretation of data may occur if used out of
+  context of the original study. While substantial efforts are made to
+  ensure the accuracy of data and associated documentation, complete
+  accuracy of data sets cannot be guaranteed. All data are made
+  available "as is." The Data User should be aware, however,
+  that data are updated periodically and it is the responsibility of the
+  Data User to check for new versions of the data. The data authors and
+  the repository where these data were obtained shall not be liable for
+  damages resulting from any use or misinterpretation of the data. Thank
+  you.
+
+    
+    
+      
+        Beaverdam Reservoir is located in Vinton, Virginia, USA
+        
+          -79.824834
+          -79.813848
+          37.322865
+          37.311961
+        
+      
+      
+        Carvins Cove Reservoir is located in Roanoke, Virginia, USA
+        
+          -79.978642
+          -79.944052
+          37.409127
+          37.365345
+        
+      
+      
+        Falling Creek Reservoir is located in Vinton, Virginia, USA
+        
+          -79.839249
+          -79.836009
+          37.309589
+          37.30266
+        
+      
+      
+        Gatewood Reservoir is located in Pulaski, Virginia, USA
+        
+          -80.89188
+          -80.858492
+          37.054358
+          37.03819
+        
+      
+      
+        Spring Hollow Reservoir is located in Salem, Virginia, USA
+        
+          -80.179076
+          -80.170407
+          37.231092
+          37.217594
+        
+      
+      
+        
+          
+            2013-08-30
+          
+          
+            2017-12-11
+          
+        
+      
+    
+    
+      ongoing
+    
+    
+      Cayelan Carey
+      Virginia Tech
+      Cayelan@vt.edu
+      https://orcid.org/0000-0001-8835-4476
+    
+    
+      
+        
+          
+  Field sample collection
+
+          
+  At each sampling site in each reservoir, temperature, dissolved oxygen
+  (DO), conductivity, pH, and oxidation-reduction potential (ORP) were
+  collected at discrete, approximately 1 m increments from the water
+  surface to the deepest portion of the reservoir using a YSI ProPlus
+  with Quatro cable (pH, ORP, conductivity) or YSI ProODO optical
+  dissolved oxygen meter (dissolved oxygen, temperature). Dissolved
+  oxygen was calibrated approximately weekly using the water-saturated
+  air technique. The pH sensor was calibrated approximately weekly using
+  a series of three standardized pH solutions (pH 4, 7, 10) and the ORP
+  sensor was calibrated approximately weekly using Zobell solution.,
+
+          
+  Photosynthetically active radiation (PAR) was collected at discrete,
+  approximately 1 m increments from the water surface to the depth of
+  light extinction (~ 0 micromole m-2 s-1) using a LiCor LI-192
+  underwater quantum sensor. PAR was also measured in air approximately
+  0.1 m above the water surface; these depths are recorded as -0.1m.
+
+          
+  Secchi disk depth was measured using a standard 20 cm diameter
+  circular Secchi disk attached to a calibrated rope. Secchi depth
+  measurements were made without the aid of a plexiglass viewer. The
+  disk was lowered from the shaded side of the boat or dock, and the
+  water depths at which the disk disappeared while being lowered and
+  reappeared while being raised were averaged to determine Secchi depth.
+
+          
+  YSI and PAR profiles, and Secchi depths, were collected approximately
+  fortnightly in the spring months (Mar. - May), weekly in the summer
+  and early autumn (Jun. - Sept.), and monthly in the late autumn and
+  winter (Oct. - Feb.). Most sampling occurred between the hours of 9:00
+  and 15:00, and are denoted in the DateTime as 12:00. Some sampling
+  occurred outside of these hours, including some overnight sampling;
+  these instances are noted by the actual sampling time within the
+  DateTime column. For more information about nighttime sampling, see
+  Doubek et. al. 2018.
+
+          
+  The YSI and PAR depth profiles and Secchi depths were measured at the
+  deepest site of each reservoir adjacent to the dam (Site 50), as well
+  as at a gauged weir on the primary inflow tributary (Site 100) at
+  Falling Creek Reservoir and other in-reservoir transects in Falling
+  Creek Reservoir (Site 45, 30, 20, 10). For a map of the transects in
+  Falling Creek Reservoir, see Chen et al. 2016.
+
+          
+  From 2013 to 2017, multiple whole-ecosystem manipulations were
+  conducted at Falling Creek Reservoir. These manipulations include
+  intermittent operation of hypolimnetic oxygenation and pulsed
+  epilimnetic mixing engineering systems. For a detailed description of
+  the hypolimnetic oxygenation engineered system, see Gerling et al.
+  (2014) and for a detailed description of the epilimnetic mixing
+  engineered system, see Chen et al. (2017). These systems were operated
+  over time following Table 1 in Gerling et al. (2016), Table 1 in
+  Munger et al. (2016), and Table 2 in McClure et al. (2018).
+
+          
+  References
+
+          
+  Chen, S., C. Lei, C.C. Carey, and J.C. Little. 2016. Modelling the
+  effect of artificial mixing on thermal stability and substance
+  transport in a drinking-water reservoir using a 3D hydrodynamic model.
+  Proceedings of the 20th Australasian Fluid Mechanics Conference.
+  Perth, Australia, 5-8 December 2016.
+
+          
+  Chen, S., C. Lei, C.C. Carey, P.A. Gantzer, and J.C. Little. 2017.
+  Predicting hypolimnetic oxygenation and epilimnetic mixing in a
+  shallow eutrophic reservoir using a coupled three-dimensional
+  hydrodynamic model. Water Resources Research. 53: 470-484. DOI:
+  10.1002/2016WR019279
+
+          
+  Gerling, A.B., Browne, R.G., Gantzer, P.A., Mobley, M.H., Little,
+  J.C., and C.C. Carey. 2014. First report of the successful operation
+  of a side stream supersaturation hypolimnetic oxygenation system in a
+  eutrophic, shallow reservoir. Water Research. 67: 129-143. doi:
+  10.1016/j.watres.2014.09.002
+
+          
+  Gerling, A.B., Z.W. Munger, J.P. Doubek, K.D. Hamre, P.A. Gantzer,
+  J.C. Little, and C.C. Carey. 2016. Whole-catchment manipulations of
+  internal and external loading reveal the sensitivity of a century-old
+  reservoir to hypoxia. Ecosystems. 19:555-571. DOI:
+  10.1007/s10021-015-9951-0
+
+          
+  McClure, R.P., K.D. Hamre, B.R. Niederlehner, Z.W. Munger, S. Chen,
+  M.E. Lofton, M.E. Schreiber, and C.C. Carey. 2018 Metalimnetic oxygen
+  minima alter the vertical profiles of carbon dioxide and methane in a
+  managed freshwater reservoir. Science of the Total Environment 636:
+  610-620. DOI: 10.1016/j.scitotenv.2018.04.255
+
+          
+  Munger, Z.W., C.C. Carey, A.B. Gerling, K.D. Hamre, J.P. Doubek, S.D.
+  Klepatzki, R.P. McClure, and M.E. Schreiber. 2016. Effectiveness of
+  hypolimnetic oxygenation for preventing accumulation of Fe and Mn in a
+  drinking water reservoir. Water Research. 106: 1-14. DOI:
+  10.1016/j.watres.2016.09.038.
+
+        
+      
+    
+    
+      No project title to report
+      
+        Cayelan Carey
+        Cayelan@vt.edu
+        https://orcid.org/0000-0001-8835-4476
+        Principal Investigator
+      
+      Western Virginia Water Authority
+      
+        Dynamics of coupled P-Fe-Mn cycling in drinking water reservoirs and implications for water quality
+        
+          Cayelan Carey
+          Cayelan@vt.edu
+          https://orcid.org/0000-0001-8835-4476
+          Principal Investigator
+        
+        Institute of Critical Technology and Applied Science
+      
+      
+        No project title to report
+        
+          Cayelan Carey
+          Cayelan@vt.edu
+          https://orcid.org/0000-0001-8835-4476
+          Principal Investigator
+        
+        Virginia Tech Global Change Center
+      
+      
+        No project title to report
+        
+          Cayelan Carey
+          Cayelan@vt.edu
+          https://orcid.org/0000-0001-8835-4476
+          Principal Investigator
+        
+        Fralin Life Sciences Institute
+      
+    
+    
+      Secchi_depth.csv
+      Secchi depth data from five reservoirs in southwestern Virginia
+      
+        Secchi_depth.csv
+        14009
+        0ec316b08deff8d8186062930847e1ca
+        
+          
+            1
+            \r\n
+            column
+            
+              ,
+            
+          
+        
+        
+          
+            https://pasta.lternet.edu/package/data/eml/edi/198/3/e9280c1dd65d46cc7774f3a2be945e36
+          
+        
+      
+      
+        
+          Reservoir
+          Three-letter code corresponding to sampled reservoir; BVR=Beaverdam Reservoir, CCR= Carvins Cove Reservoir, FCR=Falling Creek Reservoir, GWR=Gatewood Reservoir, SHR=Spring Hollow Reservoir
+          string
+          
+            
+              
+                
+                  
+                    BVR
+                    Beaverdam Reservoir
+                  
+                  
+                    CCR
+                    Carvins Cove Reservoir
+                  
+                  
+                    FCR
+                    Falling Creek Reservoir
+                  
+                  
+                    GWR
+                    Gatewood Reservoir
+                  
+                  
+                    SHR
+                    Spring Hollow Reservoir
+                  
+                
+              
+            
+          
+          
+            NA
+            No data
+          
+        
+        
+          Site
+          Sampling site within each reservoir; 50=Deep hole or site nearest to dam in each reservoir, 45=Transect 45 in Falling Creek Reservoir, 30=Transect 30 in Falling Creek Reservoir, 20=Transect 20 in Falling Creek Reservoir, 10=Transect 10 in Falling Creek Reservoir, 100=Inflow stream of Falling Creek Reservoir
+          float
+          
+            
+              
+                dimensionless
+              
+              
+                natural
+                
+                  10
+                  50
+                
+              
+            
+          
+          
+            NA
+            No data
+          
+        
+        
+          DateTime
+          Date and time of sampling. All data were collected in the eastern time zone of the U.S.A., with daylight savings time observed
+          date
+          
+            
+              YYYY-MM-DD hh:mm:ss
+            
+          
+          
+            NA
+            No data
+          
+        
+        
+          Secchi_m
+          Secchi disk depth
+          float
+          
+            
+              
+                meter
+              
+              
+                real
+                
+                  0
+                  13.5
+                
+              
+            
+          
+          
+            NA
+            No data
+          
+        
+        
+          Flag_Secchi
+          Data flag for Secchi depths; 0=not suspect, 1=sample not taken
+          float
+          
+            
+              
+                dimensionless
+              
+              
+                whole
+                
+                  0
+                  1
+                
+              
+            
+          
+        
+      
+      409
+    
+    
+      YSI_PAR_profiles.csv
+      Discrete depths of water temperature, dissolved oxygen, conductivity, photosynthetically active radiation, redox potential, and pH in five southwestern Virginia reservoirs
+      
+        YSI_PAR_profiles.csv
+        347811
+        2fc80583b6c0d45bff86c6728428b3ab
+        
+          
+            1
+            \r\n
+            column
+            
+              ,
+            
+          
+        
+        
+          
+            https://pasta.lternet.edu/package/data/eml/edi/198/3/62c1d12630b721754fe5d406c6906fb2
+          
+        
+      
+      
+        
+          Reservoir
+          Three-letter code corresponding to sampled reservoir; BVR=Beaverdam Reservoir, CCR= Carvins Cove Reservoir, FCR=Falling Creek Reservoir, GWR=Gatewood Reservoir, SHR=Spring Hollow Reservoir
+          string
+          
+            
+              
+                
+                  
+                    GWR
+                    Beaverdam Reservoir
+                  
+                  
+                    FCR
+                    Carvins Cove Reservoir
+                  
+                  
+                    BVR
+                    Falling Creek Reservoir
+                  
+                  
+                    CCR
+                    Gatewood Reservoir
+                  
+                  
+                    SHR
+                    Spring Hollow Reservoir
+                  
+                
+              
+            
+          
+          
+            NA
+            No data
+          
+        
+        
+          Site
+          Sampling site within each reservoir; 50=Deep hole or site nearest to dam in each reservoir, 45=Transect 45 in Falling Creek Reservoir, 30=Transect 30 in Falling Creek Reservoir, 20=Transect 20 in Falling Creek Reservoir, 10=Transect 10 in Falling Creek Reservoir, 100=Inflow stream of Falling Creek Reservoir
+          float
+          
+            
+              
+                dimensionless
+              
+              
+                natural
+                
+                  10
+                  100
+                
+              
+            
+          
+          
+            NA
+            No data
+          
+        
+        
+          DateTime
+          Date and time of sampling. All data were collected in the eastern time zone of the U.S.A., with daylight savings time observed
+          date
+          
+            
+              YYYY-MM-DD hh:mm:ss
+            
+          
+          
+            NA
+            No data
+          
+        
+        
+          Depth_m
+          Water depth where the sample was collected or sensor reading was measured
+          float
+          
+            
+              
+                meter
+              
+              
+                real
+                
+                  -0.1
+                  28
+                
+              
+            
+          
+          
+            NA
+            No data
+          
+        
+        
+          Temp_C
+          Water temperature
+          float
+          
+            
+              
+                celsius
+              
+              
+                real
+                
+                  1.6
+                  107
+                
+              
+            
+          
+          
+            NA
+            No data
+          
+        
+        
+          DO_mgL
+          Dissolved oxygen (DO) concentration
+          float
+          
+            
+              
+                milligramsPerLiter
+              
+              
+                real
+                
+                  0.06
+                  16.69
+                
+              
+            
+          
+          
+            NA
+            No data
+          
+        
+        
+          DOSat
+          Dissolved oxygen (DO) percent saturation
+          float
+          
+            
+              
+                dimensionless
+              
+              
+                real
+                
+                  0.3
+                  999.4
+                
+              
+            
+          
+          
+            NA
+            No data
+          
+        
+        
+          Cond_uScm
+          Conductivity
+          float
+          
+            
+              
+                microSiemenPerCentimeter
+              
+              
+                real
+                
+                  0.3
+                  388
+                
+              
+            
+          
+          
+            NA
+            No data
+          
+        
+        
+          PAR_umolm2s
+          Photosynthetically active radiation
+          float
+          
+            
+              
+                micromolePerMeterSquaredPerSecond
+              
+              
+                real
+                
+                  0
+                  3444
+                
+              
+            
+          
+          
+            NA
+            No data
+          
+        
+        
+          ORP_mV
+          oxidation-reduction potential
+          float
+          
+            
+              
+                millivolt
+              
+              
+                real
+                
+                  -155.4
+                  1824
+                
+              
+            
+          
+          
+            NA
+            No data
+          
+        
+        
+          pH
+          water pH
+          float
+          
+            
+              
+                dimensionless
+              
+              
+                real
+                
+                  3.8
+                  9.88
+                
+              
+            
+          
+          
+            NA
+            No data
+          
+        
+        
+          Flag_Temp
+          Data flag for temperature; 0=Not suspect, 1=Sample not taken, 2=Instrument malfunction, 3=Sample below detection,4=Negative value set to 0
+          float
+          
+            
+              
+                dimensionless
+              
+              
+                whole
+                
+                  0
+                  2
+                
+              
+            
+          
+        
+        
+          Flag_DO
+          Data flag for dissolved oxygen (DO) concentration; 0=Not suspect, 1=Sample not taken, 2=Instrument malfunction, 3=Sample below detection,4=Negative value set to 0
+          float
+          
+            
+              
+                dimensionless
+              
+              
+                whole
+                
+                  0
+                  1
+                
+              
+            
+          
+        
+        
+          Flag_DOSat
+          Data flag for dissolved oxygen (DO) percent saturation; 0=Not suspect, 1=Sample not taken, 2=Instrument malfunction, 3=Sample below detection,4=Negative value set to 0
+          float
+          
+            
+              
+                dimensionless
+              
+              
+                whole
+                
+                  0
+                  2
+                
+              
+            
+          
+        
+        
+          Flag_Cond
+          Data flag for conductivity; 0=Not suspect, 1=Sample not taken, 2=Instrument malfunction, 3=Sample below detection,4=Negative value set to 0
+          float
+          
+            
+              
+                dimensionless
+              
+              
+                whole
+                
+                  0
+                  2
+                
+              
+            
+          
+        
+        
+          Flag_PAR
+          Data flag for photosynthetically active radiation (PAR); 0=Not suspect, 1=Sample not taken, 2=Instrument malfunction, 3=Sample below detection,4=Negative value set to 0
+          float
+          
+            
+              
+                dimensionless
+              
+              
+                whole
+                
+                  0
+                  2
+                
+              
+            
+          
+        
+        
+          Flag_ORP
+          Data flag for ORP; 0=Not suspect, 1=Sample not taken, 2=Instrument malfunction, 3=Sample below detection,4=Negative value set to 0
+          float
+          
+            
+              
+                dimensionless
+              
+              
+                whole
+                
+                  0
+                  2
+                
+              
+            
+          
+        
+        
+          Flag_pH
+          Data flag for pH; 0=Not suspect, 1=Sample not taken, 2=Instrument malfunction, 3=Sample below detection,4=Negative value set to 0
+          float
+          
+            
+              
+                dimensionless
+              
+              
+                whole
+                
+                  0
+                  2
+                
+              
+            
+          
+        
+      
+      4838
+    
+  
+  
+    
+      
+        
+          microSiemenPerCentimeter
+        
+        
+          micromole per meter squared per second
+        
+      
+    
+  

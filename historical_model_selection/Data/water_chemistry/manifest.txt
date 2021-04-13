@@ -1,0 +1,5 @@
+Manifest file for archive_edi.199.4_153505665276797613.zip created on Thu Aug 23 14:37:32 MDT 2018
+chemistry.csv (155189 bytes)
+edi.199.4.xml (38694 bytes)
+edi.199.4.txt (23325 bytes)
+edi.199.4.report.xml (29457 bytes)

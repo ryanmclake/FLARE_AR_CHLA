@@ -1,0 +1,5 @@
+Manifest file for archive_edi.200.4_153505594858983194.zip created on Thu Aug 23 14:25:48 MDT 2018
+CTD_Meta_13_17.csv (41321156 bytes)
+edi.200.4.xml (29730 bytes)
+edi.200.4.txt (16694 bytes)
+edi.200.4.report.xml (29417 bytes)
