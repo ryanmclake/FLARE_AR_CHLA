@@ -1,0 +1,18 @@
+keyword	keywordThesaurus
+Carey Lab	carey lab controlled vocabulary
+Virginia Tech	carey lab controlled vocabulary
+lakes	lter controlled vocabulary
+lake 	cuahsi controlled vocabulary
+reservoir	cuahsi controlled vocabulary
+reservoirs	cuahsi controlled vocabulary
+water quality	lter controlled vocabulary
+chlorophyll a	lter controlled vocabulary
+Western Virginia Water Authority	carey lab controlled vocabulary
+Falling Creek Reservoir	carey lab controlled vocabulary
+fluorescence	lter controlled vocabulary
+forecast	
+hindcast	
+historical monitoring	
+resource management	lter controlled vocabulary
+phytoplankton	lter controlled vocabulary
+near-term	

@@ -9,14 +9,10 @@
 #load packages
 library(tidyverse)
 
-#read in final data files to check format
-nldas <- read_csv("C:/Users/Mary Lofton/Dropbox/Ch5/EDI.hindcasts.NLDAS.PRISM/NLDAS_solar_radiation_2009-2016.csv")
-prism <- read_csv("C:/Users/Mary Lofton/Dropbox/Ch5/EDI.hindcasts.NLDAS.PRISM/PRISM_precipitation_2009-2016.csv")
-
 # (install and) Load EMLassemblyline #####
 # install.packages('devtools')
 
-devtools::install_github("EDIorg/EMLassemblyline")
+#devtools::install_github("EDIorg/EMLassemblyline")
 #note that EMLassemblyline has an absurd number of dependencies and you
 #may exceed your API rate limit; if this happens, you will have to wait an
 #hour and try again or get a personal authentification token (?? I think)
@@ -25,15 +21,34 @@ library(EMLassemblyline)
 
 
 #Step 1: Create a directory for your dataset
-#in this case, our directory is C:\Users\Mary Lofton\Dropbox\Ch5\EDI.hindcasts.NLDAS.PRISM
+eml_folder <- './FCR_forecasts/MakeEML'
+dir.create(eml_folder)
 
 #Step 2: Move your dataset to the directory
+# in this case we have three example files and three zipped folders
+# '2019_01_02_chla_1day_uncert1.csv' and zipped folder 'forecast_output_EDI'
+# '2019_01_02_ensemble_parameters_1day_uncert1.csv' and zipped folder 'parameter_output_EDI'
+# '2019_01_02_null_summary_1day.csv' and zipped folder 'null_model_EDI'
+
+# read in files to check their structure
+fc <- read.csv(paste0(eml_folder, '/2019_01_02_chla_1day_uncert1.csv'))
+str(fc)
+# because the EML functions do not like when columns have the same value for every row, we will delete those rows
+# and make sure to note in the metadata that they were removed
+fc <- fc %>% select(-forecast_run_day, -(par1:par5))
+write.csv(fc, paste0(eml_folder, '/2019_01_02_chla_1day_uncert1.csv'), row.names = FALSE)
+
+par <- read.csv(paste0(eml_folder, '/2019_01_02_ensemble_parameters_1day_uncert1.csv'))
+str(par)
+
+null <- read.csv(paste0(eml_folder, '/2019_01_02_null_summary_1day.csv'))
+str(null)
 
 #Step 3: Identify an intellectual rights license
 #ours is CCBY
 
 #Step 4: Identify the types of data in your dataset
-#we have two tables and one zip file
+#we have three tables and three zip files
 
 #Step 5: Import the core metadata templates
 
@@ -47,47 +62,45 @@ library(EMLassemblyline)
 ?template_geographic_coverage
 ?template_taxonomic_coverage
 
-# Import templates for our dataset licensed under CCBY, with 2 tables.
-template_core_metadata(path = "C:/Users/Mary Lofton/Dropbox/Ch5/EDI.hindcasts.NLDAS.PRISM",
+# Import templates for our dataset licensed under CCBY, with 3 tables.
+template_core_metadata(path = eml_folder,
                  license = "CCBY",
                  file.type = ".txt",
                  write.file = TRUE)
 
-template_table_attributes(path = "C:/Users/Mary Lofton/Dropbox/Ch5/EDI.hindcasts.NLDAS.PRISM",
-                       data.path = "C:/Users/Mary Lofton/Dropbox/Ch5/EDI.hindcasts.NLDAS.PRISM",
-                       data.table = "NLDAS_solar_radiation_2009-2016.csv",
+template_table_attributes(path = eml_folder,
+                       data.path = eml_folder,
+                       data.table = "2019_01_02_ensemble_parameters_1day_uncert1.csv",
                        write.file = TRUE)
 
-template_table_attributes(path = "C:/Users/Mary Lofton/Dropbox/Ch5/EDI.hindcasts.NLDAS.PRISM",
-                          data.path = "C:/Users/Mary Lofton/Dropbox/Ch5/EDI.hindcasts.NLDAS.PRISM",
-                          data.table = "PRISM_precipitation_2009-2016.csv",
+template_table_attributes(path = eml_folder,
+                          data.path = eml_folder,
+                          data.table = "2019_01_02_null_summary_1day.csv",
                           write.file = TRUE)
 
-# template_table_attributes(path = "C:/Users/Mary Lofton/Dropbox/Ch5/EDI.hindcasts.NLDAS.PRISM",
-#                           data.path = "C:/Users/Mary Lofton/Dropbox/Ch5/EDI.hindcasts.NLDAS.PRISM",
-#                           data.table = "AR_IC.Pa.P.O_2015-05-14_example.csv",
-#                           write.file = TRUE)
+template_table_attributes(path = eml_folder,
+                          data.path = eml_folder,
+                          data.table = "2019_01_02_chla_1day_uncert1.csv",
+                          write.file = TRUE)
+
 
 
 #we want empty to be true for this because we don't include lat/long
 #as columns within our dataset but would like to provide them
 #only have to do this once even if have multiple data tables
-template_geographic_coverage(path = "C:/Users/Mary Lofton/Dropbox/Ch5/EDI.hindcasts.NLDAS.PRISM",
-                          data.path = "C:/Users/Mary Lofton/Dropbox/Ch5/EDI.hindcasts.NLDAS.PRISM",
-                          data.table = "NLDAS_solar_radiation_2009-2016.csv",
+template_geographic_coverage(path = eml_folder,
+                          data.path = eml_folder,
+                          data.table = "2019_01_02_chla_1day_uncert1.csv",
                           empty = TRUE,
                           write.file = TRUE)
 
 
-#for this project we also need taxonomic coverage for G. echinulata
-#however, I am just copying a file Bethel used for a different Gloeo pub
-#so we are not going to create a new file in this script
 
 #Step 6: Script your workflow
 #that's what this is, silly!
 
 #Step 7: Abstract
-#copy-paste the abstract from your Microsoft Word document into abstract.txt
+#edit abstract.txt directly in Rstudio 
 #if you want to check your abstract for non-allowed characters, go to:
 #https://pteo.paranoiaworks.mobi/diacriticsremover/
 #paste text and click remove diacritics
@@ -99,7 +112,6 @@ template_geographic_coverage(path = "C:/Users/Mary Lofton/Dropbox/Ch5/EDI.hindca
 #paste text and click remove diacritics
 
 #Step 9: Additional information
-#refs to other data pubs associated with the GLEON Bayes Gloeo project are in here
 
 #Step 10: Keywords
 #DO NOT EDIT KEYWORDS FILE USING A TEXT EDITOR!! USE EXCEL!!
@@ -122,7 +134,7 @@ view_unit_dictionary()
 #Step 13: Custom Units
 #if units are not in the unit dictionary, you need to fill them out in the
 #custom_units.txt file
-#in our case, this is lnColoniesPerLiter, wattsPerMeterSquared, and millimetersPerDay
+
 
 #Step 14: Close files
 #if all your files aren't closed, sometimes functions don't work
@@ -154,21 +166,21 @@ view_unit_dictionary()
 
 # Run this function
 make_eml(
-  path = "C:/Users/Mary Lofton/Dropbox/Ch5/EDI.hindcasts.NLDAS.PRISM",
-  data.path = "C:/Users/Mary Lofton/Dropbox/Ch5/EDI.hindcasts.NLDAS.PRISM",
-  eml.path = "C:/Users/Mary Lofton/Dropbox/Ch5/EDI.hindcasts.NLDAS.PRISM",
-  dataset.title = "Lake Sunapee Gloeotrichia echinulata density near-term hindcasts from 2015-2016 and meteorological model driver data, including shortwave radiation and precipitation from 2009-2016",
-  temporal.coverage = c("2009-05-29", "2016-09-28"), #needs edited!!
-  maintenance.description = 'completed', #or completed if we don't ever plan on updating this
-  data.table = c("NLDAS_solar_radiation_2009-2016.csv","PRISM_precipitation_2009-2016.csv"),
-  data.table.name = c("NLDAS solar radiation data","PRISM precipitation data"),
-  data.table.description = c("NLDAS solar radiation data","PRISM precipitation data"),
-  other.entity = "Gechinulata_hindcasts.zip",
-  other.entity.name = "Lake Sunapee G. echinulata density hindcast NetCDF files",
-  other.entity.description = "Lake Sunapee G. echinulata density hindcast NetCDF files",
-  user.id = 'melofton', #you need credentials for this part - not cool to use someone else's w/o permission! ask Mary Lofton what to do or email EDI
+  path = eml_folder,
+  data.path = eml_folder,
+  eml.path = eml_folder,
+  dataset.title = "Forecasts of Chlorophyll-a (ug/L) at Falling Creek Reservoir over 2019 and 2020 using three models with different timesteps and a null persistence model, including parameter values for all forecasts",
+  temporal.coverage = c("2019-01-02", "2020-08-15"), #needs edited!!
+  maintenance.description = 'completed', #completed if we don't ever plan on updating this
+  data.table = c("2019_01_02_chla_1day_uncert1.csv","2019_01_02_ensemble_parameters_1day_uncert1.csv", "2019_01_02_null_summary_1day.csv"),
+  data.table.name = c("Example forecast output","Example parameter output", "Example null forecast output"),
+  data.table.description = c("Example forecast output","Example parameter output", "Example null forecast output"),
+  other.entity = c("forecast_output_EDI.zip", "parameter_output_EDI.zip", "null_model_EDI.zip"),
+  other.entity.name = c("FCR forecast files", "FCR parameter output files", "FCR null model files"),
+  other.entity.description = c("FCR forecast files", "FCR parameter output files", "FCR null model files"),
+  user.id = 'ccarey', 
   user.domain = 'EDI',
-  package.id = 'edi.18.5') #will need to change this
+  package.id = 'edi.199.1') #will need to change this
 
 ## Step 20: Check your data product! ####
 # Return to the EDI staging environment (https://portal-s.edirepository.org/nis/home.jsp),
