@@ -18,10 +18,13 @@
 #####################################################################################################
 # forecast output files
 new_folder <- './FCR_forecasts/forecast_output_EDI'
-old_folder <- './FCR_forecasts/1day/update_bayes_method_Oct_2020'
+old_folder <- './FCR_forecasts/1day/update_bayes_method_Feb_2021'
 dir.create(new_folder)
 names <- list.files(path = old_folder, pattern = '*chla_1day.csv')
 newNames <- sub("chla_1day.csv", "chla_1day_uncert1.csv", names)
+
+# clear out any existing files
+file.remove(list.files(path = new_folder, full.names = TRUE))
 
 file.copy(from = paste0(old_folder, "/", names), to = paste0(new_folder, "/", newNames))
 
@@ -137,6 +140,9 @@ dir.create(new_folder)
 names <- list.files(path = old_folder, pattern = '*parameters.csv')
 newNames <- sub("parameters.csv", "parameters_1day_uncert1.csv", names)
 
+# clear out any existing files
+file.remove(list.files(path = new_folder, full.names = TRUE))
+
 file.copy(from = paste0(old_folder, "/", names), to = paste0(new_folder, "/", newNames))
 
 # do again for 7day parameter output
@@ -160,6 +166,9 @@ old_folder <- './FCR_forecasts/1day/null_daily'
 dir.create(new_folder)
 names <- list.files(path = old_folder, pattern = '*null_summary.csv')
 newNames <- sub("null_summary.csv", "null_summary_1day.csv", names)
+
+# clear out any existing files
+file.remove(list.files(path = new_folder, full.names = TRUE))
 
 file.copy(from = paste0(old_folder, "/", names), to = paste0(new_folder, "/", newNames))
 
