@@ -10,7 +10,7 @@
 hist_file <- 'data_arima_highfrequency_through_2019.csv'
 timestep <- '1day'
 timestep_numeric <- 1
-outfile <-  paste0(folder, '/data_arima_', timestep, '_through_2020.csv')
+outfile <-  paste0(folder, '/training_datasets/data_arima_', timestep, '_through_2020.csv')
 data_location <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA/SCCData"
 folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
 
@@ -24,7 +24,7 @@ working_arima <- paste0(folder, "/", "ARIMA_working")
 
 # read in the original training dataset from 2013-2016
 # this is the format that the end file should have so that it can read in to the jags code
-data <- read.csv(hist_file)
+data <- read.csv(paste0(folder, '/training_datasets/', hist_file))
 data$Date <- as.Date(data$Date)
 
 
