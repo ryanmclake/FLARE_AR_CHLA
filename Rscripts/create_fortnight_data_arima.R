@@ -19,7 +19,7 @@ folder <- 'C:/Users/wwoel/Desktop/FLARE_AR_CHLA'
 #                  met_obs_fname = met_obs_fname)
 
 
-train <- read.csv(paste0(folder, '/data_arima_7day_through_2020.csv'))
+train <- read.csv(paste0(folder, '/training_datasets/data_arima_7day_through_2020.csv'))
 train$Date <- as.Date(train$Date)
 # make 14 day lag instead of 7 day
 train <- train %>% mutate(Chla_ARlag_timestep_sqrt = lag(Chla_sqrt, 2L))
@@ -31,5 +31,5 @@ train_fortnight <- train[-remove,]
 train_fortnight <- na.omit(train_fortnight)
 
 # file with fortnightly timestep through the forecast period (Dec 2019)
-write.csv(train_fortnight, paste0(folder, '/data_arima_14day_through_2020.csv'), row.names = FALSE)
+write.csv(train_fortnight, paste0(folder, '/training_datasets/data_arima_14day_through_2020.csv'), row.names = FALSE)
 
