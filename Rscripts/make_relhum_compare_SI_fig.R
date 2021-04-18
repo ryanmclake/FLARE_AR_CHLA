@@ -1,7 +1,8 @@
 # make SI figure comparing daily forecasts with different covariates
+library(tidyverse)
 
-swd <- read.csv('./FCR_forecasts/daily/daily_SW_discharge/dailyforecast_SWdischarge_metrics.csv')
-rh <- read.csv('./FCR_forecasts/daily/relhum_training_spinup_Feb0420/dailyforecast_relhum_metrics.csv')
+swd <- read.csv('./FCR_forecasts/1day/daily_SW_discharge/dailyforecast_SWdischarge_metrics.csv')
+rh <- read.csv('./FCR_forecasts/1day/relhum_training_spinup_Feb0420/dailyforecast_relhum_metrics.csv')
 
 swd <- swd %>% select(day_in_future, RMSE_forecast, RMSE_forecast_nonbloom, RMSE_forecast_daily_bloom)
 colnames(swd) <- c('day_in_future', 'RMSE_swd', 'RMSE_swd_nonbloom', 'RMSE_swd_bloom')
@@ -24,7 +25,7 @@ dev.off()
 
 #####################################################################################################################################
 # make SI figure of weekly training and forecast chl time series
-data <- read.csv('./data_arima_working.csv')
+data <- read.csv('./training_datasets/data_arima_working.csv')
 data$Date <- as.Date(data$Date)
 par(mfrow = c(1,1))
 
