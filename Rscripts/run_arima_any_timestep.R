@@ -393,7 +393,6 @@ run_arima <- function(
   ####CREATE INFLOW AND OUTFILE FILES############
   ###############################################
   
-#  source(paste0(folder,"/","Rscripts/create_inflow_outflow_file_forecastdischarge.R"))
   source(paste0(folder,"/","Rscripts/create_discharge_forecast_ensembles.R"))
   source(paste0(folder,"/","Rscripts/inflow_qaqc.R"))
   
