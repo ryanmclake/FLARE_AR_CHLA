@@ -9,4 +9,10 @@ forecast_max	max forecast of chl in ug/L	numeric	microgramsPerLiter		NA	value is
 forecast_min	min forecast of chl in ug/L	numeric	microgramsPerLiter		NA	value is missing
 forecast_variance	variance of forecast of chl in ug/L	numeric	microgramsPerLiter		NA	value is missing
 obs_chl_EXO	observed chl on the day being forecasted	numeric	microgramsPerLiter		NA	value is missing
+forecast_run_day	the date the forecast was initiated	Date		YYYY_MM_DD	NA	value is missing
 day_in_future	the number of days in the future being forecast (time horizon)	numeric	nominalDay		NA	value is missing
+par1	parameter value for the model intercept	numeric	dimensionless		NA	value is missing
+par2	parameter value for the autoregressive chl driver	numeric	dimensionless		NA	value is missing
+par3	parameter value for the discharge driver	numeric	dimensionless		NA	value is missing
+par4	parameter value for the shortwave radiation driver	numeric	dimensionless		NA	value is missing
+par5	standard deviation of the distribution of process error	numeric	dimensionless		NA	value is missing
