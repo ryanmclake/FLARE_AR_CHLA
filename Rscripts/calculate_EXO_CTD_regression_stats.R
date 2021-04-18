@@ -1,4 +1,6 @@
 # build regression between CTD and EXO chl data
+library(tidyverse)
+library(lubridate)
 
 # download the CTD data from EDI
 inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/200/11/d771f5e9956304424c3bc0a39298a5ce" 
@@ -150,8 +152,8 @@ overlap_WW <- overlap_WW[overlap_WW$Day<'2019-01-01',]
 mod_WW <- lm(CTDChla_ugL ~ EXOChla_ugL, data = overlap_WW)
 res_WW <- resid(mod_WW)
 summary(mod_WW)
-rout <- list(paste('Model: ', round(coef(mod_sqrt)[1], 3), ' + ',
-                   round(coef(mod_WW)[2], 3), 'x,', ' R^2 = ', round(summary(mod_sqrt)[['r.squared']], 3), sep = ''))
+rout <- list(paste('Model: ', round(coef(mod_WW)[1], 3), ' + ',
+                   round(coef(mod_WW)[2], 3), 'x,', ' R^2 = ', round(summary(mod_WW)[['r.squared']], 3), sep = ''))
 
 #regression plot
 plot1 <- ggplot(data = overlap_WW, aes(x = EXOChla_ugL, y = CTDChla_ugL))+
@@ -177,6 +179,7 @@ overlap_WW <- overlap_WW %>% mutate(EXOChla_ugL_1_sqrt = sqrt(EXOChla_ugL)) %>%
 mod_sqrt <- lm(CTDChla_ugL_1_sqrt ~ EXOChla_ugL_1_sqrt, data = overlap_WW)
 
 res_sqrt <- resid(mod_sqrt)
+sd(res_sqrt)
 summary(mod_sqrt)
 rout_sqrt <- list(paste('Model: ', round(coef(mod_sqrt)[1], 3), ' + ',
                    round(coef(mod_sqrt)[2], 3), 'x,', ' R^2 = ', round(summary(mod_sqrt)[['r.squared']], 3), sep = ''))
