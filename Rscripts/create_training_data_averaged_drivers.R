@@ -3,7 +3,7 @@ library(tidyverse)
 library(lubridate)
 
 folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
-data <- read.csv(paste0(folder, './data_arima_WW.csv'))
+data <- read.csv(paste0(folder, '/training_datasets/data_arima_WW.csv'))
 colnames(data) <- c('Date', 'Chla_sqrt', 'Chla_ARlag1_sqrt', 'daily_mean_flow', 'daily_mean_shortwave')
 data$Date <- as.Date(data$Date)
 data$weekly_mean_flow <- NA
@@ -18,7 +18,7 @@ flow <- flow %>% mutate(Date = date(DateTime)) %>%
   select(Date, Daily_Avg_cms)
 
 
-met <- read.csv('C:/Users/wwoel/Dropbox/Thesis/Data/MET/Met_FCR_daily.csv')
+met <- read.csv('./historical_model_selection/Data/MET/Met_FCR_daily.csv')
 met <- met %>% select(Date, ShortWave_mean)
 met$Date <- as.Date(met$Date)
 
@@ -82,4 +82,4 @@ abline(a = 0, b = 1)
 dev.off()
 ##########################################################################################################################################################################
 # output the dataframe
-write.csv(data, paste0(folder, '/data_arima_driver_average.csv'), row.names = FALSE)
+write.csv(data, paste0(folder, '/training_datasets/data_arima_driver_average.csv'), row.names = FALSE)
