@@ -35,7 +35,7 @@ timestep_numeric <- 1
 timestep_interval <- 1 # the interval in between timesteps, e.g. 4day would be 4; daily would be 1; weekly would be 7
 max_timestep <- 14 #maximum number of timesteps that can be propagated to the max time horizon (e.g., daily is 14, weekly is 2)
 max_horizon <- 14 # maximum number of days that are propagated in this forecast (e.g. daily timestep has max_horizon = 14)
-sim_name <- 'Mar2021_UC'
+sim_name <- 'TEST'
 forecast_location <- paste0(folder, "/FCR_forecasts", '/', timestep, '/', sim_name)
 
 
@@ -59,7 +59,7 @@ n_ds_members <- 1
 n_met_members <- 21
 n_discharge_members <- 21
 nmembers <- n_ds_members*n_met_members*n_discharge_members
-num_forecast_periods <- 365 # number of times the script will loop through automation
+num_forecast_periods <- 3 # number of times the script will loop through automation
 
 
 # initialize forecast time
@@ -68,7 +68,7 @@ start_day <- forecast_start_day
 start_day <- as.POSIXct(start_day, format = "%Y-%m-%d %H:%M:%S")
 hist_days <- 1
 
-source(paste0(folder, "/", "Rscripts/run_arima_any_timestep_test_UC_all.R"))
+source(paste0(folder, "/", "Rscripts/run_arima_any_timestep.R"))
 
 forecast_day_count <- 1
 #ALL SUBSEQUENT DAYS
