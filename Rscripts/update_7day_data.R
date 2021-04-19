@@ -7,20 +7,23 @@
 # shortwave radiation     source: FCR met station
 # discharge               source: EDI through 2018 or diana pressure transducer
 
-hist_file <- 'data_arima_weekly_through_2019.csv'
-timestep = timestep_numeric
+folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
+#hist_file <- 'data_arima_7day_through_2019.csv'
+hist_file <- 'data_arima_updated.csv'
+timestep = '7day'
 outfile = paste0(folder, '/data_arima_', timestep, '_through_2020.csv')
+data_location <-  "C:/Users/wwoel/Desktop/FLARE_AR_CHLA/SCCData"
+
 
 library(lubridate)
 library(tidyverse)
 
 
-setwd(folder)
 working_arima <- paste0(folder, "/", "ARIMA_working")
 
 # read in the original training dataset from 2013-2016
 # this is the format that the end file should have so that it can read in to the jags code
-data <- read.csv(hist_file)
+data <- read.csv(paste0(folder, '/training_datasets/', hist_file))
 data$Date <- as.Date(data$Date)
 
 # remove dates between Apr 2018 and Aug 2018 in weekly dataset to make equal with daily training dataset
@@ -37,14 +40,12 @@ data <- data[!duplicated(data$Date),]
   
   temp_obs_fname <- "Catwalk.csv"
   temp_obs_fname_wdir <- paste0(temperature_location, "/", temp_obs_fname) 
-  setwd(folder)
   #download.file('https://github.com/CareyLabVT/SCCData/raw/mia-data/Catwalk.csv','./SCCData/mia-data/Catwalk.csv')
   
   
   observed_depths_chla_fdom <- 1
   reference_tzone <- "EST"
-  full_time = seq(tail(data$Date, n=1), as.Date(forecast_start_day) , by = timestep)
-  #full_time = seq(as.Date(forecast_start_day), as.Date(forecast_start_day)+16 , by = timestep)
+  full_time = seq(tail(data$Date, n=1), as.Date("2020-09-01"), by = 'week')
   
   
   source(paste0(folder,"/","Rscripts/temp_oxy_chla_qaqc.R")) 
@@ -86,10 +87,10 @@ data <- data[!duplicated(data$Date),]
   working_arima <- paste0(folder, "/", "ARIMA_working")  
   met_update_outfile <- paste0(working_arima, "/", "update_met.csv")
  # download.file('https://github.com/CareyLabVT/SCCData/raw/carina-data/FCRmet.csv','./SCCData/carina-data/FCRmet.csv')
-  
+
   
   full_time_hour_obs <- seq(  as.POSIXct(paste0((tail(data$Date, n=1)), " 00:00:00")), 
-                              (as.POSIXct(forecast_start_day)), 
+                              (as.POSIXct("2020-09-01 00:00:00")), 
                               by = "1 hour")
 
   source(paste0(folder,"/","Rscripts/create_obs_met_input.R"))
@@ -116,7 +117,7 @@ data <- data[!duplicated(data$Date),]
   met_obs_fname <- 'FCRmet.csv'
   met_obs_fname_wdir <-paste0(met_station_location, "/", met_obs_fname)
   full_time_hour_obs <- seq(  as.POSIXct("2020-01-01 00:00:00"), 
-                              (as.POSIXct(forecast_start_day)), 
+                              (as.POSIXct("2020-09-01 00:00:00")), 
                               by = "1 hour")
   create_obs_met_input(fname = met_obs_fname_wdir,
                        outfile= met_update_outfile,
@@ -146,7 +147,6 @@ data <- data[!duplicated(data$Date),]
   # after 2019-06-03, use diana data but convert to wvwa units
   
   
-    source(paste0(folder,"/","Rscripts/create_inflow_outflow_file_forecastdischarge.R"))
     source(paste0(folder,"/","Rscripts/inflow_qaqc.R"))
     
     
@@ -157,11 +157,11 @@ data <- data[!duplicated(data$Date),]
     
     inflow_qaqc(fname = inflow_file1,
                 cleaned_inflow_file ,
-                local_tzone, 
+                local_tzone = 'EST', 
                 input_file_tz = 'EST',
                 working_arima)
     
-    full_time = seq(tail(data$Date, n=1), as.Date(forecast_start_day) , by = timestep)
+    full_time = seq(tail(data$Date, n=1), as.Date("2020-09-01") , by = 'week')
     #create_inflow_outflow_file(folder = folder,
     #                           full_time = full_time ,
     #                           working_arima = working_arima, 
@@ -186,7 +186,7 @@ data <- data[!duplicated(data$Date),]
   
   
   data_assimilate <- na.omit(data_assimilate)
-  #data_assimilate <- data[data$Date<forecast_start_day,]
+  data_assimilate <- data_assimilate[data_assimilate$Date<as.Date('2020-08-15'),]
   write.csv(data_assimilate,outfile , row.names = FALSE)
   
   
