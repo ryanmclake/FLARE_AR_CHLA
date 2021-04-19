@@ -100,7 +100,7 @@ for (i in 1:max_timestep) {
   temp <- left_join(temp, temp_null, by = 'forecast_run_day')
   temp <- na.omit(temp)
   
-  obs <- read.csv(paste0(folder, '/obs_chla_02Jan2019_15Aug2020.csv'))
+  obs <- read.csv(paste0(folder, '/obs_chl_15Aug18_29Aug20.csv'))
   obs$forecast_date <- as.Date(obs$forecast_date)
   obs$forecast_run_day <- as.Date(obs$forecast_run_day)
   temp <- left_join(temp, obs)
