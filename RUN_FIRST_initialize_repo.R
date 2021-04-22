@@ -43,3 +43,11 @@ try(download.file(inUrl1,infile1,method="curl"))
 if (is.na(file.size(infile1))) download.file(inUrl1,infile1,method="auto")
 
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+
+### Download the published inflow data from EDI. EDI == Environmental Data Initiative
+inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/202/7/f5fa5de4b49bae8373f6e7c1773b026e"
+infile1 <- tempfile()
+try(download.file(inUrl1,infile1,method="curl"))
+if (is.na(file.size(infile1))) download.file(inUrl1,infile1,method="auto")
+
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
