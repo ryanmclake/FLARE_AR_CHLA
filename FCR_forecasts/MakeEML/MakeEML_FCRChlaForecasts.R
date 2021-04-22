@@ -34,10 +34,7 @@ dir.create(eml_folder)
 # read in files to check their structure
 fc <- read.csv(paste0(eml_folder, '/2019_01_02_chla_1day_uncert1.csv'))
 str(fc)
-# because the EML functions do not like when columns have the same value for every row, we will delete those rows
-# and make sure to note in the metadata that they were removed
-#fc <- fc %>% select(-forecast_run_day, -(par1:par5))
-#write.csv(fc, paste0(eml_folder, '/2019_01_02_chla_1day_uncert1.csv'), row.names = FALSE)
+
 
 par <- read.csv(paste0(eml_folder, '/2019_01_02_ensemble_parameters_1day_uncert1.csv'))
 str(par)
@@ -181,7 +178,7 @@ make_eml(
   other.entity.description = c("FCR forecast files", "FCR parameter output files", "FCR null model files"),
   user.id = 'ccarey', 
   user.domain = 'EDI',
-  package.id = 'edi.199.2') #will need to change this
+  package.id = 'edi.199.3') #will need to change this
 
 ## Step 20: Check your data product! ####
 # Return to the EDI staging environment (https://portal-s.edirepository.org/nis/home.jsp),
