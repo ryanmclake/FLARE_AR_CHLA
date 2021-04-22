@@ -1,24 +1,14 @@
-# script to pull weekly driver data to update training dataset for AR model
+###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### CHLA Forecasting in Falling Creek Reservoir
+###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+### STEP 04 ---- 
+# script to pull weekly driver data to update training dataset for AR model every 7 days
 # to be consistent with 2013-2016 dataset, use observed data from Mondays only
 
-# assimilated data includes:
-# chla response           source: from EXO sonde but converted into CTD units
-# chla one week lag,      source: from EXO sonde but converted into CTD units
-# shortwave radiation     source: FCR met station
-# discharge               source: EDI through 2018 or diana pressure transducer
-
-folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
-#hist_file <- 'data_arima_7day_through_2019.csv'
 hist_file <- 'data_arima_updated.csv'
 timestep = '7day'
 outfile = paste0(folder, '/data_arima_', timestep, '_through_2020.csv')
-data_location <-  "C:/Users/wwoel/Desktop/FLARE_AR_CHLA/SCCData"
-
-
-library(lubridate)
-library(tidyverse)
-
-
 working_arima <- paste0(folder, "/", "ARIMA_working")
 
 # read in the original training dataset from 2013-2016

@@ -1,9 +1,8 @@
+###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### CHLA Forecasting in Falling Creek Reservoir
+###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-library(ggplot2)
-library(dplyr)
-library(scales)
-
-folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
+### STEP 09b ----
 
 # define specs for the timestep and simulation
 timestep <- '7day' # character definition of the timestep

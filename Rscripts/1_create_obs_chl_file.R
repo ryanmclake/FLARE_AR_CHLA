@@ -1,7 +1,16 @@
-# script to extract obs chl-a from the entire forecasting period and save as csv
 
-folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
+###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### CHLA Forecasting in Falling Creek Reservoir
+###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+### STEP 01 ---- 
+### script to extract obs chl-a from the entire forecasting period and save as csv
+
+### SPECIFY ALL OF THE DIRECTORIES YOU WILL USE FROM SCRIPTS 1-13
+folder <- getwd()
+data_location <- paste0(getwd(),"/","SCCData")
+
+### Source the function scripts needed to get the observed chlorophyll a
 source(paste0(folder,"/","Rscripts/extract_EXOchl_chain_dailyavg.R")) 
 source(paste0(folder,"/","Rscripts/temp_oxy_chla_qaqc.R")) 
 

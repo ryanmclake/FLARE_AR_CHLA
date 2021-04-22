@@ -1,16 +1,11 @@
-library(mvtnorm)
-library(lubridate)
-library(RCurl)
-library(testit)
-library(imputeTS)
-library(tidyverse)
-library(modelr)
-library(RcppRoll)
+###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### CHLA Forecasting in Falling Creek Reservoir
+###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+### STEP 07b ---- >
+# Forecast with null persistence (i.e. Random walk) model
 
-folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
-data_location <-  "C:/Users/wwoel/Desktop/FLARE_AR_CHLA/SCCData"
-forecast_start_day <-"2019-01-01 00:00:00"
+forecast_start_day <- forecast_start_day
 
 #set up ensembles
 n_ds_members <- 1
@@ -34,7 +29,7 @@ source(paste0(folder, "/", "Rscripts/run_null_forecast.R"))
 
 
 forecast_day_count <- 1
-num_forecast_periods <- 750
+num_forecast_periods <- num_forecast_periods
 
 #ALL SUBSEQUENT DAYS
 repeat{
@@ -102,9 +97,3 @@ repeat{
   }
   
 }
-
-
-
-
-
-

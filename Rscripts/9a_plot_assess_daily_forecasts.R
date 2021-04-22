@@ -1,11 +1,8 @@
+###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### CHLA Forecasting in Falling Creek Reservoir
+###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-library(ggplot2)
-library(dplyr)
-library(lubridate)
-library(scales)
-
-folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
-
+### STEP 09 ----
 # define specs for the timestep and simulation
 timestep <- '1day' # character definition of the timestep
 timestep_numeric <- 1 # maybe timestep_numeric and timestep_interval are actually the same thing and not both needed -_-
@@ -100,10 +97,9 @@ for (i in 1:max_timestep) {
   temp <- left_join(temp, temp_null, by = 'forecast_run_day')
   temp <- na.omit(temp)
   
-  obs <- read.csv(paste0(folder, '/obs_chl_15Aug18_29Aug20.csv'))
-  obs$forecast_date <- as.Date(obs$forecast_date)
-  obs$forecast_run_day <- as.Date(obs$forecast_run_day)
-  temp <- left_join(temp, obs)
+  obs <- read_csv(paste0(folder, '/obs_chl_15Aug18_29Aug20.csv'))
+  obs$forecast_date <- lubridate::as_date(obs$Date)
+  temp <- left_join(temp, obs, by = "forecast_date") %>% select(-Date)
   
   # calculate forecast metrics
   source(paste0(folder,"/","Rscripts/model_assessment.R")) # sim, obs
@@ -303,42 +299,4 @@ points(metrics_overtime$day_in_future, metrics_overtime$RMSE_forecast, col = 'bl
 points(metrics_overtime$day_in_future, metrics_overtime$RMSE_forecast_nonbloom, col = 'orange')
 points(metrics_overtime$day_in_future, metrics_overtime$RMSE_null_nonbloom, col = 'purple')
 legend('topleft', c('null', 'forecast', 'null nonbloom', 'forecast nonbloom'), col = c('red', 'blue', 'purple', 'orange'), lty = c(1,1), bty = 'n')
-
-
-ggplot(data = metrics_overtime, aes(x = day_in_future,y = RMSE_null)) + 
-  geom_point(aes(day_in_future, RMSE_null), col = 'red', size = 15) +
-  geom_point(aes(day_in_future, RMSE_forecast), col = 'blue', size = 15)+
-  xlab('Weeks into the future') + 
-  ylab('RMSE (ug/L)') +
-  theme(axis.text.x = element_text(size = 35),
-        axis.text.y = element_text(size = 50),
-        axis.title.x = element_text(size =45),
-        axis.title.y = element_text(size = 45),
-        legend.title = element_text(size = 35),
-        legend.text = element_text(size = 30),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        legend.position = 'right') +
-  scale_x_discrete(limits = c('1','2')) 
-
-ggplot(data = metrics_overtime, aes(x = day_in_future,y = RMSE_null)) + 
-  geom_point(aes(day_in_future, RMSE_forecast_nonbloom), col = 'orange', size = 15) +
-  geom_point(aes(day_in_future, RMSE_forecast_bloom), col = 'red', size = 15) +
-  geom_point(aes(day_in_future, RMSE_forecast), col = 'blue', size = 15)+
-  xlab('Weeks into the future') + 
-  ylab('RMSE (ug/L)') +
-  theme(axis.text.x = element_text(size = 35),
-        axis.text.y = element_text(size = 50),
-        axis.title.x = element_text(size =45),
-        axis.title.y = element_text(size = 45),
-        legend.title = element_text(size = 35),
-        legend.text = element_text(size = 30),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        legend.position = 'right') +
-  scale_x_discrete(limits = c('1','2')) +
-  scale_color_manual(labels = c('Total', 'bloom', 'nonbloom'), 
-                     breaks = c('blue', 'red', 'orange'),
-                     values = c('blue', 'red', 'orange'))
-
 

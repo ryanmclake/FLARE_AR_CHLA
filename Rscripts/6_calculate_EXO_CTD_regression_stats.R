@@ -1,6 +1,9 @@
-# build regression between CTD and EXO chl data
-library(tidyverse)
-library(lubridate)
+###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### CHLA Forecasting in Falling Creek Reservoir
+###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+### STEP 06 ---- 
+# Build EXO and CTD regression
 
 # download the CTD data from EDI
 inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/200/11/d771f5e9956304424c3bc0a39298a5ce" 
@@ -133,8 +136,7 @@ exo <- exo %>%
          Hour = hour(DateTime)) %>%
   select(-DateTime)
 exo$EXOChla_ugL_1 <- as.numeric(exo$EXOChla_ugL_1)
-#exo <- aggregate(cbind(EXOChla_ugL_1) ~ Day + Hour, data = exo, mean) %>%
-#  mutate(Depth_m = 1)
+
 
 exo <- exo %>% group_by(Day) %>% 
   mutate(EXOChla_daily_mean = mean(EXOChla_ugL_1))
@@ -200,5 +202,3 @@ abline(0,0)
 
 summary(mod_sqrt)
 summary(mod_WW)
-
-

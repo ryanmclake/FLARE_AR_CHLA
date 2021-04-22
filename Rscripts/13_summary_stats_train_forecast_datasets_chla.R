@@ -1,15 +1,17 @@
+###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### CHLA Forecasting in Falling Creek Reservoir
+###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+### STEP 13 ----
+
 # determine summary stats (median, standard deviation, max values) for observed chl-a during training period and during forecast period
-
-library(tidyverse)
-
-
-folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
-timestep <- '14day'
-sim_name <- '22Jul2020'
 setwd(folder)
+timestep <- '1day'
+sim_name <- sim_name
+
 
 # training dataset May-Oct 2013-2016
-train <- read.csv('./data_arima_WW.csv')
+train <- read.csv('./training_datasets/data_arima_WW.csv')
 train$Date <- as.Date(train$Date)
 train <- train %>% mutate(Chla = Chla_sqrt^2) %>% 
   mutate(Chla_EXO = ((Chla + 0.0308)/0.55))
@@ -56,10 +58,8 @@ abline(v = as.Date('2020-03-16'))
 abline(v = as.Date('2020-04-23'))
 
 all <- rbind(train, stuff)
-png('C:/Users/wwoel/Dropbox/Thesis/Figures/arima/SI_Fig_chl_timeseries.png', width = 1100, height = 800)
 par(mar= c(5.1, 5.1, 4.1, 2.1))
 plot(all$Date, all$Chla_EXO, xlab = 'Date', ylab = 'Chl-a (μg/L)', cex.axis = 2, cex.main = 2, cex.lab = 2, cex = 1.5)
-dev.off()
 
 
 
