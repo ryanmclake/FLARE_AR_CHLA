@@ -1,9 +1,12 @@
+###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### CHLA Forecasting in Falling Creek Reservoir
+###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+### STEP 08 ----
 # assess convergence and effective sample size
 
 # run statistics on the first day of the forecasting period (aka after training and spinup)
-forecast_start_day <-"2019-01-01 00:00:00"
-data_location <-  "C:/Users/wwoel/Desktop/FLARE_AR_CHLA/SCCData"
-folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
+forecast_start_day <- forecast_start_day
 
 ###########################################################################################################################################################################
 # first for daily
@@ -17,10 +20,6 @@ data <- read.csv(paste0(folder, '/training_datasets/data_arima_', timestep, '_th
 data$Date <- as.Date(data$Date)
 data <- data[data$Date<forecast_start_day,]
 
-library(rjags)
-library(PerformanceAnalytics)
-
-setwd(folder)
 #Full time series with gaps
 y <- c(data$Chla_sqrt)
 time <- c(data$Date)
@@ -110,8 +109,6 @@ timestep <- '7day' # character definition of the timestep
 data <- read.csv(paste0(folder, '/training_datasets/data_arima_', timestep, '_through_2020.csv'))
 data$Date <- as.Date(data$Date)
 data <- data[data$Date<forecast_start_day,]
-
-setwd(folder)
 
 #Full time series with gaps
 y <- c(data$Chla_sqrt)
@@ -219,7 +216,6 @@ gelman.diag(samples_weekly)
 gelman.diag(samples_fortnightly)
 
 
-library(LaplacesDemon)
 ess_daily <- ESS(samples_daily)
 ess_daily <- as.data.frame(ess_daily)
 ess_weekly <- ESS(samples_weekly)
@@ -235,4 +231,4 @@ si_table[1,] <- ess_daily[,1]
 si_table[2,] <- ess_weekly[,1]
 si_table[3,] <- ess_fortnightly[,1]
 
-write.csv(si_table, paste0(folder, './FCR_forecasts/effective_sample_size_SI_table_', Sys.Date(), '.csv'))
+write.csv(si_table, paste0(folder, '/FCR_forecasts/effective_sample_size_SI_table_', Sys.Date(), '.csv'))

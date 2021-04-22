@@ -1,11 +1,12 @@
-# script to create training data for daily forecasts using weekly model covariates (mean SW and discharge)
-library(tidyverse)
-library(lubridate)
 
-# training data should run from 2018-08-15 to 2019-12-31 (and will get approriately subsetted using with the data assimilation script)
+###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### CHLA Forecasting in Falling Creek Reservoir
+###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+### STEP 02 ---- 
+# script to create high-frequency catawlk data from 2018 through 2020
 
 source("./Rscripts/extract_EXOchl_chain_dailyavg.R")
-folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
 
 temperature_location <-  "./SCCData/mia-data"
 
@@ -73,7 +74,6 @@ data <- left_join(data, Discharge)
 
 # Now SW data
 # first for data in 2018 (have to do this separately because met data file is separated by year)
-data_location <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA/SCCData"
 met_station_location <- paste0(data_location, "/", "carina-data")
 met_obs_fname <- 'FCRmet_legacy_2018.csv'
 met_obs_fname_wdir <-paste0(met_station_location, "/", met_obs_fname)
@@ -105,7 +105,6 @@ met_hist_daily_2018 <- met_hist_daily_2018 %>% select(Date, ShortWave_mean)
 met_hist_daily_2018 <- as.data.frame(met_hist_daily_2018)
 
 # do the same for 2019
-data_location <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA/SCCData"
 met_station_location <- paste0(data_location, "/", "carina-data")
 met_obs_fname <- 'FCRmet_legacy_2019.csv'
 met_obs_fname_wdir <-paste0(met_station_location, "/", met_obs_fname)

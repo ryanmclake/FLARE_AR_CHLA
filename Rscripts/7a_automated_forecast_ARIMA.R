@@ -1,35 +1,15 @@
+###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### CHLA Forecasting in Falling Creek Reservoir
+###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+### STEP 07a ---- 
+# Forecast using SS-model structure
 
 #############################################################################################################
 #### code from 'automate_forecast_example.R' and modified for FCR total chlorophyll ARIMA  model ############
 #############################################################################################################
 
-if (!"mvtnorm" %in% installed.packages()) install.packages("mvtnorm")
-if (!"ncdf4" %in% installed.packages()) install.packages("ncdf4")
-if (!"lubridate" %in% installed.packages()) install.packages("lubridate")
-if (!"RCurl" %in% installed.packages()) install.packages("RCurl")
-if (!"testit" %in% installed.packages()) install.packages("testit")
-if (!"imputeTS" %in% installed.packages()) install.packages("imputeTS")
-if (!"tidyverse" %in% installed.packages()) install.packages("tidyverse")
-if (!"RcppRoll" %in% installed.packages()) install.packages("RcppRoll")
-if (!"rjags" %in% installed.packages()) install.packages("rjags")
-if (!"PerformanceAnalytics" %in% installed.packages()) install.packages("PerformanceAnalytics")
 
-
-
-library(mvtnorm)
-library(lubridate)
-library(RCurl)
-library(testit)
-library(imputeTS)
-library(tidyverse)
-library(modelr)
-library(RcppRoll)
-
-
-
-
-data_location <-  "C:/Users/wwoel/Desktop/FLARE_AR_CHLA/SCCData"
-folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
 timestep <- '1day' # character definition of the timestep
 timestep_numeric <- 1
 timestep_interval <- 1 # the interval in between timesteps, e.g. 4day would be 4; daily would be 1; weekly would be 7
@@ -54,7 +34,7 @@ local_tzone <- "EST5EDT"
 include_wq <<- FALSE
 use_future_inflow <<- TRUE
 
-#set up ensemblesa
+#set up ensembles
 n_ds_members <- 1
 n_met_members <- 21
 n_discharge_members <- 21
@@ -140,8 +120,6 @@ repeat{
   
  # restart_file <- unlist(forecast)[1]
   
-
-  
   #ADVANCE TO NEXT DAY
   start_day <- as.POSIXct(start_day, format = "%Y-%m-%d %H:%M:%S") + days(1)
   forecast_start_day <- start_day
@@ -152,9 +130,3 @@ repeat{
   }
   
 }
-
-
-
-
-
-

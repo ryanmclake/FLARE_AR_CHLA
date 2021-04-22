@@ -1,23 +1,9 @@
+###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### CHLA Forecasting in Falling Creek Reservoir
+###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+### STEP 05 ---- 
 # create fortnightly training dataset for running 2-week forecasts
-
-folder <- 'C:/Users/wwoel/Desktop/FLARE_AR_CHLA'
-
-# create file with weekly data through 2019 that I will later subset for fortnightly
-# run once, shouldn't need to be updated
-#folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
-#source(paste0(folder,"/","Rscripts/data_assimilation_AR.R"))
-#outfile <- 'data_arima_weekly_through_2019.csv'
-#forecast_start_day <-"2019-12-30 00:00:00"
-#met_obs_fname <- "FCRmet.csv"
-#data_location = "C:/Users/wwoel/Desktop/FLARE_AR_CHLA/SCCData"
-#data_assimilation(folder = folder, 
-#                  data_location =  data_location,
-#                  hist_file = paste0(folder, '/', 'data_arima_updated.csv'),
-#                  forecast_start_day = forecast_start_day,
-#                  timestep = 7, 
-#                  outfile = outfile,
-#                  met_obs_fname = met_obs_fname)
-
 
 train <- read.csv(paste0(folder, '/training_datasets/data_arima_7day_through_2020.csv'))
 train$Date <- as.Date(train$Date)

@@ -1,3 +1,8 @@
+###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### CHLA Forecasting in Falling Creek Reservoir
+###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+### STEP 03 ---- 
 # script to pull weekly driver data to update training dataset for AR model
 # to be consistent with 2013-2016 dataset, use observed data from Mondays only
 
@@ -8,16 +13,9 @@
 # discharge               source: EDI through 2018 or diana pressure transducer
 
 
-library(lubridate)
-library(tidyverse)
-
-folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
-data_location <-  "C:/Users/wwoel/Desktop/FLARE_AR_CHLA/SCCData"
-#setwd(folder)
-
 # read in the original training dataset from 2013-2016
 # this is the format that the end file should have so that it can read in to the jags code
-train <- read.csv('./data_arima_WW.csv')
+train <- read.csv('./training_datasets/data_arima_WW.csv')
 train$Date <- as.Date(train$Date)
 
 #######################################################################################################################################################################################
@@ -91,7 +89,7 @@ create_obs_met_input(fname = met_obs_fname_wdir,
                                   input_tz = "EST5EDT", 
                                   output_tz = reference_tzone)
 # read in the hourly data that was created and summarize to daily mean
-setwd(folder)
+
 sw_hist <- read.csv('./ARIMA_working/AR_historical_met.csv')
 sw_hist_daily <- sw_hist %>% mutate(Date = date(time)) %>% 
   group_by(Date) %>% 

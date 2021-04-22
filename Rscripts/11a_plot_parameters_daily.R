@@ -1,13 +1,10 @@
+###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### CHLA Forecasting in Falling Creek Reservoir
+###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
-library(rsq)
-library(tidyverse)
-library(lubridate)
-library(Metrics)
+### STEP 11 ----
 reference_tzone <- "GMT"
 
-#set the location of the forecasts
-folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
 timestep <- '1day'
 sim_name <- 'Mar2021_UC'
 forecast_folder <- paste0(folder, "/FCR_forecasts", '/', timestep, '/', sim_name)

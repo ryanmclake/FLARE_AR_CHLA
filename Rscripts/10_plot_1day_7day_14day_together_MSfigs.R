@@ -1,9 +1,8 @@
+###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### CHLA Forecasting in Falling Creek Reservoir
+###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-library(ggplot2)
-library(patchwork)
-library(scales)
-
-folder <- "C:/Users/wwoel/Desktop/FLARE_AR_CHLA"
+### STEP 10 ----
 
 sim_name <- 'Mar2021_UC'
 daily <- read.csv(paste0(folder, '/FCR_forecasts/1day/', sim_name, '/ForecastMetrics_1day_2021-04-08.csv'))
