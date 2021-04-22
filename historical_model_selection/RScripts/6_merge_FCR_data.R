@@ -4,7 +4,7 @@ library(ggplot2)
 
 #####################################################################################################################
 ############################ start with CTD and chem data  ########################################################
-ctd <- read.csv("./historical_model_selection/Data/CTD/FCR_CTD_50_binned.csv") #ctd data for FCR at site 50, processed for layers
+ctd <- read.csv("./historical_model_selection/ARIMA_data/FCR_CTD_50_binned.csv") #ctd data for FCR at site 50, processed for layers
 ctd<- ctd %>% select( -Cond_uScm, -Reservoir, -Site)
 ctd$Date <- as.Date(ctd$Date)
 colnames(ctd)[2] <- "Depth"
@@ -74,8 +74,8 @@ join4 <- join4 %>% select(-X)
 
 
 #########################################################################################################################################
-############################ add inflow-created data: residence time, and nutrient load ########################################
-inf <- read.csv("./historical_model_selection/Data/Inflow/inflow_loads_wrt.csv")
+############################ add inflow data########################################
+inf <- read.csv("./historical_model_selection/Data/Inflow/inflowcalcs_FCR.csv")
 inf$Date <- as.Date(inf$Date)
 join5 <- left_join(join4, inf, by = "Date", all = TRUE)
 
