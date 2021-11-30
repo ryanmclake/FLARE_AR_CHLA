@@ -77,6 +77,8 @@ run_arima <- function(
     met_obs_fname <- "FCRmet_legacy_2018.csv" # needs to be FCRmet_lecagy01.csv if running dates before 01-01-2019 because these files were split up
   }else if(forecast_start_day < as.Date('2020-01-01')){
     met_obs_fname <- 'FCRmet_legacy_2019.csv'
+  }else if(forecast_start_day < as.Date('2021-01-01')){
+    met_obs_fname <- 'FCRmet_legacy_2020.csv'
   }else{
     met_obs_fname <- 'FCRmet.csv'
   }
