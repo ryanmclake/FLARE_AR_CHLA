@@ -19,3 +19,6 @@ RealTimeCatwalk.csv
 note.md
 *gep_all_*.csv
 *.zip
+
+#ignore files in the working directory
+ARIMA_working/
