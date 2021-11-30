@@ -7,15 +7,15 @@ head(raw) # View data preview with auto-parsed structures
 
 # Calculate all statistics for all varaibles, then drop the ones you don't need
 met <- raw %>%                                                 # start with the raw data
-  mutate(Date = as.Date(time, format="%Y-%m-%d hh:mm:ss")) %>% # create a column of just the date
+  mutate(Date = as.Date(time, format="%Y-%m-%d")) %>% # create a column of just the date
   select(-time) %>%                                # drop the datetime column
   group_by(Date) %>%                                           # group by date (for daily statistics)
   summarise_all(c("mean", "median", "max","sum")) %>%           # get min, median, max, and sum for all variables each day
-  select(-(ShortWave_sum:WindSpeed_sum), -Rain_median, -Rain_max) %>% # drop calcs you don't want
-  select(Date, noquote(order(colnames(.))))                    # arrange columns alphabetically after Date
+  select(-(ShortWave_sum:WindSpeed_sum), -Rain_median, -Rain_max)# %>% # drop calcs you don't want
+  select(Date, everything())                    # arrange columns alphabetically after Date
 
-met <- met %>%
-  select(-(LongWave_max:Rain_mean), -ShortWave_median)
+#met <- met %>%
+#  select(-(LongWave_max:Rain_mean), -ShortWave_median)
 
 View(met) # Look at your output
 

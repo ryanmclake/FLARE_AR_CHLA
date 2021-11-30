@@ -1,2 +1,0 @@
-"forecast_date","forecast_mean_chl","forecast_median_chl","forecast_sd_chl","forecast_CI95_upper","forecast_CI95_lower","forecast_max","forecast_min","forecast_variance","obs_chl_EXO","forecast_run_day","day_in_future","par1","par2","par3","par4","par5"
-2020-09-15,7.18945367297672,6.30992739440465,4.36267796676775,17.599496025699,0.819096976209028,27.046043581652,0.350529258761628,0.390654163346714,NA,2020-09-01,14,1.72540449433234,0.312806347999916,-3.85603551723801,-0.00149425985773265,0.611375266696223

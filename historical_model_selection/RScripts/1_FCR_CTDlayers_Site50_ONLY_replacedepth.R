@@ -70,7 +70,7 @@ one_1.6 <- lm(layer2$Chla_ugL~layer3$Chla_ugL)
 summary(one_1.6)
 
 #save layer 1 as csv
-write.csv(layer1, "FCR_CTD_50surf_binned.csv", row.names=FALSE)
+write.csv(layer1, "./historical_model_selection/ARIMA_data/FCR_CTD_50surf_binned.csv", row.names=FALSE)
 
 
 #put all layers together for all layers at FCR 50

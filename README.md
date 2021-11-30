@@ -16,7 +16,7 @@ File are organized into the following folders:\
 JAGS (Just Another Gibbs Sampler) is an independent program for analysis of Bayesian models which is used in thie forecast analysis. The program needs to be installed on your computer before you can run code using the `rjags` package. You can find information on downloading JAGS here: https://mcmc-jags.sourceforge.io/
 
 # Setting up SCCData data repositories
-After cloning this repository, rename the `SCCData_temp` folder with the 'noaa-data' in it to just `SCCData`. Ultimately, you should have an 'SCCData' folder with the following folders inside it:\
+After cloning this repository, you will open the `RUN_FIRST_initialize_repo.R` script to rename the `SCCData_temp` folder with the 'noaa-data' in it to just `SCCData`. Ultimately, you should have an 'SCCData' folder with the following folders inside it:\
 'carina-data' this corresponds to data from the FCR meteorological station\
 'diana-data' this corresponds to data from the incoming stream weir\
 'manual-data' this corresponds to manually collected profiles at FCR\

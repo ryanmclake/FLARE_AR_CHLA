@@ -57,14 +57,14 @@ for (i in 1:length(dates)){
 
 #Get slope for Kd
 final <- matrix(data=NA, ncol=2, nrow=length(dates))
-
+temp <- matrix(data=NA, ncol=2, nrow=1)
 
 for (i in 1:length(dates)){
   j=dates[i]
   q <- subset(light, light$Date == j)
   mod <- lm(q$Depth ~ log(q$PAR))
   slope <- mod$coefficients[2]
-  temp <- c(j,slope)
+  temp <- cbind(j, slope) #c(as.Date(j, origin="1970-01-01"),slope)
   final[i,] <- temp
   
 }
@@ -77,5 +77,5 @@ colnames(final)[2] <- "Date"
 final <- final[, c("Date", "Kd")]
 
 #Yay! :)
-write.csv(final, "./historical_model_selection/Data/FCR_Kd.csv")
+write.csv(final, "./historical_model_selection/Data/YSI_PAR_SECCHI/FCR_Kd.csv")
 

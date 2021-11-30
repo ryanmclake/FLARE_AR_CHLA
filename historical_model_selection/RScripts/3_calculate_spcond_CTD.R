@@ -4,7 +4,7 @@ library(dplyr)
 
 #setwd("C:/Users/wwoel/Dropbox/FCR_TimeSeries")
 
-ctd <- read.csv("./historical_model_selection/Data/CTD/FCR_CTD_50_binned.csv") #ctd data for FCR at site 50, processed for layers
+ctd <- read.csv("./historical_model_selection/ARIMA_data/FCR_CTD_50_binned.csv") #ctd data for FCR at site 50, processed for layers
 
 # calculate specific conductivity within CTD data
 ctd <- mutate(ctd, SpCond_calc = Cond_uScm/(1+(0.0191*(Temp_C - 25))))
@@ -19,4 +19,4 @@ ggplot(ctd) + geom_point(aes(x = Spec_Cond_uScm, y = SpCond_calc)) + ylim(c(0,50
 ctd2 <- ctd %>% select(-(Spec_Cond_uScm))
 
 #create a csv with the new calculated specific conductance
-write.csv(ctd2, "./historical_model_selection/Data/CTD/FCR_CTD_50_binned.csv", row.names = FALSE)
+write.csv(ctd2, "./historical_model_selection/ARIMA_data/FCR_CTD_50_binned.csv", row.names = FALSE)
