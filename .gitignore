@@ -2,13 +2,16 @@
 .Rhistory
 .RData
 .Ruserdata
-#a bunch of SCC files that don't need to be pushed to the repo
 
+#a bunch of SCC files that don't need to be pushed to the repo
 /SCCData/noaa-data/
 /SCCData/mia-data/
 /SCCData/manual-data/
 /SCCData/diana-data/
 /SCCData/carina-data/
+/SCCData/bvre-data/usda_soil_data/
+
+# and some big files
 FCRweir.csv
 FCRmet.csv
 stats.csv
