@@ -25,7 +25,8 @@ run_arima <- function(
   timestep_numeric,
   timestep_interval,
   max_timestep,
-  max_horizon 
+  max_horizon,
+  site_id
 ){
   
   
@@ -71,7 +72,13 @@ run_arima <- function(
   observed_depths_do <- c(1, 5, 9)
   observed_depths_chla_fdom <- 1
   
-  temp_obs_fname <- "Catwalk.csv"
+  if(site_id=='fcre'){
+    temp_obs_fname <- "Catwalk.csv"
+    
+  }else if(site_id=='bvre'){
+    temp_obs_fname <- "bvre-waterquality.csv"
+    
+  }
   
   if(forecast_start_day < as.Date("2019-01-01")){
     met_obs_fname <- "FCRmet_legacy_2018.csv" # needs to be FCRmet_lecagy01.csv if running dates before 01-01-2019 because these files were split up
@@ -82,6 +89,7 @@ run_arima <- function(
   }else{
     met_obs_fname <- 'FCRmet.csv'
   }
+  
   forecast_start_day <- start_day
   
   
@@ -89,7 +97,11 @@ run_arima <- function(
   ####### set file locations for  driver data####
   ###############################################
   
-  temperature_location <- paste0(data_location, "/", "mia-data")
+  if(site_id=='fcre'){
+    temperature_location <- paste0(data_location, "/", "mia-data")
+  }else if(site_id=='bvre'){
+    temperature_location <- paste0(data_location, "/", "bvre-data")
+  }
   met_station_location <- paste0(data_location, "/", "carina-data")
   noaa_location <- paste0(data_location, "/", "noaa-data")
   diana_data_location <- paste0(data_location, "/", "diana-data")
@@ -323,10 +335,6 @@ run_arima <- function(
   fl <- c(list.files(sim_files_folder, full.names = TRUE))
   tmp <- file.copy(from = fl, to = working_arima, overwrite = TRUE)
   tmp <- file.copy(from = fl, to = working_arima, overwrite = TRUE)
- # if(!is.na(restart_file)){
- #    tmp <- file.copy(from = restart_file, to = working_arima, overwrite = TRUE)
- #  }
-
   
   ###############################################
   ####CREATE INFLOW AND OUTFILE FILES############
