@@ -238,90 +238,27 @@ run_arima <- function(
     n_ds_members <- 1
   }
   
-  
-  met_file_names <- rep(NA, 1+(n_met_members*n_ds_members))
-  obs_met_outfile <- paste0(working_arima, "/", "GLM_met.csv")
-  
-  # this function takes the observed met data at FCR and calculates hourly summaries for a given date range 'full_time_hour_obs'
-  create_obs_met_input(fname = met_obs_fname_wdir,
-                       outfile=obs_met_outfile,
-                       full_time_hour_obs, 
-                       input_tz = "EST5EDT", 
-                       output_tz = reference_tzone)
-  met_file_names[1] <- obs_met_outfile
-  
+  source(paste0(folder, "/Rscripts/generate_glm_met_files.R"))
   ###CREATE FUTURE MET FILES
   if(forecast_days > 0){
-    in_directory <- paste0(noaa_location)
-    out_directory <- working_arima
-    file_name <- paste0('fcre_', forecast_base_name)
     
-    VarInfo <- data.frame("VarNames" = c("AirTemp",
-                                         "WindSpeed",
-                                         "RelHum",
-                                         "ShortWave",
-                                         "LongWave",
-                                         "Rain"),
-                          "VarType" = c("State",
-                                        "State",
-                                        "State",
-                                        "Flux",
-                                        "Flux",
-                                        "Flux"),
-                          "ds_res" = c("hour",
-                                       "hour",
-                                       "hour",
-                                       "hour",
-                                       "6hr",
-                                       "6hr"),
-                          "debias_method" = c("lm",
-                                              "lm",
-                                              "lm",
-                                              "lm",
-                                              "lm",
-                                              "compare_totals"),
-                          "use_covariance" = c(TRUE,
-                                               TRUE,
-                                               TRUE,
-                                               TRUE,
-                                               TRUE,
-                                               FALSE),
-                          stringsAsFactors = FALSE)
+    # download NOAA forecasts for the days needed
+      prefix <- paste0('noaa/NOAAGEFS_1hr/fcre/', forecast_start_day)
+      FLAREr::get_driver_forecast(lake_directory = working_arima, 
+                                  forecast_path = prefix)
+      
     
-    replaceObsNames <- c("AirTC_Avg" = "AirTemp",
-                         "WS_ms_Avg" = "WindSpeed",
-                         "RH" = "RelHum",
-                         "SR01Up_Avg" = "ShortWave",
-                         "IR01UpCo_Avg" = "LongWave",
-                         "Rain_mm_Tot" = "Rain")
-    
-    met_file_names[2:(1+(n_met_members*n_ds_members))] <- process_downscale_GEFS(folder,
-                                                                                 noaa_location,
-                                                                                 met_station_location,
-                                                                                 working_arima,
-                                                                                 sim_files_folder = paste0(folder, "/", "sim_files"),
-                                                                                 n_ds_members,
-                                                                                 n_met_members,
-                                                                                 file_name,
-                                                                                 output_tz = reference_tzone,
-                                                                                 FIT_PARAMETERS,
-                                                                                 DOWNSCALE_MET,
-                                                                                 met_downscale_uncertainty,
-                                                                                 compare_output_to_obs = FALSE,
-                                                                                 VarInfo,
-                                                                                 replaceObsNames,
-                                                                                 downscaling_coeff,
-                                                                                 full_time_local,
-                                                                                 first_obs_date = met_ds_obs_start,
-                                                                                 last_obs_date = met_ds_obs_end,
-                                                                                 met_obs_fname = met_obs_fname)
-    
+    # process NOAA forecasts into hourly and in correct format
+    met_file_names <- generate_glm_met_files(obs_met_file = NULL, #needs to be netcdf
+                                              out_dir = working_arima,
+                                              forecast_dir = file.path(working_arima, 'drivers', prefix, '00/'))
+  }
     if(weather_uncertainty == FALSE & met_downscale_uncertainty == TRUE){
       met_file_names <- met_file_names[1:(1+(1*n_ds_members))]
     }else if(weather_uncertainty == FALSE & met_downscale_uncertainty == FALSE){
       met_file_names <- met_file_names[1:2]
     }
-  }
+  
   
   if(weather_uncertainty == FALSE){
     n_met_members <- 1
@@ -329,33 +266,33 @@ run_arima <- function(
   
   
   # go through met_file_names and take daily averages of SW and a sum of rain, which is needed for the discharge forecast
-  data<-matrix(data=NA,16,(length(met_file_names)-1))
+  data<-matrix(data=NA,16,(length(met_file_names)))
 
   firstchunk <- seq(as.Date('2018-12-22'), as.Date('2018-12-28'), by = '1 day')
   secondchunk <- seq(as.Date('2019-11-13'), as.Date('2019-11-19'), by = '1 day')
   dates_GMT <- c(firstchunk, secondchunk)
   if(as.Date(forecast_start_day) %in% dates_GMT){
     
-    for(j in 2:length(met_file_names)){
+    for(j in 1:length(met_file_names)){
       temp<-read.csv(met_file_names[j])
       temp$date <- date(temp$time)
       for(i in 2:(length(unique(temp$date))-1)){  # use this line for the Dec 2018 and Nov 2019 forecasts which are in GMT
         temp1<-subset(temp, temp$date==unique(temp$date)[i])
         temp2 <- temp1 %>% mutate(SW = mean(temp1$ShortWave)) 
-        data[i-1,j-1]=temp2[1,10] #'j-1' because you start at 2 in the loop above
+        data[i-1,j]=temp2[1,10] #'j-1' because you start at 2 in the loop above
         
       }
     }
     
   }else{
-    for(j in 2:length(met_file_names)){ # start at 2 because first file is obs met
+    for(j in 1:length(met_file_names)){ # start at 2 because first file is obs met
       temp<-read.csv(met_file_names[j])
       temp$date <- date(temp$time)
 
       for(i in 2:(length(unique(temp$date)))){ # start at 2 because first date is forecast start day
         temp1<-subset(temp, temp$date==unique(temp$date)[i])
         temp2 <- temp1 %>% mutate(SW = mean(temp1$ShortWave)) 
-        data[i,j-1]=temp2[1,10] #'j-1' because you start at 2 in the loop above
+        data[i-1,j]=temp2[1,10] #'j-1' because you start at 2 in the loop above
         
       }
     }
@@ -410,15 +347,15 @@ run_arima <- function(
               working_arima)
   
   start_forecast_step <- hist_days + 1
-  create_inflow_outflow_file(full_time_day_local = full_time_day_local,
-                             working_directory = working_arima,
-                             input_file_tz = 'EST5EDT', 
-                             start_forecast_step = start_forecast_step,
-                             inflow_file1 = cleaned_inflow_file,
-                             local_tzone = local_tzone,
-                             met_file_names = met_file_names,
-                             forecast_days = forecast_days,
-                             inflow_process_uncertainty = driver_uncertainty_discharge)
+  create_discharge_forecast_ensembles(full_time_day_local = full_time_day_local,
+                                      working_directory = working_arima,
+                                      input_file_tz = 'EST5EDT', 
+                                      start_forecast_step = start_forecast_step,
+                                      inflow_file1 = cleaned_inflow_file,
+                                      local_tzone = local_tzone,
+                                      met_file_names = met_file_names,
+                                      forecast_days = forecast_days,
+                                      inflow_process_uncertainty = driver_uncertainty_discharge)
   
  discharge_file_names <- list.files(path = paste0(working_arima, '/'), pattern = paste0('inflow_forecast_ensemble', '*'))
  discharge_forecast <- read.csv(paste0(working_arima, '/', discharge_file_names[1]))
@@ -427,7 +364,7 @@ run_arima <- function(
  discharge_forecast$time <- as.Date(discharge_forecast$time)
  
 if(weather_uncertainty==TRUE){
-  for (i in 2:length(discharge_file_names)) {
+  for (i in 1:length(discharge_file_names)){
     temp <- read.csv(paste0(working_arima, '/', discharge_file_names[i]))
     temp <- temp %>% select(FLOW)
     colnames(temp) <- c(paste0('FLOW_', i))
@@ -916,10 +853,12 @@ y[1] ~ dnorm(latent.chl[1], tau_obs)
       if(!is.na(x[1,1,])){
         pdf(file = forecast_plot_output_location )
         x_axis <-   forecast_sequence
-        plot(x_axis, ((x[,1,] - CTD_EXO_intercept)/CTD_EXO_slope)^2, type = 'o',ylim = range(c((min(out[,8], out[,8], na.rm = TRUE)), max(out[,7], out[,10], na.rm = TRUE))) # once catwalk data cleaning script is running, can change this to include: out[1,10], out[2,10]
+        plot(x_axis, ((na.omit(x[,1,]) - CTD_EXO_intercept)/CTD_EXO_slope)^2, 
+             type = 'o',
+             ylim = range(c((min(out[,8], out[,8], na.rm = TRUE)), max(out[,7], out[,10], na.rm = TRUE))) # once catwalk data cleaning script is running, can change this to include: out[1,10], out[2,10]
              , xlab = "Date", ylab = "Chla (ug/L)")
         for(m in 2:length(x[1,,1])){
-          points(x_axis, ((x[,m,] - CTD_EXO_intercept)/CTD_EXO_slope)^2, type = 'o')  
+          points(x_axis, ((na.omit(x[,m,]) - CTD_EXO_intercept)/CTD_EXO_slope)^2, type = 'o')  
         }
         for(j in 1:nrow(out)){
           points(out[j,1], (out[j,2]), col = 'orange', pch = 16, cex = 2)  
