@@ -51,3 +51,17 @@ try(download.file(inUrl1,infile1,method="curl"))
 if (is.na(file.size(infile1))) download.file(inUrl1,infile1,method="auto")
 
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+
+########################################################################################################################################
+# data from Beaverdam Reservoir (bvre)
+
+#soil data
+url="https://websoilsurvey.sc.egov.usda.gov/DSD/Download/AOI/u3w5wfn2eaouxxeoweiwlw12/wss_aoi_2021-10-13_12-59-06.zip"
+location <- "./SCCData/bvre-data/usda_soil_data/"
+download.file(url, paste0(location, "mysoil.zip")) #Note: will probably have to update wss_aoi date if it's been a while - go to wss homepage and click on start wss link on right of page
+unzip(paste0(location, "mysoil.zip"))            #zoom in to site, use define aoi tool to select desired area, go to download soils data tab, scroll to bottom of page and click "create download link", right click and copy link address, paste on line 10
+
+# Grab the necessary soil and elevation spatial layers and parameters (usgs)
+url="https://prd-tnm.s3.amazonaws.com/StagedProducts/Hydrography/NHD/HU8/HighResolution/Shape/NHD_H_03010101_HU8_Shape.zip"
+curl_download(url,paste0(location, "NHD_H_03010101_HU8_Shape.zip"))
+unzip(paste0(location, "NHD_H_03010101_HU8_Shape.zip",exdir="03010101"))
