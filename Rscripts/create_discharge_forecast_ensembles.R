@@ -1,6 +1,6 @@
 
 
-create_inflow_outflow_file <- function(full_time_day_local,
+create_discharge_forecast_ensembles <- function(full_time_day_local,
                                        working_directory,
                                        input_file_tz = 'EST5EDT', 
                                        start_forecast_step,
@@ -36,14 +36,14 @@ create_inflow_outflow_file <- function(full_time_day_local,
     Rain = col_double(),
     Snow = col_double())
   
-  for(m in 2:length(met_file_names)){
+  for(m in 1:length(met_file_names)){
     curr_met_daily <- read_csv(met_file_names[m],
                                col_types = col_types) %>% 
       mutate(time = as_date(time)) %>% 
       group_by(time) %>% 
       dplyr::summarize(Rain = mean(Rain, na.rm = TRUE),
                 AirTemp = mean(AirTemp, na.rm = TRUE)) %>% 
-      mutate(ensemble = m-1) %>% 
+      mutate(ensemble = m) %>% 
       mutate(AirTempMean = roll_mean(AirTemp, n = 5, align = "right",fill=NA),
              RainMean = roll_mean(Rain, n = 5, align = "right",fill=NA),
              AirTemp_lag1 = lag(AirTemp, 1),
