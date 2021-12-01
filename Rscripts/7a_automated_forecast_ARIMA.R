@@ -9,16 +9,27 @@
 #### code from 'automate_forecast_example.R' and modified for FCR total chlorophyll ARIMA  model ############
 #############################################################################################################
 
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(tidyverse,lubridate,mvtnorm,
+               RCurl,testit,imputeTS,modelr,
+               RcppRoll,PerformanceAnalytics,
+               rjags,LaplacesDemon,scales,
+               Metrics,rsq)
 
-timestep <- '1day' # character definition of the timestep
-timestep_numeric <- 1
-timestep_interval <- 1 # the interval in between timesteps, e.g. 4day would be 4; daily would be 1; weekly would be 7
-max_timestep <- 14 #maximum number of timesteps that can be propagated to the max time horizon (e.g., daily is 14, weekly is 2)
+
+folder <- getwd()
+data_location <- paste0(getwd(),"/","SCCData")
+
+
+timestep <- '7day' # character definition of the timestep
+timestep_numeric <- 7
+timestep_interval <- 7 # the interval in between timesteps, e.g. 4day would be 4; daily would be 1; weekly would be 7
+max_timestep <- 2 #maximum number of timesteps that can be propagated to the max time horizon (e.g., daily is 14, weekly is 2)
 max_horizon <- 14 # maximum number of days that are propagated in this forecast (e.g. daily timestep has max_horizon = 14)
-sim_name <- 'TEST'
+sim_name <- 'test_bvre_Aug2020'
 forecast_location <- paste0(folder, "/FCR_forecasts", '/', timestep, '/', sim_name)
 
-
+site_id <- 'bvre'
 restart_file <- NA
 spin_up_days <- 0
 push_to_git <- FALSE
@@ -43,7 +54,7 @@ num_forecast_periods <- 3 # number of times the script will loop through automat
 
 
 # initialize forecast time
-forecast_start_day <-"2019-11-15 00:00:00" # day the forecast initialized
+forecast_start_day <-"2020-08-22 00:00:00" # day the forecast initialized
 start_day <- forecast_start_day 
 start_day <- as.POSIXct(start_day, format = "%Y-%m-%d %H:%M:%S")
 hist_days <- 1
