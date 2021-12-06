@@ -40,7 +40,7 @@ temp_oxy_chla_qaqc <- function(data_file, maintenance_file, output_file)
   ))
   
   # remove NaN data at beginning
-  catdata <- catdata %>% filter(DateTime >= ymd_hms("2018-07-05 14:50:00"))
+  catdata <- catdata %>% filter(DateTime >= lubridate::ymd_hms("2018-07-05 14:50:00"))
   
   # add flag columns
   catdata$Flag_All <- 0
@@ -178,21 +178,21 @@ temp_oxy_chla_qaqc <- function(data_file, maintenance_file, output_file)
   BGAPC_ugL_1_threshold <- EXO_FOULING_FACTOR * sd(catdata$EXOBGAPC_ugL_1, na.rm = TRUE)
   
   catdata <- catdata %>%
-    mutate(Flag_Chla = ifelse(DateTime >= ymd("2018-10-01") & DateTime < ymd("2019-03-01") &
+    mutate(Flag_Chla = ifelse(DateTime >= lubridate::ymd("2018-10-01") & DateTime < lubridate::ymd("2019-03-01") &
                                 (! is.na(EXOChla_RFU_1) & abs(EXOChla_RFU_1 - Chla_RFU_1_mean) > Chla_RFU_1_threshold |
                                    ! is.na(EXOChla_ugL_1) & abs(EXOChla_ugL_1 - Chla_ugL_1_mean) > Chla_ugL_1_threshold),
                               4, Flag_Chla)) %>%
-    mutate(Flag_Phyco = ifelse(DateTime >= ymd("2018-10-01") & DateTime < ymd("2019-03-01") &
+    mutate(Flag_Phyco = ifelse(DateTime >= lubridate::ymd("2018-10-01") & DateTime < lubridate::ymd("2019-03-01") &
                                  (! is.na(EXOBGAPC_RFU_1) & abs(EXOBGAPC_RFU_1 - BGAPC_RFU_1_mean) > BGAPC_RFU_1_threshold |
                                     ! is.na(EXOBGAPC_ugL_1) & abs(EXOBGAPC_ugL_1 - BGAPC_ugL_1_mean) > BGAPC_ugL_1_threshold),
                                4, Flag_Phyco)) %>%
-    mutate(EXOChla_RFU_1 = ifelse(DateTime >= ymd("2018-10-01") & DateTime < ymd("2019-03-01") &
+    mutate(EXOChla_RFU_1 = ifelse(DateTime >= lubridate::ymd("2018-10-01") & DateTime < lubridate::ymd("2019-03-01") &
                                     abs(EXOChla_RFU_1 - Chla_RFU_1_mean) > Chla_RFU_1_threshold, NA, EXOChla_RFU_1)) %>%
-    mutate(EXOChla_ugL_1 = ifelse(DateTime >= ymd("2018-10-01") & DateTime < ymd("2019-03-01") &
+    mutate(EXOChla_ugL_1 = ifelse(DateTime >= lubridate::ymd("2018-10-01") & DateTime < lubridate::ymd("2019-03-01") &
                                     abs(EXOChla_ugL_1 - Chla_ugL_1_mean) > Chla_ugL_1_threshold, NA, EXOChla_ugL_1)) %>%
-    mutate(EXOBGAPC_RFU_1 = ifelse(DateTime >= ymd("2018-10-01") & DateTime < ymd("2019-03-01") &
+    mutate(EXOBGAPC_RFU_1 = ifelse(DateTime >= lubridate::ymd("2018-10-01") & DateTime < lubridate::ymd("2019-03-01") &
                                      abs(EXOBGAPC_RFU_1 - BGAPC_RFU_1_mean) > BGAPC_RFU_1_threshold, NA, EXOBGAPC_RFU_1)) %>%
-    mutate(EXOBGAPC_ugL_1 = ifelse(DateTime >= ymd("2018-10-01") & DateTime < ymd("2019-03-01") &
+    mutate(EXOBGAPC_ugL_1 = ifelse(DateTime >= lubridate::ymd("2018-10-01") & DateTime < lubridate::ymd("2019-03-01") &
                                      abs(EXOBGAPC_ugL_1 - BGAPC_ugL_1_mean) > BGAPC_ugL_1_threshold, NA, EXOBGAPC_ugL_1))
   
   # flag EXO sonde sensor data of value above 4 * standard deviation at other times
