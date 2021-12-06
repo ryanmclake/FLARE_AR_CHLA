@@ -12,6 +12,12 @@
 # shortwave radiation     source: FCR met station
 # discharge               source: EDI through 2018 or diana pressure transducer
 
+library(tidyverse)
+folder <- getwd()
+data_location <- paste0(getwd(),"/","SCCData")
+working_arima <- paste0(folder, "/", "ARIMA_working")  
+temperature_location <- paste0(data_location, "/", "mia-data")
+
 
 # read in the original training dataset from 2013-2016
 # this is the format that the end file should have so that it can read in to the jags code
@@ -34,7 +40,7 @@ source(paste0(folder,"/","Rscripts/temp_oxy_chla_qaqc.R"))
 
 
 observed_depths_chla_fdom <- 1
-temp_obs_fname_wdir <- paste0(temperature_location, "/", temp_obs_fname) 
+temp_obs_fname_wdir <- paste0(temperature_location, "/", "Catwalk.csv") 
 cleaned_temp_oxy_chla_file <- paste0(working_arima, "/Catwalk_postQAQC.csv")
 temp_oxy_chla_qaqc(data_file = temp_obs_fname_wdir[1], 
                    maintenance_file = paste0(data_location, '/mia-data/CAT_MaintenanceLog.txt'), 
@@ -42,22 +48,24 @@ temp_oxy_chla_qaqc(data_file = temp_obs_fname_wdir[1],
 
 new_temp_obs_fname_wdir <- temp_obs_fname_wdir
 new_temp_obs_fname_wdir[1] <- cleaned_temp_oxy_chla_file
+cat <- read.csv(cleaned_temp_oxy_chla_file)
 
-# change the function to 'extract_chla_chain_dailyavg
+full_time <- seq(as.Date(min(cat$DateTime)), as.Date(max(cat$DateTime)), by = 'day')
+
 chl_hist <- extract_chla_chain_dailyavg(fname = new_temp_obs_fname_wdir,
-                                        full_time,
+                                        full_time = full_time,
                                         depths = 1.0,
                                         observed_depths_chla_fdom = observed_depths_chla_fdom,
                                         input_tz = "EST5EDT", 
-                                        output_tz = reference_tzone)
+                                        output_tz = "GMT")
 
 
 date_vector <- data.frame(full_time)
 chl_hist_daily <- data.frame(cbind(date_vector, chl_hist[[1]][,1])  )
 colnames(chl_hist_daily) <- c('Date', 'Chla_EXO')
 chl_hist_daily <- chl_hist_daily %>% mutate(Chla_sqrt_EXO = sqrt(Chla_EXO*0.55 - 0.0308)) %>%  #convert into CTD units and then take the square root
-  select(-Chla_EXO) %>%                                                                   # drop the EXO data
-  mutate(Chla_ARlag1_sqrt = lag(Chla_sqrt_EXO, n = 7L))                                       # create the weekly lag
+  dplyr::select(-Chla_EXO) %>%                                                                   # drop the EXO data
+  dplyr::mutate(Chla_ARlag1_sqrt = lag(Chla_sqrt_EXO, n = 7L))                                       # create the weekly lag
 # select only the time period I want to add to the CTD data (ie, where CTD data doesn't exist in the past)
 chl_hist_daily <- chl_hist_daily[chl_hist_daily$Date>=as.Date('2019-04-22'),]
 chl_hist_daily <- chl_hist_daily %>% mutate(dow  = rep(1:7, length.out = nrow(chl_hist_daily)))
