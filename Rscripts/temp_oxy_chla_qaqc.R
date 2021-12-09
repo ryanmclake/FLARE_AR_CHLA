@@ -202,14 +202,14 @@ temp_oxy_chla_qaqc <- function(data_file, maintenance_file, output_file)
                                5, Flag_Phyco))
   
   # delete EXO_Date and EXO_Time columns
-  catdata <- catdata %>% select(-EXO_Date, -EXO_Time)
+  catdata <- catdata %>% dplyr::select(-EXO_Date, -EXO_Time)
   
   # add Reservoir and Site columns
   catdata$Reservoir <- "FCR"
   catdata$Site <- "50"
   
   # reorder columns
-  catdata <- catdata %>% select(Reservoir, Site, -RECORD, -CR6_Batt_V, -CR6Panel_Temp_C, -Flag_All, -Flag_DO_1, -Flag_DO_5,
+  catdata <- catdata %>% dplyr::select(Reservoir, Site, -RECORD, -CR6_Batt_V, -CR6Panel_Temp_C, -Flag_All, -Flag_DO_1, -Flag_DO_5,
                                 -Flag_DO_9, -Flag_Chla, -Flag_Phyco, -Flag_TDS, everything())
   
   # replace NaNs with NAs
