@@ -5,6 +5,7 @@ generate_glm_met_files <- function(obs_met_file = NULL,
                                    out_dir,
                                    forecast_dir = NULL){
   
+
   if(is.null(obs_met_file) & is.null(forecast_dir)){
     stop("missing files to convert")
   }
@@ -68,8 +69,18 @@ generate_glm_met_files <- function(obs_met_file = NULL,
   
   
   if(!is.null(forecast_dir)){
-    
-    forecast_files <- list.files(forecast_dir, pattern = ".nc", full.names = TRUE)
+    forecast_dir_hour <- paste0(forecast_dir, '/00')
+    forecast_files <- list.files(forecast_dir_hour, pattern = ".nc", full.names = TRUE)
+    if(length(forecast_files) < 1){
+      forecast_dir_hour <- paste0(forecast_dir, '/06')
+      forecast_files <- list.files(forecast_dir_hour, pattern = ".nc", full.names = TRUE)
+      
+    }
+    if(length(forecast_files) < 1){
+      forecast_dir_hour <- paste0(forecast_dir, '/12')
+      forecast_files <- list.files(forecast_dir_hour, pattern = ".nc", full.names = TRUE)
+      
+    }
     # line below removes the obs met file
     #forecast_files <- forecast_files[!stringr::str_detect(string = forecast_files, pattern = basename(obs_met_file))]
     
