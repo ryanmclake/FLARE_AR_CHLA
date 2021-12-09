@@ -80,30 +80,119 @@ chl_hist_join <- rbind(chl_hist_CTD, chl_hist_weekly)
 ########### gather FCR met data up to the current day  
 #######################################################################################################################################################################################
 
-met_obs_fname <- "FCRmet.csv"
-met_station_location <- paste0(data_location, "/", "carina-data")
+# add 2018 met data
+source(paste0(folder, "/Rscripts/create_obs_met_input.R"))
+met_obs_fname <- "FCRmet_legacy_2018.csv"
+met_station_location <- paste0(folder, "/SCCData/carina-data")
+
+download.file("https://github.com/FLARE-forecast/FCRE-data/raw/5a3751847fcbf5b31c3799aa6fb9d6e662873b08/FCRmet_legacy_2018.csv",
+              paste0(met_station_location, "/", met_obs_fname))
 met_obs_fname_wdir <-paste0(met_station_location, "/", met_obs_fname)
-working_arima <- paste0(folder, "/", "ARIMA_working")  
-AR_obs_met_outfile <- paste0(working_arima, "/", "AR_historical_met.csv")
-full_time_hour_obs <- seq(as.POSIXct('2018-04-20 00:00:00'), 
-                          as.POSIXct(Sys.Date()),
+working_arima <- paste0(folder, "/ARIMA_working")
+AR_obs_met_outfile <- paste0(working_arima, "/", "update_met_2018.csv")
+reference_tzone <- "GMT"
+full_time_hour_obs <- seq(as.POSIXct('2018-01-10 00:00:00'), 
+                          as.POSIXct('2018-12-31 00:00:00'),
                           by = "1 hour")
-  
-source(paste0(folder,"/","Rscripts/create_obs_met_input.R"))
 
 create_obs_met_input(fname = met_obs_fname_wdir,
-                                  outfile= AR_obs_met_outfile,
-                                  full_time_hour_obs = full_time_hour_obs, 
-                                  input_tz = "EST5EDT", 
-                                  output_tz = reference_tzone)
+                     outfile= AR_obs_met_outfile,
+                     full_time_hour_obs = full_time_hour_obs, 
+                     input_tz = "EST5EDT", 
+                     output_tz = reference_tzone)
 # read in the hourly data that was created and summarize to daily mean
 
-sw_hist <- read.csv('./ARIMA_working/AR_historical_met.csv')
-sw_hist_daily <- sw_hist %>% mutate(Date = date(time)) %>% 
-  group_by(Date) %>% 
-  mutate(ShortWave_mean = mean(ShortWave)) %>% 
-  select(Date, ShortWave_mean)
-sw_hist_daily <- sw_hist_daily[!duplicated(sw_hist_daily$Date),]
+sw_hist_2018 <- read.csv(paste0(folder, '/ARIMA_working/update_met_2018.csv'))
+sw_hist_daily_2018 <- sw_hist_2018 %>% dplyr::mutate(Date = lubridate::date(time)) %>% 
+  dplyr::group_by(Date) %>% 
+  dplyr::mutate(ShortWave_mean = mean(ShortWave, na.rm = TRUE)) %>% 
+  dplyr::select(Date, ShortWave_mean)
+sw_hist_daily_2018 <- sw_hist_daily_2018[!duplicated(sw_hist_daily_2018$Date),]
+sw_hist_daily_2018 <- as.data.frame(sw_hist_daily_2018)
+sw_hist_daily_2018$Date <- as.Date(sw_hist_daily_2018$Date)
+
+# and add 2019 met data
+met_obs_fname <- "FCRmet_legacy_2019.csv"
+met_station_location <- paste0(folder, "/SCCData/carina-data")
+met_obs_fname_wdir <-paste0(met_station_location, "/", met_obs_fname)
+download.file("https://github.com/FLARE-forecast/FCRE-data/raw/5a3751847fcbf5b31c3799aa6fb9d6e662873b08/FCRmet_legacy_2019.csv",
+              met_obs_fname_wdir)
+AR_obs_met_outfile <- paste0(working_arima, "/", "update_met_2019.csv")
+reference_tzone <- "GMT"
+full_time_hour_obs <- seq(as.POSIXct('2019-01-10 00:00:00'), 
+                          as.POSIXct('2019-12-31 00:00:00'),
+                          by = "1 hour")
+
+create_obs_met_input(fname = met_obs_fname_wdir,
+                     outfile= AR_obs_met_outfile,
+                     full_time_hour_obs = full_time_hour_obs, 
+                     input_tz = "EST5EDT", 
+                     output_tz = reference_tzone)
+# read in the hourly data that was created and summarize to daily mean
+sw_hist_2019 <- read.csv(AR_obs_met_outfile)
+sw_hist_daily_2019 <- sw_hist_2019 %>% dplyr::mutate(Date = lubridate::date(time)) %>% 
+  dplyr::group_by(Date) %>% 
+  dplyr::mutate(ShortWave_mean = mean(ShortWave, na.rm = TRUE)) %>% 
+  dplyr::select(Date, ShortWave_mean)
+sw_hist_daily_2019 <- sw_hist_daily_2019[!duplicated(sw_hist_daily_2019$Date),]
+sw_hist_daily_2019 <- as.data.frame(sw_hist_daily_2019)
+sw_hist_daily_2019$Date <- as.Date(sw_hist_daily_2019$Date)
+
+# and add 2020 met data
+met_obs_fname <- "FCRmet_legacy_2020.csv"
+met_station_location <- paste0(folder, "/SCCData/carina-data")
+met_obs_fname_wdir <-paste0(met_station_location, "/", met_obs_fname)
+download.file("https://github.com/FLARE-forecast/FCRE-data/blob/5a3751847fcbf5b31c3799aa6fb9d6e662873b08/FCRmet.csv?raw=true", 
+              met_obs_fname_wdir)
+AR_obs_met_outfile <- paste0(working_arima, "/", "update_met_2020.csv")
+reference_tzone <- "GMT"
+full_time_hour_obs <- seq(as.POSIXct('2020-01-10 00:00:00'), 
+                          as.POSIXct('2020-12-31 00:00:00'),
+                          by = "1 hour")
+
+create_obs_met_input(fname = met_obs_fname_wdir,
+                     outfile= AR_obs_met_outfile,
+                     full_time_hour_obs = full_time_hour_obs, 
+                     input_tz = "EST5EDT", 
+                     output_tz = reference_tzone)
+# read in the hourly data that was created and summarize to daily mean
+sw_hist_2020 <- read.csv(AR_obs_met_outfile)
+sw_hist_daily_2020 <- sw_hist_2020 %>% dplyr::mutate(Date = lubridate::date(time)) %>% 
+  dplyr::group_by(Date) %>% 
+  dplyr::mutate(ShortWave_mean = mean(ShortWave, na.rm = TRUE)) %>% 
+  dplyr::select(Date, ShortWave_mean)
+sw_hist_daily_2020 <- sw_hist_daily_2020[!duplicated(sw_hist_daily_2020$Date),]
+sw_hist_daily_2020 <- as.data.frame(sw_hist_daily_2020)
+sw_hist_daily_2020$Date <- as.Date(sw_hist_daily_2020$Date)
+
+# and add 2021 met data
+#download.file("https://github.com/FLARE-forecast/FCRE-data/blob/fcre-metstation-data/FCRmet.csv?raw=true", './SCCData/carina-data/FCRmet.csv')
+met_obs_fname <- "FCRmet.csv"
+met_obs_fname_wdir <-paste0(met_station_location, "/", met_obs_fname)
+AR_obs_met_outfile <- paste0(working_arima, "/", "update_met_2021.csv")
+reference_tzone <- "GMT"
+full_time_hour_obs <- seq(as.POSIXct('2021-01-01 00:00:00'), 
+                          as.POSIXct(Sys.Date()),
+                          by = "1 hour")
+
+create_obs_met_input(fname = met_obs_fname_wdir,
+                     outfile= AR_obs_met_outfile,
+                     full_time_hour_obs = full_time_hour_obs, 
+                     input_tz = "EST5EDT", 
+                     output_tz = reference_tzone)
+# read in the hourly data that was created and summarize to daily mean
+sw_hist_2021 <- read.csv(AR_obs_met_outfile)
+sw_hist_daily_2021 <- sw_hist_2021 %>% dplyr::mutate(Date = lubridate::date(time)) %>% 
+  dplyr::group_by(Date) %>% 
+  dplyr::mutate(ShortWave_mean = mean(ShortWave, na.rm = TRUE)) %>% 
+  dplyr::select(Date, ShortWave_mean)
+sw_hist_daily_2021 <- sw_hist_daily_2021[!duplicated(sw_hist_daily_2021$Date),]
+sw_hist_daily_2021 <- as.data.frame(sw_hist_daily_2021)
+sw_hist_daily_2021$Date <- as.Date(sw_hist_daily_2021$Date)
+
+sw_all <- rbind(sw_hist_daily_2018, sw_hist_daily_2019, sw_hist_daily_2020, sw_hist_daily_2021)
+plot(sw_all$Date, sw_all$ShortWave_mean)
+
 
 
 #######################################################################################################################################################################################
@@ -113,11 +202,11 @@ sw_hist_daily <- sw_hist_daily[!duplicated(sw_hist_daily$Date),]
 # for 2018-07-05 through 2019-06-03 (this is the most recent file for wvwa flow data)
 # after 2019-06-03, use diana data but convert to wvwa units
 
-discharge_wvwa <- read.csv('./sim_files/FCR_inflow_WVWA_2013_2019.csv')
+discharge_wvwa <- read.csv(paste0(folder, '/sim_files/FCR_inflow_WVWA_2013_2019.csv'))
 discharge_wvwa <- na.omit(discharge_wvwa)
 discharge_wvwa_daily <- discharge_wvwa %>%  
   select(DateTime, Flow_cms) %>% 
-  mutate(Date = date(DateTime)) %>% 
+  mutate(Date = lubridate::date(DateTime)) %>% 
   group_by(Date) %>% 
   summarise_all('mean') %>% 
   select(-DateTime)
@@ -130,9 +219,9 @@ discharge_wvwa_daily <- discharge_wvwa_daily[discharge_wvwa_daily$Date!=as.Date(
 colnames(discharge_wvwa_daily) <- c('Date', 'flow_cms_wvwa')
 
 # download the latest diana weir file
-download.file('https://github.com/CareyLabVT/SCCData/raw/diana-data/FCRweir.csv','./SCCData/FCRweir.csv')
-dianaheader<-read.csv("./SCCData/FCRweir.csv", skip=1, as.is=T) #get header minus wonky Campbell rows
-dianadata<-read.csv("./SCCData/FCRweir.csv", skip=4, header=F) #get data minus wonky Campbell rows
+download.file('https://github.com/CareyLabVT/SCCData/raw/diana-data/FCRweir.csv','./SCCData/diana-data/FCRweir.csv')
+dianaheader<-read.csv(paste0(folder, "/SCCData/diana-data/FCRweir.csv"), skip=1, as.is=T) #get header minus wonky Campbell rows
+dianadata<-read.csv(paste0(folder, "/SCCData/diana-data/FCRweir.csv"), skip=4, header=F) #get data minus wonky Campbell rows
 names(dianadata)<-names(dianaheader) #combine the names to deal with Campbell logger formatting
 dianadata$TIMESTAMP <- as.POSIXct(dianadata$TIMESTAMP, format = "%Y-%m-%d %H:%M:%S")
 colnames(dianadata)[colnames(dianadata)=="Lvl_psi"] <- "diana_psi_corr"
@@ -160,7 +249,7 @@ dianadata <- rbind(dianadata_pre, dianadata_post)
 # calculate daily values
 discharge_diana_daily <- dianadata %>% 
   select(TIMESTAMP, flow_cms) %>% 
-  mutate(Date = date(TIMESTAMP))%>% 
+  mutate(Date = lubridate::date(TIMESTAMP))%>% 
   group_by(Date) %>% 
   summarise_all('mean') %>% 
   select(-TIMESTAMP)
@@ -191,7 +280,7 @@ discharge_daily <- discharge_daily %>% mutate(mean_flow = if_else(is.na(flow_cms
 discharge <- discharge_daily %>% select(Date, mean_flow)
 
 data <- left_join(chl_hist_join, discharge)
-data <- left_join(data, sw_hist_daily)
+data <- left_join(data, sw_all)
 
 
 # now join with the original training data
@@ -202,4 +291,6 @@ plot(data_assimilate$Date, data_assimilate$Chla_sqrt)
 #get rid of na's
 data_assimilate <- na.omit(data_assimilate)
 
-write.csv(data_assimilate,'data_arima_updated.csv' , row.names = FALSE)
+write.csv(data_assimilate,paste0(folder, '/training_datasets/data_arima_updated.csv'), row.names = FALSE)
+
+          
