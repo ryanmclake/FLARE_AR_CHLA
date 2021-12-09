@@ -253,17 +253,18 @@ run_arima <- function(
   source(paste0(folder, "/Rscripts/generate_glm_met_files.R"))
   ###CREATE FUTURE MET FILES
   if(forecast_days > 0){
-    
+    Sys.setenv("AWS_DEFAULT_REGION" = "s3",
+               "AWS_S3_ENDPOINT" = "flare-forecast.org")
     # download NOAA forecasts for the days needed
       prefix <- paste0('noaa/NOAAGEFS_1hr/fcre/', forecast_start_day)
       FLAREr::get_driver_forecast(lake_directory = working_arima, 
                                   forecast_path = prefix)
-      
+      # no files for 2020-09-24, 2020-10-23, 2020-10-24, 2020-10-25, 2020-10-26, 2020-12-26, 2020-12-31, 2021-01-21, 2021-01-22
     
     # process NOAA forecasts into hourly and in correct format
     met_file_names <- generate_glm_met_files(obs_met_file = NULL, #needs to be netcdf
                                               out_dir = working_arima,
-                                              forecast_dir = file.path(working_arima, 'drivers', prefix, '00/'))
+                                              forecast_dir = file.path(working_arima, 'drivers', prefix))
   }
     if(weather_uncertainty == FALSE & met_downscale_uncertainty == TRUE){
       met_file_names <- met_file_names[1:(1+(1*n_ds_members))]
@@ -320,7 +321,9 @@ run_arima <- function(
   spot <- seq(2, max_timestep+1, by = 1)
   if(timestep == '1day'){
     sw_forecast <- data[,]
-  }else if(timestep == '7day'){ 
+  }else if(timestep == '7day' & forecast_start_day > '2020-09-23'){ 
+    sw_forecast[2:3,] <- data[take,1:21] 
+  }else if(timestep == '7day' & forecast_start_day <= '2020-09-23'){ # after 2020-09-23 there are 21 ensembles
     sw_forecast[2:3,] <- data[take,] 
   }else if(timestep == '14day'){
     sw_forecast[2,] <- data[take,]     
@@ -339,69 +342,132 @@ run_arima <- function(
   ###############################################
   ####CREATE INFLOW AND OUTFILE FILES############
   ###############################################
-  
-  source(paste0(folder,"/","Rscripts/create_discharge_forecast_ensembles.R"))
-  source(paste0(folder,"/","Rscripts/inflow_qaqc.R"))
-  
-  
-  cleaned_inflow_file <- paste0(working_arima, "/FCRinflow_postQAQC.csv")
-  inflow_file1 <- c(paste0(data_location,"/diana-data/FCRweir.csv"),
-                     paste0(folder,"/sim_files/FCR_inflow_WVWA_2013_2019.csv"))
-  
-  inflow_qaqc(fname = inflow_file1,
-              cleaned_inflow_file ,
-              local_tzone, 
-              input_file_tz = 'EST',
-              working_arima)
-  
-  start_forecast_step <- hist_days + 1
-  create_discharge_forecast_ensembles(full_time_day_local = full_time_day_local,
-                                      working_directory = working_arima,
-                                      input_file_tz = 'EST5EDT', 
-                                      start_forecast_step = start_forecast_step,
-                                      inflow_file1 = cleaned_inflow_file,
-                                      local_tzone = local_tzone,
-                                      met_file_names = met_file_names,
-                                      forecast_days = forecast_days,
-                                      inflow_process_uncertainty = driver_uncertainty_discharge)
-  
- discharge_file_names <- list.files(path = paste0(working_arima, '/'), pattern = paste0('inflow_forecast_ensemble', '*'))
- discharge_forecast <- read.csv(paste0(working_arima, '/', discharge_file_names[1]))
- discharge_forecast <- discharge_forecast %>% select(time, FLOW)
- colnames(discharge_forecast) <- c('time', 'FLOW_1')
- discharge_forecast$time <- as.Date(discharge_forecast$time)
+  if(site_id=='fcre'){
+    source(paste0(folder,"/","Rscripts/create_discharge_forecast_ensembles.R"))
+    source(paste0(folder,"/","Rscripts/inflow_qaqc.R"))
+    
+    
+    cleaned_inflow_file <- paste0(working_arima, "/FCRinflow_postQAQC.csv")
+    inflow_file1 <- c(paste0(data_location,"/diana-data/FCRweir.csv"),
+                      paste0(folder,"/sim_files/FCR_inflow_WVWA_2013_2019.csv"))
+    
+    inflow_qaqc(fname = inflow_file1,
+                cleaned_inflow_file ,
+                local_tzone, 
+                input_file_tz = 'EST',
+                working_arima)
+    
+    start_forecast_step <- hist_days + 1
+    #2020-11-01 discharge forecast fails
+    create_discharge_forecast_ensembles(full_time_day_local = full_time_day_local,
+                                        working_directory = working_arima,
+                                        input_file_tz = 'EST5EDT', 
+                                        start_forecast_step = start_forecast_step,
+                                        inflow_file1 = cleaned_inflow_file,
+                                        local_tzone = local_tzone,
+                                        met_file_names = met_file_names,
+                                        forecast_days = forecast_days,
+                                        inflow_process_uncertainty = driver_uncertainty_discharge)
+    
+    discharge_file_names <- list.files(path = paste0(working_arima, '/'), pattern = paste0('inflow_forecast_ensemble', '*'))
+    discharge_forecast <- read.csv(paste0(working_arima, '/', discharge_file_names[1]))
+    discharge_forecast <- discharge_forecast %>% dplyr::select(time, FLOW)
+    colnames(discharge_forecast) <- c('time', 'FLOW_1')
+    discharge_forecast$time <- as.Date(discharge_forecast$time)
+    
+    if(weather_uncertainty==TRUE){
+      for (i in 1:length(discharge_file_names)){
+        temp <- read.csv(paste0(working_arima, '/', discharge_file_names[i]))
+        temp <- temp %>% dplyr::select(FLOW)
+        colnames(temp) <- c(paste0('FLOW_', i))
+        discharge_forecast <- cbind(discharge_forecast, temp) 
+      }
+    }else{
+      discharge_forecast <- discharge_forecast
+    }
+    
+    
+    
+    forecast_sequence <- seq(as.Date(forecast_start_day), as.Date(forecast_start_day)+max_horizon, by = timestep_interval) 
+    discharge_forecast <- discharge_forecast[discharge_forecast$time %in% forecast_sequence,]
+    
+    
+  }else if(site_id=='bvre'){
+    source(paste0(folder, "/Rscripts/forecast_inflow_bvre.R"))
+    
+    inflow_obs <- paste0(folder, "/SCCData/bvre-data/BVR_flow_calcs_obs_met_2021-10-13.csv") 
+    soil_file_dir <- file.path(folder, 'SCCData', 'bvre-data', 'usda_soil_data')
+    forecast_start_day <- forecast_start_day
+    inflow_model <- 'TMWB' 
+    output_dir <- working_arima 
+    forecast_dir = file.path(working_arima, 'drivers', prefix)
+    
+    inf_file <- forecast_inflow_bvre(inflow_obs = inflow_obs,
+                                  site_id = site_id,
+                                  folder = folder, 
+                                  forecast_dir = forecast_dir, 
+                                  soil_file_dir = soil_file_dir,
+                                  forecast_start_day = forecast_start_day,
+                                  output_dir = output_dir,
+                                  inflow_model = inflow_model)
+    
+    discharge_file_names <- list.files(path = output_dir, pattern = paste0(inf_file, '*'))
+    discharge_forecast <- read.csv(paste0(working_arima, '/', discharge_file_names[1]))
+    discharge_forecast <- discharge_forecast %>% dplyr::select(time, FLOW)
+    colnames(discharge_forecast) <- c('time', 'FLOW_1')
+    discharge_forecast$time <- as.Date(discharge_forecast$time)
+    
+    if(weather_uncertainty==TRUE){
+      for (i in 2:length(discharge_file_names)){
+        temp <- read.csv(paste0(working_arima, '/', discharge_file_names[i]))
+        temp <- temp %>% dplyr::select(FLOW)
+        colnames(temp) <- c(paste0('FLOW_', i))
+        discharge_forecast <- cbind(discharge_forecast, temp) 
+      }
+    }else{
+      discharge_forecast <- discharge_forecast
+    }
+    
+    
+    
+    forecast_sequence <- seq(as.Date(forecast_start_day), as.Date(forecast_start_day)+max_horizon, by = timestep_interval) 
+    discharge_forecast <- discharge_forecast[discharge_forecast$time %in% forecast_sequence,]
+    
  
-if(weather_uncertainty==TRUE){
-  for (i in 1:length(discharge_file_names)){
-    temp <- read.csv(paste0(working_arima, '/', discharge_file_names[i]))
-    temp <- temp %>% select(FLOW)
-    colnames(temp) <- c(paste0('FLOW_', i))
-    discharge_forecast <- cbind(discharge_forecast, temp) 
   }
-}else{
-  discharge_forecast <- discharge_forecast
-}
-  
-  
-  
-  forecast_sequence <- seq(as.Date(forecast_start_day), as.Date(forecast_start_day)+max_horizon, by = timestep_interval) 
-  discharge_forecast <- discharge_forecast[discharge_forecast$time %in% forecast_sequence,]
-  
   
   ############################################
   ##### chla data extraction and download  ###
   ############################################
   
   source(paste0(folder,"/","Rscripts/extract_EXOchl_chain_dailyavg.R")) 
-  source(paste0(folder,"/","Rscripts/temp_oxy_chla_qaqc.R")) 
   
   
   observed_depths_chla_fdom <- 1
   temp_obs_fname_wdir <- paste0(temperature_location, "/", temp_obs_fname) 
+  temp_obs_fname_wdir <- paste0(temperature_location, "/bvre-waterquality_2020-06-18_2021-10-11.csv") 
+  if(site_id=='fcre'){
+    maint_file <- paste0(data_location, '/mia-data/CAT_MaintenanceLog.txt')
+  }else if(site_id=='bvre'){
+    maint_file <- paste0(temperature_location, '/BVR_maintenance_log.txt')
+  }
+  
   cleaned_temp_oxy_chla_file <- paste0(working_arima, "/Catwalk_postQAQC.csv")
-  temp_oxy_chla_qaqc(data_file = temp_obs_fname_wdir[1], 
-                     maintenance_file = paste0(data_location, '/mia-data/CAT_MaintenanceLog.txt'), 
-                     output_file = cleaned_temp_oxy_chla_file)
+  
+  if(site_id=='fcre'){
+    source(paste0(folder,"/","Rscripts/temp_oxy_chla_qaqc.R")) 
+    temp_oxy_chla_qaqc(data_file = temp_obs_fname_wdir[1], 
+                       maintenance_file = maint_file, 
+                       output_file = cleaned_temp_oxy_chla_file)
+    
+  }else if(site_id=='bvre'){
+    source(paste0(folder,"/","Rscripts/temp_oxy_chla_qaqc_bvre.R")) 
+    temp_oxy_chla_qaqc_bvre(data_file = temp_obs_fname_wdir[1], 
+                            maintenance_file = maint_file, 
+                            output_file = cleaned_temp_oxy_chla_file)
+    
+    
+  }
   
   new_temp_obs_fname_wdir <- temp_obs_fname_wdir
   new_temp_obs_fname_wdir[1] <- cleaned_temp_oxy_chla_file
@@ -419,15 +485,21 @@ if(weather_uncertainty==TRUE){
 #########################################################################################################################
 ###### data assimilation  ###############################################################################################
 #########################################################################################################################
+  if(site_id=='fcre'){
+    train_data <- paste0(folder, '/training_datasets/data_arima_', timestep, '_through_2020.csv')
+    # should be through 2021???
+  }else if(site_id=='bvre'){
+    train_data <- paste0(folder, '/training_datasets/data_arima_7day_BVR.csv')
+  }
   if(data_assimilation){
     # read in file with all data and subset to the forecast day
-    data <- read.csv(paste0(folder, '/training_datasets/data_arima_', timestep, '_through_2020.csv'))
+    data <- read.csv(train_data)
     data$Date <- as.Date(data$Date)
     data <- data[data$Date<=forecast_start_day,]
     print('data subsetted to forecast start day')
     
   }else{
-    data <- read.csv(paste0(folder, '/data_arima_', timestep, '_through_2020.csv'))
+    data <- read.csv(train_data)
     data$Date <- as.Date(data$Date)
     data <- data[data$Date<as.Date('2018-01-01'),]
     
@@ -668,7 +740,7 @@ y[1] ~ dnorm(latent.chl[1], tau_obs)
         if(driver_uncertainty_discharge == TRUE){
           curr_discharge = rnorm(1, discharge_forecast[i,met_index+1], 0.00965) #sd from QT's discharge forecasts, met_index+1 bc the first col is time
         }else{
-          curr_discharge = discharge_forecast[i,2] # if not discharge uncertainty, use just one of the discharge ensembles
+          curr_discharge = discharge_forecast[i,2] # if no discharge uncertainty, use just one of the discharge ensembles
         }
         if(weather_uncertainty == TRUE){
           curr_shortwave = sw_forecast[i,met_index]
@@ -707,9 +779,13 @@ y[1] ~ dnorm(latent.chl[1], tau_obs)
     )
     
     
-    
-    CTD_EXO_slope <- 0.6
-    CTD_EXO_intercept <- 0.25
+    if(site_id=='fcre'){
+      CTD_EXO_slope <- 0.6
+      CTD_EXO_intercept <- 0.25
+    }else if(site_id=='bvre'){
+      CTD_EXO_slope <- 0.482
+      CTD_EXO_intercept <- 0.096
+    }
     
     for (i in 2:nsteps) {
       error_upper <-  qnorm(0.975, mean = mean(x[i,,]), sd =sd((x[i,,])) )
@@ -769,7 +845,7 @@ y[1] ~ dnorm(latent.chl[1], tau_obs)
     
     
     
-    setwd(folder)
+    #setwd(folder)
     
     # create a single csv for each forecast that is named with day the forecast is run
     if(day(forecast_start_day) < 10){
@@ -861,7 +937,7 @@ y[1] ~ dnorm(latent.chl[1], tau_obs)
       if(!is.na(x[1,1,])){
         pdf(file = forecast_plot_output_location )
         x_axis <-   forecast_sequence
-        plot(x_axis, ((na.omit(x[,1,]) - CTD_EXO_intercept)/CTD_EXO_slope)^2, 
+        plot(x_axis, as.vector(((na.omit(x[,1,]) - CTD_EXO_intercept)/CTD_EXO_slope)^2), 
              type = 'o',
              ylim = range(c((min(out[,8], out[,8], na.rm = TRUE)), max(out[,7], out[,10], na.rm = TRUE))) # once catwalk data cleaning script is running, can change this to include: out[1,10], out[2,10]
              , xlab = "Date", ylab = "Chla (ug/L)")
