@@ -21,7 +21,7 @@ create_obs_met_input <- function(fname,
                               format= "%Y-%m-%d %H:%M",
                               tz = input_tz)
 
-  d_time_tmp <- with_tz(d_time_tmp_in, tzone = output_tz)
+  d_time_tmp <- lubridate::with_tz(d_time_tmp_in, tzone = output_tz)
   full_time_tmp <-  full_time_hour_obs
   
   if(length(which(d_time_tmp == full_time_tmp[1])) > 0){
