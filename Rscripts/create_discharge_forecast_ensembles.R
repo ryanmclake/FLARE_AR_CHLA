@@ -105,7 +105,7 @@ create_discharge_forecast_ensembles <- function(full_time_day_local,
     tmp2 <- tmp %>% 
       filter(ensemble == i) %>% 
       mutate(SALT = 0.0) %>% 
-      select(time, FLOW, TEMP, SALT) %>% 
+      dplyr::select(time, FLOW, TEMP, SALT) %>% 
       mutate_at(vars(c("FLOW", "TEMP", "SALT", wq_names_tmp)), funs(round(., 4)))
       
    if(i < 10){
@@ -118,7 +118,7 @@ create_discharge_forecast_ensembles <- function(full_time_day_local,
               quote_escape = "none")
 
     tmp2 <- tmp2 %>% 
-     select(time, FLOW)
+     dplyr::select(time, FLOW)
     
 
   }
