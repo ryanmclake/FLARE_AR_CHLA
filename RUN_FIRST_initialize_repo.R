@@ -14,6 +14,7 @@ pacman::p_load(tidyverse,lubridate,mvtnorm,
 
 # Initialize the repository for use (set up folders, download published data and data from other repositories)
 # after cloning the github repo: https://github.com/wwoelmer/FLARE_AR_CHLA/tree/EcoAppsReleaseApr2021
+folder <- getwd()
 
 ### Create a directory with the NOAA GEFS forecasts in FCR
 dir.create('./SCCData')
@@ -51,6 +52,16 @@ try(download.file(inUrl1,infile1,method="curl"))
 if (is.na(file.size(infile1))) download.file(inUrl1,infile1,method="auto")
 
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+
+##### Download the published CTD data from EDI. EDI == Environmental Data Initiative
+data  <- "https://pasta.lternet.edu/package/data/eml/edi/200/11/d771f5e9956304424c3bc0a39298a5ce"
+destination <- paste0(folder, "/sim_files")
+download.file(data, destfile = paste0(destination, '/CTD_final_2013_2020.csv'), method='curl')
+
+##### Download the published EXO data from EDI. EDI == Environmental Data Initiative
+data  <-  "https://pasta.lternet.edu/package/data/eml/edi/271/5/c1b1f16b8e3edbbff15444824b65fe8f" 
+destination <- paste0(folder, "/sim_files")
+download.file(data, destfile = paste0(destination, '/Catwalk_EDI_2020.csv'), method='curl')
 
 ########################################################################################################################################
 # data from Beaverdam Reservoir (bvre)
