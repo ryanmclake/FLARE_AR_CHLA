@@ -11,13 +11,13 @@ sim_name <- sim_name
 
 
 # training dataset May-Oct 2013-2016
-train <- read.csv('./training_datasets/data_arima_WW.csv')
+train <- read.csv('./training_datasets/data_arima_updated.csv')
 train$Date <- as.Date(train$Date)
 train <- train %>% mutate(Chla = Chla_sqrt^2) %>% 
   mutate(Chla_EXO = ((Chla - 0.255)/0.605))
-train <- train %>% select(Date, Chla_EXO)
 
 median(train$Chla_EXO)
+median(train$Chla)
 sd(train$Chla_EXO)
 plot(train$Date, train$Chla_EXO, xlab = 'Date', ylab = 'Chl-a (ug/L)')
 
@@ -46,6 +46,14 @@ par(mar= c(5.1, 5.1, 4.1, 2.1))
 plot(all$Date, all$Chla_EXO, xlab = 'Date', ylab = 'Chl-a (μg/L)', cex.axis = 2, cex.main = 2, cex.lab = 2, cex = 1.5)
 
 
+## and BVR stats
+bvr <- read.csv('./training_datasets/data_arima_7day_BVR.csv')
 
+bvr$Date <- as.Date(bvr$Date)
+bvr <- bvr %>% mutate(Chla = Chla_sqrt^2) %>% 
+  mutate(Chla_EXO = ((Chla - 0.255)/0.605))
 
+median(bvr$Chla)
+sd(bvr$Chla_EXO)
+plot(train$Date, train$Chla_EXO, xlab = 'Date', ylab = 'Chl-a (ug/L)')
 
