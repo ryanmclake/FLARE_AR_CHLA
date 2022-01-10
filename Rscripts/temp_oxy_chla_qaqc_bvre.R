@@ -33,7 +33,8 @@ temp_oxy_chla_qaqc_bvre <- function(data_file,
   # NOTE: date-times throughout this script are processed as UTC
   catdata <- readr::read_csv(data_file, skip = 4, col_names = CATDATA_COL_NAMES, 
                       col_types = readr::cols(.default = readr::col_double(), DateTime = readr::col_datetime()))
-
+  catdata <- catdata[!is.na(catdata$RECORD),]
+  
   log <- readr::read_csv(maintenance_file, col_types = readr::cols(
     .default = readr::col_character(),
     TIMESTAMP_start = readr::col_datetime("%Y-%m-%d %H:%M:%S%*"),
