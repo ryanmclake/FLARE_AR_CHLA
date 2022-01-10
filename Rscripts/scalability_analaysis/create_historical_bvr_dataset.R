@@ -6,9 +6,7 @@ library(tidyverse)
 library(lubridate)
 
 ###### chl data, taken from published ctd data at BVR
-#data  <- "https://pasta.lternet.edu/package/data/eml/edi/200/11/d771f5e9956304424c3bc0a39298a5ce"
-destination <- "./SCCData/bvre-data"
-#download.file(data, destfile = paste0(destination, '/CTD_final_2013_2020.csv'), method='curl')
+destination <- "./sim_files" # file downloaded in 'RUN_FIRST_initialize_repo.R'
 
 ctd <- read.csv(paste0(destination, '/CTD_final_2013_2020.csv'))
 ctd <- ctd[ctd$Reservoir =='BVR' & ctd$Site == '50',]
