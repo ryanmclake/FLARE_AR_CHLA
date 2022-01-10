@@ -259,7 +259,7 @@ run_arima <- function(
       prefix <- paste0('noaa/NOAAGEFS_1hr/fcre/', forecast_start_day)
       FLAREr::get_driver_forecast(lake_directory = working_arima, 
                                   forecast_path = prefix)
-      # no files for 2020-09-24, 2020-10-23, 2020-10-24, 2020-10-25, 2020-10-26, 2020-12-26, 2020-12-31, 2021-01-21, 2021-01-22
+      # no files for 2020-09-24, 2020-10-23, 2020-10-24, 2020-10-25, 2020-10-26, 2020-11-01, 2020-12-25, 2020-12-26, 2020-12-31, 2021-01-21, 2021-01-22
     
     # process NOAA forecasts into hourly and in correct format
     met_file_names <- generate_glm_met_files(obs_met_file = NULL, #needs to be netcdf
@@ -418,7 +418,11 @@ run_arima <- function(
     discharge_forecast$time <- as.Date(discharge_forecast$time)
     
     if(weather_uncertainty==TRUE){
-      for (i in 2:length(discharge_file_names)){
+      if(forecast_start_day > as.Date('2020-09-24')){
+        z <- 2
+      }else(z <- 1)
+      z <- z+1
+      for (i in z:length(discharge_file_names)){
         temp <- read.csv(paste0(working_arima, '/', discharge_file_names[i]))
         temp <- temp %>% dplyr::select(FLOW)
         colnames(temp) <- c(paste0('FLOW_', i))
@@ -445,10 +449,10 @@ run_arima <- function(
   
   observed_depths_chla_fdom <- 1
   temp_obs_fname_wdir <- paste0(temperature_location, "/", temp_obs_fname) 
-  temp_obs_fname_wdir <- paste0(temperature_location, "/bvre-waterquality_2020-06-18_2021-10-11.csv") 
   if(site_id=='fcre'){
     maint_file <- paste0(data_location, '/mia-data/CAT_MaintenanceLog.txt')
   }else if(site_id=='bvre'){
+    temp_obs_fname_wdir <- paste0(temperature_location, "/bvre-waterquality_2020-06-18_2021-10-11.csv") 
     maint_file <- paste0(temperature_location, '/BVR_maintenance_log.txt')
   }
   
@@ -486,7 +490,8 @@ run_arima <- function(
 ###### data assimilation  ###############################################################################################
 #########################################################################################################################
   if(site_id=='fcre'){
-    train_data <- paste0(folder, '/training_datasets/data_arima_', timestep, '_through_2020.csv')
+    train_data <- paste0(folder, '/training_datasets/data_arima_updated.csv')
+    #train_data <- paste0(folder, '/training_datasets/data_arima_', timestep, '_through_2020.csv')
     # should be through 2021???
   }else if(site_id=='bvre'){
     train_data <- paste0(folder, '/training_datasets/data_arima_7day_BVR.csv')
@@ -573,10 +578,15 @@ y[1] ~ dnorm(latent.chl[1], tau_obs)
                       .RNG.name = "base::Wichmann-Hill",
                       .RNG.seed = chain_seeds[i])
   }
+  if(site_id=='fcre'){
+    sd_obs <- 0.21
+  }else if(site_id=='bvre'){
+    sd_obs <- 0.27
+  }
   
   j.model <- jags.model(file = textConnection(AR),
                         data = list(
-                          'sd_obs' = 0.21,
+                          'sd_obs' = sd_obs,
                           'x_ic' = obs$Chla_sqrt[1],
                           'y' = obs$Chla_sqrt,
                           'discharge' = obs$mean_flow,
@@ -735,7 +745,6 @@ y[1] ~ dnorm(latent.chl[1], tau_obs)
           x[1,j,] <- ensemble_pars[j,1]
         }else{
           x[1,,] <- mean(ensemble_pars[,1])
-          #x[1,,] <- sqrt(chla_obs[[1]][1,1]*0.55 - 0.0308)  # convert to sqrt and CTD units
         }
         if(driver_uncertainty_discharge == TRUE){
           curr_discharge = rnorm(1, discharge_forecast[i,met_index+1], 0.00965) #sd from QT's discharge forecasts, met_index+1 bc the first col is time
@@ -783,20 +792,14 @@ y[1] ~ dnorm(latent.chl[1], tau_obs)
       CTD_EXO_slope <- 0.6
       CTD_EXO_intercept <- 0.25
     }else if(site_id=='bvre'){
-      CTD_EXO_slope <- 0.482
-      CTD_EXO_intercept <- 0.096
+      CTD_EXO_slope <- 0.69 #0.48
+      CTD_EXO_intercept <- 0.07 #0.096
+      # taken from slope and intercept of regression between CTD and EXO in SQRT units
     }
     
     for (i in 2:nsteps) {
       error_upper <-  qnorm(0.975, mean = mean(x[i,,]), sd =sd((x[i,,])) )
-      #error_upper <- (error_upper^2)/CTD_EXO_slope + CTD_EXO_intercept
-      #error_upper <- ((error_upper + CTD_EXO_intercept)/CTD_EXO_slope)^2
       error_lower <- qnorm(0.025, mean = mean(x[i,,]), sd =sd((x[i,,])) )
-      #error_lower <- (error_lower^2)/CTD_EXO_slope + CTD_EXO_intercept
-      
-      #out[i-1, 2] <- mean(    ((x[i,,]^2)/CTD_EXO_slope) + CTD_EXO_intercept)
-      #out[i-1, 3] <- median(    ((x[i,,]^2)/CTD_EXO_slope) + CTD_EXO_intercept)
-      #out[i-1, 4] <- sd(    ((x[i,,]^2)/CTD_EXO_slope) + CTD_EXO_intercept)
       out[i-1, 2] <- mean(x[i,,])
       out[i-1, 3] <- median(x[i,,])
       out[i-1, 4] <- sd(x[i,,])
@@ -811,16 +814,12 @@ y[1] ~ dnorm(latent.chl[1], tau_obs)
     convert_cols <- c('forecast_mean_chl', 'forecast_median_chl', 'forecast_sd_chl', 'forecast_CI95_upper', 
                       'forecast_CI95_lower', 'forecast_max', 'forecast_min')
     
-    # convert out of CTD units and into EXO units, and un-sqrt transform
+    # convert out of CTD units and into EXO units, and un-sqrt transform which is what we want for visualization and comparison to obs (EXO)
     out[, which(colnames(out) %in% convert_cols)] <- (((out[, which(colnames(out) %in% convert_cols)]) - CTD_EXO_intercept)/CTD_EXO_slope)^2
-    # transform out of sqrt units, data already in EXO units, which is what we want for visualization and comparison to obs (EXO)
-    #out[, which(colnames(out) %in% convert_cols)] <- (out[, which(colnames(out) %in% convert_cols)])^2
     
-    #plot(out$forecast_date, out$forecast_variance, main = 'untransform and then retransform')
-    #plot(out$forecast_date, out$forecast_mean_chl, ylim = c(0,15))
-    #points(out$forecast_date,out$forecast_CI95_upper, type = 'l')
-    #points(out$forecast_date,out$forecast_CI95_lower, type = 'l')
-    #points(col = 'red', out$forecast_date,out$obs_chl_EXO, type = 'l')
+    #### NOTE####
+    # only use the below order of operations if the slope and intercept are from the unsqrt-transform linear regression
+    #out[, which(colnames(out) %in% convert_cols)] <- (((out[, which(colnames(out) %in% convert_cols)])^2) - CTD_EXO_intercept)/CTD_EXO_slope
     
     if(timestep_numeric==1){
       for (i in 2:nsteps) {
