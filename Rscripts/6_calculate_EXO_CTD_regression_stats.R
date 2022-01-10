@@ -45,6 +45,7 @@ overlap_WW <- overlap_WW[overlap_WW$Day<'2019-01-01',]
 ## build linear model with EXO on x axis
 mod_WW <- lm(CTDChla_ugL ~ EXOChla_ugL, data = overlap_WW)
 res_WW <- resid(mod_WW)
+sd(res_WW)
 summary(mod_WW)
 rout <- list(paste('Model: ', round(coef(mod_WW)[1], 3), ' + ',
                    round(coef(mod_WW)[2], 3), 'x,', ' R^2 = ', round(summary(mod_WW)[['r.squared']], 3), sep = ''))
