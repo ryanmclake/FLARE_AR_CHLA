@@ -47,9 +47,8 @@ names(weeks) <- 'Date'
 layer <- rbind(layer, weeks)
 
 # now add in EXO data
-#  compiled in 'Combine_old_BVR_files.R', data comes from github 
-exo<-read.csv("./SCCData/bvre-data/bvre-waterquality_2020-06-18_2021-10-11.csv") #get data minus wonky Campbell rows
-exo$TIMESTAMP <- as.POSIXct(exo$TIMESTAMP)
+exo<-read.csv("./SCCData/bvre-data/bvre-waterquality.csv", as.is=T, skipNul = TRUE) #get data minus wonky Campbell rows
+exo$TIMESTAMP <- as.Date(exo$TIMESTAMP)  #as.POSIXct(strptime(exo$TIMESTAMP, "%Y-%m-%d %H:%M"), tz = "Etc/GMT+5") 
 exo <- exo %>% 
   dplyr::select(TIMESTAMP, Chla_1) %>% 
   filter(Chla_1 != "NAN")%>%
