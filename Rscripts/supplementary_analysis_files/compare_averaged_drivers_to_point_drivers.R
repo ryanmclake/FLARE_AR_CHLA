@@ -10,7 +10,7 @@ data$weekly_mean_flow <- NA
 data$weekly_mean_shortwave <- NA
 data <- data %>% distinct(Date, .keep_all = TRUE)
 
-flow <- read.csv(paste0(folder, '/SCCData/manual-data/inflow_for_EDI_2013_06Mar2020.csv'))
+flow <- read.csv(paste0(folder, '/sim_files/inflow_for_EDI_2013_10Jan2021.csv'))
 flow <- flow %>% mutate(Date = date(DateTime)) %>% 
   group_by(Date) %>% 
   mutate(Daily_Avg_cms = mean(WVWA_Flow_cms)) %>%  
