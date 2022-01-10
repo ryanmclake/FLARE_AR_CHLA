@@ -48,7 +48,7 @@ run_arima <- function(
   #################################################
   
   source(paste0(folder,"/","Rscripts/create_obs_met_input.R"))
-  source(paste0(folder,"/","Rscripts/met_downscale/process_downscale_GEFS.R")) 
+ # source(paste0(folder,"/","Rscripts/met_downscale/process_downscale_GEFS.R")) 
   
   ### METEROLOGY DOWNSCALING OPTIONS
   downscaling_coeff = NA  
