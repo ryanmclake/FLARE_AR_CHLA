@@ -35,38 +35,6 @@ num_forecast_periods <- num_forecast_periods
 repeat{
   
   startTime <- Sys.time()
-  
-  
-  #LOOP TO KEEP CHECKING FOR A NOAA FORECAST
-  forecast_avialable = FALSE
-  while(forecast_avialable == FALSE){
-    forecast_start_time <- start_day + days(1)
-    if(day(forecast_start_time) < 10){
-      forecast_day <- paste0('0',day(forecast_start_time))
-    }else{
-      forecast_day <- paste0(day(forecast_start_time))
-    }
-    if(month(forecast_start_time) < 10){
-      forecast_month <- paste0('0',month(forecast_start_time))
-    }else{
-      forecast_month <- paste0(month(forecast_start_time))
-    }
-    forecast_base_name <- paste0('fcre_', year(forecast_start_time),forecast_month,forecast_day,'_gep_all_00z.csv')
-    
-    noaa_location <- paste0(data_location,'/','noaa-data')
-    #setwd(noaa_location)
-    #system(paste0('git pull'))
-    
-    if(!file.exists(paste0(noaa_location,'/',forecast_base_name))){
-      print('Waiting for NOAA forecast')
-      Sys.sleep(wait_time)
-    }else{
-      forecast_avialable = TRUE
-    }
-  }
-  
-  
-  
   hist_days <- 1
   spin_up_days <- 0
   
