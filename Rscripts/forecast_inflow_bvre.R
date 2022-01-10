@@ -118,7 +118,11 @@ forecast_inflow_bvre <- function(inflow_obs, #observed inflow file (in this case
     c(AW,excess)
   }
   
-  for(j in 2:length(forecast_files)){
+  if(forecast_start_day > as.Date('2020-09-24')){
+    z <- 2
+  }else(z <- 1)
+  
+  for(j in z:length(forecast_files)){
 
     ens <- dplyr::last(unlist(stringr::str_split(basename(forecast_files[j]),"_")))
     ens <- stringr::str_sub(ens,1,5)
