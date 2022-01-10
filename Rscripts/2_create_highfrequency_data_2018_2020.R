@@ -54,8 +54,7 @@ source(paste0(folder,"/","Rscripts/inflow_qaqc.R"))
 
 cleaned_inflow_file <- paste0(working_arima, "/FCRinflow_postQAQC.csv")
 inflow_file1 <- c(paste0(data_location,"/diana-data/FCRweir.csv"),
-                  paste0(folder,"/sim_files/FCR_inflow_WVWA_2013_2019.csv"),
-                  paste0(data_location,"/manual-data/inflow_working_2019.csv"))
+                  paste0(folder,"/sim_files/FCR_inflow_WVWA_2013_2019.csv"))
 
 inflow_qaqc(fname = inflow_file1,
             cleaned_inflow_file ,
