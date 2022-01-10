@@ -23,7 +23,7 @@ files <- list.files('./SCCData_temp/noaa-data/', full.names = TRUE)
 file.copy(files, './SCCData/noaa-data')
 
 ### Set the directory to the data repo
-setwd('./SCCData/')
+#setwd('./SCCData/')
 
 ### Meteorological data from the dam
 system("git clone -b fcre-metstation-data --depth 1 https://github.com/FLARE-forecast/FCRE-data.git carina-data")
@@ -45,6 +45,12 @@ if (is.na(file.size(infile1))) download.file(inUrl1,infile1,method="auto")
 
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
+### Download the BVR Catwalk data
+data  <-  'https://github.com/FLARE-forecast/BVRE-data/raw/bvre-platform-data/bvre-waterquality.csv'
+destination <- paste0(folder, "/SCCData/bvre-data")
+download.file(data, destfile = paste0(destination, '/bvre-waterquality.csv'), method='curl')
+
+
 ### Download the published inflow data from EDI. EDI == Environmental Data Initiative
 inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/202/7/f5fa5de4b49bae8373f6e7c1773b026e"
 infile1 <- tempfile()
@@ -58,7 +64,7 @@ data  <- "https://pasta.lternet.edu/package/data/eml/edi/200/11/d771f5e995630442
 destination <- paste0(folder, "/sim_files")
 download.file(data, destfile = paste0(destination, '/CTD_final_2013_2020.csv'), method='curl')
 
-##### Download the published EXO data from EDI. EDI == Environmental Data Initiative
+##### Download the published FCR EXO data from EDI. EDI == Environmental Data Initiative
 data  <-  "https://pasta.lternet.edu/package/data/eml/edi/271/5/c1b1f16b8e3edbbff15444824b65fe8f" 
 destination <- paste0(folder, "/sim_files")
 download.file(data, destfile = paste0(destination, '/Catwalk_EDI_2020.csv'), method='curl')
