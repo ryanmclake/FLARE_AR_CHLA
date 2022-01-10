@@ -1,6 +1,6 @@
 # train and validate AR model on BVR data
 
-data <- read.csv('./SCCData/bvre-data/data_arima_7day_through_07-2021_BVR.csv')
+data <- read.csv('./training_datasets/data_arima_7day_BVR.csv')
 data$Date <- as.Date(data$Date)
 train <- data[data$Date < as.Date('2019-01-01'),]
 test <- data[data$Date > as.Date('2019-01-01'),]
