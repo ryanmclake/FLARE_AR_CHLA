@@ -32,10 +32,7 @@ myflowgage$declat<- 37.31321
 myflowgage$declon<- -79.81535
 
 #read in obs met data from FCR met station
-#download.file("https://portal.edirepository.org/nis/dataviewer?packageid=edi.389.5&entityid=3d1866fecfb8e17dc902c76436239431",
-#              "./SCCData/manual-data/Met_final_2015_2020.csv")
-
-met <- read.csv("./SCCData/manual-data/Met_final_2015_2020.csv")
+met <- read.csv("./sim_files/Met_final_2015_2020.csv")
 
 #drop first 3 rows because end of 1600 hour
 met <- met[-c(1:3),]
