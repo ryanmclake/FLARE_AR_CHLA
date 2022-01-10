@@ -108,14 +108,14 @@ dianadata<-read.csv("./historical_model_selection/Data/Inflow/FCRweir.csv", skip
 names(dianadata)<-names(dianaheader) #combine the names to deal with Campbell logger formatting
 dianadata$TIMESTAMP <- as.POSIXct(dianadata$TIMESTAMP, format = "%Y-%m-%d %H:%M:%S")
 colnames(dianadata)[colnames(dianadata)=="Lvl_psi"] <- "diana_psi_corr"
-dianadata <- dianadata %>% select("TIMESTAMP", "diana_psi_corr")
+dianadata <- dianadata %>% dplyr::select("TIMESTAMP", "diana_psi_corr")
 
 # the old weir equations are taken directly from MEL's Inlow Aggregation script
 dianadata_pre <- dianadata[dianadata$TIMESTAMP< as.POSIXct('2019-06-06 09:30:00'),]
 dianadata_pre <- dianadata_pre %>% mutate(diana_flow1 = (diana_psi_corr )*0.70324961490205 - 0.1603375 + 0.03048) %>% 
   mutate(diana_flow_cfs = (0.62 * (2/3) * (1.1) * 4.43 * (diana_flow1 ^ 1.5) * 35.3147)) %>% 
   mutate(flow_cms = diana_flow_cfs*0.028316847   )%>% 
-  select(TIMESTAMP, diana_psi_corr, flow_cms)
+  dplyr::select(TIMESTAMP, diana_psi_corr, flow_cms)
 
 # q = 2.391 * H^2.5
 # where H = head in meters above the notch
@@ -125,7 +125,7 @@ dianadata_pre <- dianadata_pre %>% mutate(diana_flow1 = (diana_psi_corr )*0.7032
 dianadata_post <- dianadata[dianadata$TIMESTAMP > as.POSIXct('2019-06-07 00:00:00'),]
 dianadata_post <- dianadata_post %>%  mutate(head = (0.149*diana_psi_corr)/0.293) %>% 
   mutate(flow_cms = 2.391* (head^2.5)) %>% 
-  select(TIMESTAMP, diana_psi_corr, flow_cms)
+  dplyr::select(TIMESTAMP, diana_psi_corr, flow_cms)
 
 dianadata <- rbind(dianadata_pre, dianadata_post)    
 
@@ -134,17 +134,17 @@ dianadata <- dianadata %>%  mutate(flow_cms_diana_wvwaunits = (flow_cms*0.713454
 
 # calculate daily values
 discharge_diana_daily <- dianadata %>% 
-  select(TIMESTAMP, flow_cms_diana_wvwaunits) %>% 
+  dplyr::select(TIMESTAMP, flow_cms_diana_wvwaunits) %>% 
   mutate(Date = date(TIMESTAMP))%>% 
   group_by(Date) %>% 
  mutate(mean_flow = mean(flow_cms_diana_wvwaunits)) %>% 
   mutate(flow_max = max(flow_cms_diana_wvwaunits)) %>% 
   mutate(flow_min = min(flow_cms_diana_wvwaunits)) %>% 
   mutate(flow_median = median(flow_cms_diana_wvwaunits)) %>% 
-  select(-TIMESTAMP, - flow_cms_diana_wvwaunits)
+  dplyr::select(-TIMESTAMP, - flow_cms_diana_wvwaunits)
 
 discharge_diana_daily <- discharge_diana_daily[!duplicated(discharge_diana_daily$Date),]
-discharge_diana_daily <- discharge_diana_daily %>% select(Date, everything())
+discharge_diana_daily <- discharge_diana_daily %>% dplyr::select(Date, everything())
 
 
 # throw out data 2019-06-04 through 2019-06-06 because the plug was removed from the weir in prep for replacing weir face so numbers are artificially low
@@ -157,7 +157,7 @@ discharge_diana_daily <- discharge_diana_daily[discharge_diana_daily$Date!='2019
 
 
 # gather wvwa inflow data before april 22 2019
-inf_old <- read.csv('./SCCData/manual-data/inflow_working_2019.csv')
+inf_old <- read.csv('./historical_model_selection/Data/Inflow/FCR_inflow_WVWA_2013_2019.csv')
 inf_old$Date <- as.Date(inf_old$DateTime)
 inf_old <- inf_old[inf_old$Date>as.Date('2018-08-14'),]
 
