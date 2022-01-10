@@ -18,12 +18,14 @@ folder <- getwd()
 
 ### Create a directory with the NOAA GEFS forecasts in FCR
 dir.create('./SCCData')
+dir.create('./SCCData/bvre-data') # location for Beaverdam data
 dir.create('./SCCData/noaa-data')
 files <- list.files('./SCCData_temp/noaa-data/', full.names = TRUE)
 file.copy(files, './SCCData/noaa-data')
 
+#### Download data from GitHub Repo where data are automatically uploaded from the field: https://github.com/FLARE-forecast/FCRE-data
 ### Set the directory to the data repo
-#setwd('./SCCData/')
+setwd('./SCCData/')
 
 ### Meteorological data from the dam
 system("git clone -b fcre-metstation-data --depth 1 https://github.com/FLARE-forecast/FCRE-data.git carina-data")
@@ -31,33 +33,22 @@ system("git clone -b fcre-metstation-data --depth 1 https://github.com/FLARE-for
 ### Physical, Chemical, and Biological data from sensors off of the Catwalk in FCR (See fig. XX in MS)
 system("git clone -b fcre-catwalk-data --depth 1 https://github.com/FLARE-forecast/FCRE-data.git mia-data")
 
-### Discharge data from the primary inflow into FCR (See fig. XX in MS)
+### Discharge data from the primary inflow into FCR (See fig. 1 in MS)
 system("git clone -b fcre-weir-data --depth 1 https://github.com/FLARE-forecast/FCRE-data.git diana-data")
 
-### Manually collected data from FCR's z-max (See fig. XX in MS)
-system("git clone -b fcre-manual-data --depth 1 https://github.com/FLARE-forecast/FCRE-data.git manual-data")
+setwd('..')
+
+##### Download published data from the Environmental Data Initiative (EDI)
+### Download the published inflow data from EDI
+data  <-  "https://pasta.lternet.edu/package/data/eml/edi/202/7/f5fa5de4b49bae8373f6e7c1773b026e" 
+destination <- "./sim_files"
+download.file(data, destfile = paste0(destination, '/inflow_for_EDI_2013_10Jan2021.csv'), method='curl')
 
 ### Download the published meterological data from EDI. EDI == Environmental Data Initiative
-inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/389/5/3d1866fecfb8e17dc902c76436239431" 
-infile1 <- tempfile()
-try(download.file(inUrl1,infile1,method="curl"))
-if (is.na(file.size(infile1))) download.file(inUrl1,infile1,method="auto")
-
-setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
-
-### Download the BVR Catwalk data
-data  <-  'https://github.com/FLARE-forecast/BVRE-data/raw/bvre-platform-data/bvre-waterquality.csv'
-destination <- paste0(folder, "/SCCData/bvre-data")
-download.file(data, destfile = paste0(destination, '/bvre-waterquality.csv'), method='curl')
-
-
-### Download the published inflow data from EDI. EDI == Environmental Data Initiative
-inUrl1  <- "https://pasta.lternet.edu/package/data/eml/edi/202/7/f5fa5de4b49bae8373f6e7c1773b026e"
-infile1 <- tempfile()
-try(download.file(inUrl1,infile1,method="curl"))
-if (is.na(file.size(infile1))) download.file(inUrl1,infile1,method="auto")
-
-setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+# download met data
+data  <-  "https://pasta.lternet.edu/package/data/eml/edi/389/5/3d1866fecfb8e17dc902c76436239431" 
+destination <- "./sim_files"
+download.file(data, destfile = paste0(destination, '/Met_final_2015_2020.csv'), method='curl')
 
 ##### Download the published CTD data from EDI. EDI == Environmental Data Initiative
 data  <- "https://pasta.lternet.edu/package/data/eml/edi/200/11/d771f5e9956304424c3bc0a39298a5ce"
@@ -70,7 +61,17 @@ destination <- paste0(folder, "/sim_files")
 download.file(data, destfile = paste0(destination, '/Catwalk_EDI_2020.csv'), method='curl')
 
 ########################################################################################################################################
-# data from Beaverdam Reservoir (bvre)
+# data from Beaverdam Reservoir (bvre) 
+
+### Download the BVR Catwalk data
+data  <-  'https://github.com/FLARE-forecast/BVRE-data/raw/bvre-platform-data/bvre-waterquality.csv'
+destination <- paste0(folder, "/SCCData/bvre-data")
+download.file(data, destfile = paste0(destination, '/bvre-waterquality.csv'))
+
+### Download BVR Catwalk Maintenance Log
+data  <-  'https://github.com/FLARE-forecast/BVRE-data/raw/bvre-platform-data/BVR_maintenance_log.txt'
+destination <- paste0(folder, "/SCCData/bvre-data")
+download.file(data, destfile = paste0(destination, '/BVR_maintenance_log.txt'))
 
 #soil data
 url="https://websoilsurvey.sc.egov.usda.gov/DSD/Download/AOI/u3w5wfn2eaouxxeoweiwlw12/wss_aoi_2021-10-13_12-59-06.zip"
