@@ -16,7 +16,8 @@
 ./SCCData/bvre-data/bvre-waterquality.csv
 ./SCCData/bvre-data/BVRplatform.csv
 ./SCCData/bvre-data/CTD_final_2013_2020.csv
-
+./sim_files/CTD_final_2013_2020.csv
+./sim_files/Catwalk_EDI_2020.csv
 
 # and some big files
 FCRweir.csv
