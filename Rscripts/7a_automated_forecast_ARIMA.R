@@ -26,7 +26,7 @@ timestep_numeric <- 7
 timestep_interval <- 7 # the interval in between timesteps, e.g. 4day would be 4; daily would be 1; weekly would be 7
 max_timestep <- 2 #maximum number of timesteps that can be propagated to the max time horizon (e.g., daily is 14, weekly is 2)
 max_horizon <- 14 # maximum number of days that are propagated in this forecast (e.g. daily timestep has max_horizon = 14)
-sim_name <- 'test_bvre_Aug2020'
+sim_name <- 'TEST'
 forecast_location <- paste0(folder, "/FCR_forecasts", '/', timestep, '/', sim_name)
 
 site_id <- 'bvre'
@@ -50,11 +50,11 @@ n_ds_members <- 1
 n_met_members <- 21
 n_discharge_members <- 21
 nmembers <- n_ds_members*n_met_members*n_discharge_members
-num_forecast_periods <- 3 # number of times the script will loop through automation
+num_forecast_periods <- 2 # number of times the script will loop through automation
 
 
 # initialize forecast time
-forecast_start_day <-"2020-08-22 00:00:00" # day the forecast initialized
+forecast_start_day <-"2020-08-15 00:00:00" # day the forecast initialized
 start_day <- forecast_start_day 
 start_day <- as.POSIXct(start_day, format = "%Y-%m-%d %H:%M:%S")
 hist_days <- 1
@@ -66,37 +66,6 @@ forecast_day_count <- 1
 repeat{
   
   startTime <- Sys.time()
-  
-  
-  #LOOP TO KEEP CHECKING FOR A NOAA FORECAST
-  forecast_avialable = FALSE
-  while(forecast_avialable == FALSE){
-    forecast_start_time <- start_day + days(1)
-    if(day(forecast_start_time) < 10){
-      forecast_day <- paste0('0',day(forecast_start_time))
-    }else{
-      forecast_day <- paste0(day(forecast_start_time))
-    }
-    if(month(forecast_start_time) < 10){
-      forecast_month <- paste0('0',month(forecast_start_time))
-    }else{
-      forecast_month <- paste0(month(forecast_start_time))
-    }
-    forecast_base_name <- paste0('fcre_', year(forecast_start_time),forecast_month,forecast_day,'_gep_all_00z.csv')
-    
-    noaa_location <- paste0(data_location,'/','noaa-data')
-    #setwd(noaa_location)
-    #system(paste0('git pull'))
-    
-    if(!file.exists(paste0(noaa_location,'/',forecast_base_name))){
-      print('Waiting for NOAA forecast')
-      Sys.sleep(wait_time)
-    }else{
-      forecast_avialable = TRUE
-    }
-  }
-  
-  
   
   hist_days <- 1
   spin_up_days <- 0
@@ -125,7 +94,8 @@ repeat{
     timestep_numeric = timestep_numeric,
     timestep_interval = timestep_interval,
     max_timestep = max_timestep,
-    max_horizon = max_horizon    )
+    max_horizon = max_horizon,
+    site_id = site_id)
   
   forecast_day_count <- forecast_day_count + 1
   
