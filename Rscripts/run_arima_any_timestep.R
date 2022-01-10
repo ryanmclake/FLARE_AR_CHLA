@@ -452,7 +452,7 @@ run_arima <- function(
   if(site_id=='fcre'){
     maint_file <- paste0(data_location, '/mia-data/CAT_MaintenanceLog.txt')
   }else if(site_id=='bvre'){
-    temp_obs_fname_wdir <- paste0(temperature_location, "/bvre-waterquality_2020-06-18_2021-10-11.csv") 
+    temp_obs_fname_wdir <- paste0(temperature_location, "/bvre-waterquality.csv") #manually collated file: bvre-waterquality_2020-06-18_2021-10-11.csv 
     maint_file <- paste0(temperature_location, '/BVR_maintenance_log.txt')
   }
   
