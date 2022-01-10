@@ -256,6 +256,8 @@ plot(TMWBsol$TMWB$mdate,TMWBsol$TMWB$Drainage,col="purple", type='l')
 QExport<- data.frame("time"=TMWBsol$TMWB$mdate, "Q_BVR_m3.d"=TMWBsol$TMWB$Qpred_m3pd)
 
 # because some of the NLDAS data filled in earlier years, merge this dataframe with the other file which HLW created
+download.file('https://github.com/hlwander/bvr_glm/raw/master/inputs/BVR_flow_calcs_new.csv',
+              './SCCData/bvre-data/BVR_flow_calcs_new.txt')
 old <- read.csv('./SCCData/bvre-data/BVR_flow_calcs_new.txt')
 old <- old[,-1]
 old$time <- as.Date(old$time)
