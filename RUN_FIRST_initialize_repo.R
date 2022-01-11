@@ -19,9 +19,6 @@ folder <- getwd()
 ### Create a directory with the NOAA GEFS forecasts in FCR
 dir.create('./SCCData')
 dir.create('./SCCData/bvre-data') # location for Beaverdam data
-dir.create('./SCCData/noaa-data')
-files <- list.files('./SCCData_temp/noaa-data/', full.names = TRUE)
-file.copy(files, './SCCData/noaa-data')
 
 #### Download data from GitHub Repo where data are automatically uploaded from the field: https://github.com/FLARE-forecast/FCRE-data
 ### Set the directory to the data repo
