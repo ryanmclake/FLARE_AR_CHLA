@@ -19,7 +19,13 @@ run_arima <- function(
   downscaling_coeff = NA,
   DOWNSCALE_MET = TRUE,
   FLAREversion,
-  null_model = FALSE
+  null_model = FALSE,
+  timestep = timestep,
+  timestep_numeric,
+  timestep_interval,
+  max_timestep,
+  max_horizon,
+  data_assimilation = TRUE
 ){
   
   
@@ -31,11 +37,10 @@ run_arima <- function(
   #################################################
   
   source(paste0(folder,"/","Rscripts/create_obs_met_input.R"))
-  source(paste0(folder,"/","Rscripts/process_GEFS2GLM.R"))
-  source(paste0(folder,"/","Rscripts/create_inflow_outflow_file_arima.R"))
-  source(paste0(folder,"/","Rscripts/archive_forecast.R"))
-  source(paste0(folder,"/","Rscripts/met_downscale/process_downscale_GEFS.R")) 
-  
+  #source(paste0(folder,"/","Rscripts/create_inflow_outflow_file_arima.R"))
+  source(paste0(folder,"/","Rscripts/create_discharge_forecast_ensembles.R"))
+  #source(paste0(folder,"/","Rscripts/archive_forecast.R"))
+
   
   
   ###RUN OPTIONS
@@ -64,8 +69,15 @@ run_arima <- function(
   observed_depths_chla_fdom <- 1
   
   temp_obs_fname <- "Catwalk.csv"
-  met_obs_fname <- "FCRmet.csv" # as of 27-Nov-19, need to change this to FCRmet_legacy01.csv if running dates before 01-01-2019
-                                # file name online 43 of process_downscale_GEFS script needs to be changed as well
+  if(forecast_start_day < as.Date("2019-01-01")){
+    met_obs_fname <- "FCRmet_legacy_2018.csv" # needs to be FCRmet_lecagy01.csv if running dates before 01-01-2019 because these files were split up
+  }else if(forecast_start_day < as.Date('2020-01-01')){
+    met_obs_fname <- 'FCRmet_legacy_2019.csv'
+  }else if(forecast_start_day < as.Date('2021-01-01')){
+    met_obs_fname <- 'FCRmet_legacy_2020.csv'
+  }else{
+    met_obs_fname <- 'FCRmet.csv'
+  }
   
   inflow_file1 <- "FCR_weir_inflow_2013_2017_20180716.csv"
   outflow_file1 <- "FCR_spillway_outflow_2013_2017_20180716.csv" 
@@ -73,43 +85,14 @@ run_arima <- function(
   
   
   #####################################
-  ####### update driver data from git####
+  ####### define driver data locations ####
   #####################################
   
   # set file locations for different driver data 
   temperature_location <- paste0(data_location, "/", "mia-data")
   met_station_location <- paste0(data_location, "/", "carina-data")
   noaa_location <- paste0(data_location, "/", "noaa-data")
-#  if(pull_from_git){
-#    
-#    if(!file.exists(temperature_location)){
-#      setwd(data_location)
-#      system("git clone -b mia-data --single-branch https://github.com/CareyLabVT/SCCData.git mia-data")
-#    }
-#    if(!file.exists(met_station_location)){
-#      setwd(data_location)
-#      system("git clone -b carina-data --single-branch https://github.com/CareyLabVT/SCCData.git carina-data")
-#    }
-#    if(!file.exists(noaa_location)){
-#      setwd(data_location)
-#      system("git clone -b noaa-data --single-branch https://github.com/CareyLabVT/SCCData.git noaa-data")
-#    }
-#  
-    
-    
-#    setwd(temperature_location)
-#    system(paste0("git pull"))
-#    
-#    setwd(met_station_location)
-#    system(paste0("git pull"))
-#    
-#    setwd(noaa_location)
-#    system(paste0("git pull"))
-#  }
-  
-  #download.file('https://github.com/CareyLabVT/SCCData/raw/mia-data/Catwalk.csv','./SCCData/mia-data/Catwalk.csv')
-  
-   
+
   ###################################
   ##### uncertainty options #########
   #################################
@@ -189,6 +172,9 @@ run_arima <- function(
     forecast_month <- paste0(month(forecast_start_time))
   }
   full_time <- seq(begin_sim, end_sim, by = "1 day")
+  
+  local_tzone <- "EST5EDT"
+  
   full_time_local <- with_tz(full_time, tzone = local_tzone)
   full_time <- strftime(full_time, 
                         format="%Y-%m-%d %H:%M",
@@ -253,141 +239,97 @@ run_arima <- function(
                        day(full_time_local[1]))
   }
   
-  ############################################################
-  ########### get NOAA ensemble data #########################
-  ############################################################
+  ################################################################
+  ########### get NOAA ensemble met data #########################
+  ################################################################
   ###CREATE HISTORICAL MET FILE
   if(met_downscale_uncertainty == FALSE){
     n_ds_members <- 1
   }
   
-  
-  met_file_names <- rep(NA, 1+(n_met_members*n_ds_members))
-  obs_met_outfile <- paste0(working_arima, "/", "GLM_met.csv")
-  
-  # this function takes the observed met data at FCR and calculates hourly summaries for a given date range 'full_time_hour_obs'
-  create_obs_met_input(fname = met_obs_fname_wdir,
-                       outfile=obs_met_outfile,
-                       full_time_hour_obs, 
-                       input_tz = "EST5EDT", 
-                       output_tz = reference_tzone)
-  met_file_names[1] <- obs_met_outfile
-  
+  source(paste0(folder, "/Rscripts/generate_glm_met_files.R"))
   ###CREATE FUTURE MET FILES
   if(forecast_days > 0){
-    in_directory <- paste0(noaa_location)
-    out_directory <- working_arima
-    file_name <- forecast_base_name
+    Sys.setenv("AWS_DEFAULT_REGION" = "s3",
+               "AWS_S3_ENDPOINT" = "flare-forecast.org")
+    # download NOAA forecasts for the days needed
+    prefix <- paste0('noaa/NOAAGEFS_1hr/fcre/', as.Date(forecast_start_day))
+    FLAREr::get_driver_forecast(lake_directory = working_arima, 
+                                forecast_path = prefix)
+    # no files for 2020-09-24, 2020-10-23, 2020-10-24, 2020-10-25, 2020-10-26, 2020-11-01, 2020-12-25, 2020-12-26, 2020-12-31, 2021-01-21, 2021-01-22
     
-    VarInfo <- data.frame("VarNames" = c("AirTemp",
-                                         "WindSpeed",
-                                         "RelHum",
-                                         "ShortWave",
-                                         "LongWave",
-                                         "Rain"),
-                          "VarType" = c("State",
-                                        "State",
-                                        "State",
-                                        "Flux",
-                                        "Flux",
-                                        "Flux"),
-                          "ds_res" = c("hour",
-                                       "hour",
-                                       "hour",
-                                       "hour",
-                                       "6hr",
-                                       "6hr"),
-                          "debias_method" = c("lm",
-                                              "lm",
-                                              "lm",
-                                              "lm",
-                                              "lm",
-                                              "compare_totals"),
-                          "use_covariance" = c(TRUE,
-                                               TRUE,
-                                               TRUE,
-                                               TRUE,
-                                               TRUE,
-                                               FALSE),
-                          stringsAsFactors = FALSE)
-    
-    replaceObsNames <- c("AirTC_Avg" = "AirTemp",
-                         "WS_ms_Avg" = "WindSpeed",
-                         "RH" = "RelHum",
-                         "SR01Up_Avg" = "ShortWave",
-                         "IR01UpCo_Avg" = "LongWave",
-                         "Rain_mm_Tot" = "Rain")
-    
-    met_file_names[2:(1+(n_met_members*n_ds_members))] <- process_downscale_GEFS(folder,
-                                                                                 noaa_location,
-                                                                                 met_station_location,
-                                                                                 working_arima,
-                                                                                 sim_files_folder = paste0(folder, "/", "sim_files"),
-                                                                                 n_ds_members,
-                                                                                 n_met_members,
-                                                                                 file_name,
-                                                                                 output_tz = reference_tzone,
-                                                                                 FIT_PARAMETERS,
-                                                                                 DOWNSCALE_MET,
-                                                                                 met_downscale_uncertainty,
-                                                                                 compare_output_to_obs = FALSE,
-                                                                                 VarInfo,
-                                                                                 replaceObsNames,
-                                                                                 downscaling_coeff,
-                                                                                 full_time_local,
-                                                                                 first_obs_date = met_ds_obs_start,
-                                                                                 last_obs_date = met_ds_obs_end)
-    
-    if(weather_uncertainty == FALSE & met_downscale_uncertainty == TRUE){
-      met_file_names <- met_file_names[1:(1+(1*n_ds_members))]
-    }else if(weather_uncertainty == FALSE & met_downscale_uncertainty == FALSE){
-      met_file_names <- met_file_names[1:2]
-    }
+    # process NOAA forecasts into hourly and in correct format
+    met_file_names <- generate_glm_met_files(obs_met_file = NULL, #needs to be netcdf
+                                             out_dir = working_arima,
+                                             forecast_dir = file.path(working_arima, 'drivers', prefix))
   }
+  
+  if(weather_uncertainty == FALSE & met_downscale_uncertainty == TRUE){
+    met_file_names <- met_file_names[1:(1+(1*n_ds_members))]
+  }else if(weather_uncertainty == FALSE & met_downscale_uncertainty == FALSE){
+    met_file_names <- met_file_names[1:2]
+  }
+  
   
   if(weather_uncertainty == FALSE){
     n_met_members <- 1
   }
   
   
-  #go through met_file_names and take daily averages of SW and a sum of rain, which is needed for the discharge forecast
-  # then select the days needed for the forecast
+  # go through met_file_names and take daily averages of SW and a sum of rain, which is needed for the discharge forecast
+  data<-matrix(data=NA,16,(length(met_file_names)))
   
-  data<-matrix(data=NA,16,(length(met_file_names)-1))
-  rain <- matrix(data = NA, 16, (length(met_file_names)-1))
-  
-  for(j in 2:length(met_file_names)){
-    temp<-read.csv(met_file_names[j])
-    temp$date <- date(temp$time)
-    for(i in 1:length(unique(temp$date))){
-      temp1<-subset(temp, temp$date==unique(temp$date)[i])
-      temp2 <- temp1 %>% mutate(RelHum_mean = mean(temp1$RelHum))  %>% 
-        mutate(rain_sum = sum(temp1$Rain))
-      data[i,j-1]=temp2[1,10]
-      rain[i, j-1] = temp2[1,11]
+  firstchunk <- seq(as.Date('2018-12-22'), as.Date('2018-12-28'), by = '1 day')
+  secondchunk <- seq(as.Date('2019-11-13'), as.Date('2019-11-19'), by = '1 day')
+  dates_GMT <- c(firstchunk, secondchunk)
+  if(as.Date(forecast_start_day) %in% dates_GMT){
+    
+    for(j in 1:length(met_file_names)){
+      temp<-read.csv(met_file_names[j])
+      temp$date <- date(temp$time)
+      for(i in 2:(length(unique(temp$date))-1)){  # use this line for the Dec 2018 and Nov 2019 forecasts which are in GMT
+        temp1<-subset(temp, temp$date==unique(temp$date)[i])
+        temp2 <- temp1 %>% mutate(RelHumMean = mean(temp1$RelHum)) 
+        data[i-1,j]=temp2[1,10] #'j-1' because you start at 2 in the loop above
+        
+      }
     }
+    
+  }else{
+    for(j in 1:length(met_file_names)){ # start at 2 because first file is obs met
+      temp<-read.csv(met_file_names[j])
+      temp$date <- date(temp$time)
+      
+      for(i in 2:(length(unique(temp$date)))){ # start at 2 because first date is forecast start day
+        temp1<-subset(temp, temp$date==unique(temp$date)[i])
+        temp2 <- temp1 %>% mutate(RelHumMean = mean(temp1$RelHum)) 
+        data[i-1,j]=temp2[1,10] #'j-1' because you start at 2 in the loop above
+        
+      }
+    }
+    
   }
   
-  # rename with all ensemble members 
-  rhum_forecast <- data[,]  
   
+  # extract all ensemble members for the appropriate timestep
+    take <- seq(timestep_numeric, max_horizon, by = timestep_interval)
+  
+  # add empty first row because of indexing below with the model
+  rh_forecast <- matrix(NA, c(max_timestep+1), n_met_members)  
+  spot <- seq(2, max_timestep+1, by = 1)
+  if(timestep == '1day'){
+    rh_forecast <- data[,]
+  }else if(timestep == '7day' & forecast_start_day > '2020-09-23'){ 
+    rh_forecast[2:3,] <- data[take,1:21] 
+  }else if(timestep == '7day' & forecast_start_day <= '2020-09-23'){ # after 2020-09-23 there are 21 ensembles
+    rh_forecast[2:3,] <- data[take,] 
+  }else if(timestep == '14day'){
+    rh_forecast[2,] <- data[take,]     
+  }
 
-  ####################################################
-  #### STEP 2: DETECT PLATFORM  
-  ####################################################
-  
-  switch(Sys.info() [["sysname"]],
-         Linux = { machine <- "unix" },
-         Darwin = { machine <- "mac" },
-         Windows = { machine <- "windows"})
-  
-  ###INSTALL PREREQUISITES##
-  
-  #INSTALL libnetcdf
-  if(machine == "unix") {
-    system("if [ $(dpkg-query -W -f='${Status}' libnetcdf-dev 2>/dev/null | grep -c 'ok installed') -eq 0 ]; then sudo apt update && sudo apt install libnetcdf-dev; fi;")
-    Sys.setenv(LD_LIBRARY_PATH=paste("../glm/unix/", Sys.getenv("LD_LIBRARY_PATH"),sep=":"))
-  }
+  ##########################
+  #### reorganize files ####
+  ##########################
   
   # move files from the sim folder into the working arima folder
   sim_files_folder <- paste0(folder, "/", "sim_files")
@@ -433,19 +375,23 @@ run_arima <- function(
 #########################################################################################################################
 
 # a script to check for new data to add to the historical dataset; data gets updated weekly
-train_data <- 'data_arima_highfrequency_RelHum_mean.csv'
-outfile <- 'data_arima_working_highfrequency.csv'
+train_data <- paste0(folder, '/training_datasets/data_arima_highfrequency_RelHum_mean.csv')
+  if(data_assimilation){
+    # read in file with all data and subset to the forecast day
+    data <- read.csv(train_data)
+    data$Date <- as.Date(data$Date)
+    data <- data[data$Date<=forecast_start_day,]
+    print('data subsetted to forecast start day')
+    
+  }else{
+    data <- read.csv(train_data)
+    data$Date <- as.Date(data$Date)
+    data <- data[data$Date<as.Date('2018-01-01'),]
+    
+    print('training data only')
+  }
+  
 
-    source(paste0(folder,"/","Rscripts/data_assimilation_AR.R"))
-  data_assimilation(folder = folder, 
-                    data_location =  data_location,
-                    hist_file = train_data,
-                    forecast_start_day = forecast_start_day,
-                    timestep = 1, #a numeric value for this script (so either '1' or '7')
-                    outfile = outfile,
-                    met_obs_fname = met_obs_fname)
-  
-  
   # read in the jags file to pull from parameter values 
   # load("C:/Users/wwoel/Desktop/FLARE/FLARE_3/FLARE_3/MCMC_output_ARIMA_Whitney.Rdata")
   # find a way to update the jags file without entering the whole code right here?
@@ -453,8 +399,6 @@ outfile <- 'data_arima_working_highfrequency.csv'
   library(PerformanceAnalytics)
   
   setwd(folder)
-  data = read.csv(outfile)
-  
   N <- nrow(data)
   
   sink("jags_model.bug")
@@ -494,75 +438,8 @@ outfile <- 'data_arima_working_highfrequency.csv'
   
   par_matrix <- as.matrix(samples[1])
   
-  save(samples, file = "MCMC_output_ARIMA_highfrequency_RelHum.Rdata")
-  
-  if(null_model){
-    
-    
-    # extract process error from bayes output and write to an array
-    null_error <- array(NA, dim = c(nsteps, nmembers))
-    
-    for (i in 1:nsteps) {
-      step_index <- 1
-      
-      for(j in 1:nmembers){
-        
-        p <- sample(seq(1,length(samples[[1]][,1])), 1, replace = TRUE) #changed 0 to 1 7/16
-        null_error[i, j] <- samples[[1]][p,4]
-        step_index = step_index + 1
-        
-        if(step_index > 16){
-          step_index <- 1
-        } 
-      }
-    }
-   
-    # take the obs chl on the forecast_start_day, the day the forecast is being made, and propagate that out for every timestep
-    chla_obs[[1]][1]
-    null_error <- null_error + chla_obs[[1]][1]
-    
-    # write the distribution of all 420 ensembles on each forecast day to a csv
-    if(day(forecast_start_day) < 10){
-      file_name_forecast_start_day <- paste0("0",day(forecast_start_day))
-    }else{
-      file_name_forecast_start_day <- day(forecast_start_day) 
-    }
-    
-    if(month(forecast_start_day) < 10){
-      file_name_forecast_start_month <- paste0("0",month(forecast_start_day))
-    }else{
-      file_name_forecast_start_month <- month(forecast_start_day) 
-    }
-    
-    null_file_name <- paste0(year(forecast_start_day), "_", 
-                                 file_name_forecast_start_month, "_", 
-                                 file_name_forecast_start_day, "_", 
-                                 "null_ensembles.csv")
-    
-    write.csv(null_error, paste0(forecast_location, '/null_ensemble/', null_file_name), row.names = FALSE)
-    
-    # create a csv with summary stats of the null (mean and CI)
-    null_summary <- array(NA, dim = c(16,3))
-    for (i in 1:16) {
-      # take the mean of the 420 ensembles
-      temp <- mean(null_error[i,])
-      null_summary[i,1] <- temp
-      # calculate conf intervals and add to array
-      error_upper <-  qnorm(0.975, mean = mean(null_error[i,]), sd =sd((null_error[i,])) )
-      error_lower <- qnorm(0.025, mean =  mean(null_error[i,]), sd =sd((null_error[i,])) )
-      null_summary[i,2] <- error_upper
-      null_summary[i,3] <- error_lower
-      
-    }
-    null_summary_file_name <- paste0(year(forecast_start_day), "_", 
-                             file_name_forecast_start_month, "_", 
-                             file_name_forecast_start_day, "_", 
-                             "null_summary.csv")
-    write.csv(null_summary, paste0(forecast_location, '/null_ensemble/', null_summary_file_name), row.names = FALSE)
-  }
-  
-  
-  
+  #save(samples, file = "MCMC_output_ARIMA_highfrequency_RelHum.Rdata")
+
   # the first column is observed chl that is sqrt transformed (because the model is based on sqrt units) and corrected into CTD units (because it is observed in EXO units)
   if(initial_condition_uncertainty == TRUE& !is.na(chla_obs[[1]][1,1]) ){
     for(i in 1:nmembers){
@@ -621,9 +498,9 @@ outfile <- 'data_arima_working_highfrequency.csv'
     #    curr_discharge = discharge_forecast[i,2]
     #  }
       if(weather_uncertainty == TRUE){
-        curr_relhum = rhum_forecast[i,met_index]
+        curr_relhum = rh_forecast[i,met_index]
       }else{
-        curr_relhum = rhum_forecast[i]
+        curr_relhum = rh_forecast[i]
       }
       x[i,j,] <- ensemble_pars[j, 1] + ensemble_pars[j, 2]*x[i-1,j,] +  ensemble_pars[j, 3]*curr_relhum + added_process_uncertainty
       met_index = met_index + 1
@@ -653,6 +530,7 @@ outfile <- 'data_arima_working_highfrequency.csv'
                                file_name_forecast_start_month, "_", 
                                file_name_forecast_start_day, "_", 
                                "chla_daily_ensembles.csv")
+  dir.create(forecast_location)
   write.csv(x, paste0(forecast_location, '/', forecast_ensemble_file_name), row.names = FALSE)
  }
   
@@ -800,7 +678,7 @@ outfile <- 'data_arima_working_highfrequency.csv'
                                           "ensemble_plots/",
                                           forecast_plot_name) 
   
-  
+  dir.create(paste0(forecast_location,  "/ensemble_plots/"))
   
   if(!is.na(x[1,1,])){
     pdf(file = forecast_plot_output_location )
