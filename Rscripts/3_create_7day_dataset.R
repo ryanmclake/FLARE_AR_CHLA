@@ -31,7 +31,7 @@ chl_hist_CTD <- read.csv('./sim_files/FCR_CTD_2018_2019.csv')
 chl_hist_CTD$Date <- as.Date(chl_hist_CTD$Date)
 chl_hist_CTD <- chl_hist_CTD %>% mutate(Chla_sqrt = sqrt(Chla_ugL)) %>% 
   mutate(Chla_ARlag1_sqrt = sqrt(chla_lag))
-chl_hist_CTD <- chl_hist_CTD %>%  select(-Chla_ugL, -chla_lag)
+chl_hist_CTD <- chl_hist_CTD %>%  dplyr::select(-Chla_ugL, -chla_lag)
 #2019 CTD doesn't start until June--add in exo data but convert to ctd units
 
 source(paste0(folder,"/","Rscripts/extract_EXOchl_chain_dailyavg.R")) 
@@ -70,7 +70,7 @@ chl_hist_daily <- chl_hist_daily %>% mutate(Chla_sqrt_EXO = sqrt(Chla_EXO*0.55 -
 chl_hist_daily <- chl_hist_daily[chl_hist_daily$Date>=as.Date('2019-04-22'),]
 chl_hist_daily <- chl_hist_daily %>% mutate(dow  = rep(1:7, length.out = nrow(chl_hist_daily)))
 chl_hist_weekly <- chl_hist_daily[chl_hist_daily$dow==7,]
-chl_hist_weekly <- chl_hist_weekly %>% select(-dow)
+chl_hist_weekly <- chl_hist_weekly %>% dplyr::select(-dow)
 colnames(chl_hist_weekly) <- c('Date', 'Chla_sqrt', 'Chla_ARlag1_sqrt')
 chl_hist_weekly$Date <- as.Date(chl_hist_weekly$Date)
 
@@ -84,14 +84,11 @@ chl_hist_join <- rbind(chl_hist_CTD, chl_hist_weekly)
 source(paste0(folder, "/Rscripts/create_obs_met_input.R"))
 met_obs_fname <- "FCRmet_legacy_2018.csv"
 met_station_location <- paste0(folder, "/SCCData/carina-data")
-
-download.file("https://github.com/FLARE-forecast/FCRE-data/raw/5a3751847fcbf5b31c3799aa6fb9d6e662873b08/FCRmet_legacy_2018.csv",
-              paste0(met_station_location, "/", met_obs_fname))
 met_obs_fname_wdir <-paste0(met_station_location, "/", met_obs_fname)
 working_arima <- paste0(folder, "/ARIMA_working")
-AR_obs_met_outfile <- paste0(working_arima, "/", "update_met_2018.csv")
+AR_obs_met_outfile <- paste0(working_arima, "/", "update_met.csv")
 reference_tzone <- "GMT"
-full_time_hour_obs <- seq(as.POSIXct('2018-01-10 00:00:00'), 
+full_time_hour_obs <- seq(as.POSIXct('2018-08-14 00:00:00'), 
                           as.POSIXct('2018-12-31 00:00:00'),
                           by = "1 hour")
 
@@ -102,7 +99,7 @@ create_obs_met_input(fname = met_obs_fname_wdir,
                      output_tz = reference_tzone)
 # read in the hourly data that was created and summarize to daily mean
 
-sw_hist_2018 <- read.csv(paste0(folder, '/ARIMA_working/update_met_2018.csv'))
+sw_hist_2018 <- read.csv(paste0(folder, '/ARIMA_working/update_met.csv'))
 sw_hist_daily_2018 <- sw_hist_2018 %>% dplyr::mutate(Date = lubridate::date(time)) %>% 
   dplyr::group_by(Date) %>% 
   dplyr::mutate(ShortWave_mean = mean(ShortWave, na.rm = TRUE)) %>% 
@@ -115,9 +112,7 @@ sw_hist_daily_2018$Date <- as.Date(sw_hist_daily_2018$Date)
 met_obs_fname <- "FCRmet_legacy_2019.csv"
 met_station_location <- paste0(folder, "/SCCData/carina-data")
 met_obs_fname_wdir <-paste0(met_station_location, "/", met_obs_fname)
-download.file("https://github.com/FLARE-forecast/FCRE-data/raw/5a3751847fcbf5b31c3799aa6fb9d6e662873b08/FCRmet_legacy_2019.csv",
-              met_obs_fname_wdir)
-AR_obs_met_outfile <- paste0(working_arima, "/", "update_met_2019.csv")
+AR_obs_met_outfile <- paste0(working_arima, "/", "update_met.csv")
 reference_tzone <- "GMT"
 full_time_hour_obs <- seq(as.POSIXct('2019-01-10 00:00:00'), 
                           as.POSIXct('2019-12-31 00:00:00'),
@@ -142,9 +137,7 @@ sw_hist_daily_2019$Date <- as.Date(sw_hist_daily_2019$Date)
 met_obs_fname <- "FCRmet_legacy_2020.csv"
 met_station_location <- paste0(folder, "/SCCData/carina-data")
 met_obs_fname_wdir <-paste0(met_station_location, "/", met_obs_fname)
-download.file("https://github.com/FLARE-forecast/FCRE-data/blob/5a3751847fcbf5b31c3799aa6fb9d6e662873b08/FCRmet.csv?raw=true", 
-              met_obs_fname_wdir)
-AR_obs_met_outfile <- paste0(working_arima, "/", "update_met_2020.csv")
+AR_obs_met_outfile <- paste0(working_arima, "/", "update_met.csv")
 reference_tzone <- "GMT"
 full_time_hour_obs <- seq(as.POSIXct('2020-01-10 00:00:00'), 
                           as.POSIXct('2020-12-31 00:00:00'),
@@ -166,13 +159,12 @@ sw_hist_daily_2020 <- as.data.frame(sw_hist_daily_2020)
 sw_hist_daily_2020$Date <- as.Date(sw_hist_daily_2020$Date)
 
 # and add 2021 met data
-#download.file("https://github.com/FLARE-forecast/FCRE-data/blob/fcre-metstation-data/FCRmet.csv?raw=true", './SCCData/carina-data/FCRmet.csv')
 met_obs_fname <- "FCRmet.csv"
 met_obs_fname_wdir <-paste0(met_station_location, "/", met_obs_fname)
-AR_obs_met_outfile <- paste0(working_arima, "/", "update_met_2021.csv")
+AR_obs_met_outfile <- paste0(working_arima, "/", "update_met.csv")
 reference_tzone <- "GMT"
 full_time_hour_obs <- seq(as.POSIXct('2021-01-01 00:00:00'), 
-                          as.POSIXct(Sys.Date()),
+                          as.POSIXct('2021-12-31 00:00:00'),
                           by = "1 hour")
 
 create_obs_met_input(fname = met_obs_fname_wdir,
@@ -194,7 +186,6 @@ sw_all <- rbind(sw_hist_daily_2018, sw_hist_daily_2019, sw_hist_daily_2020, sw_h
 plot(sw_all$Date, sw_all$ShortWave_mean)
 
 
-
 #######################################################################################################################################################################################
 ####### gather discharge driver data #######################################################
 ##########################################################################################################################################################################
@@ -205,11 +196,11 @@ plot(sw_all$Date, sw_all$ShortWave_mean)
 discharge_wvwa <- read.csv(paste0(folder, '/sim_files/FCR_inflow_WVWA_2013_2019.csv'))
 discharge_wvwa <- na.omit(discharge_wvwa)
 discharge_wvwa_daily <- discharge_wvwa %>%  
-  select(DateTime, Flow_cms) %>% 
+  dplyr::select(DateTime, Flow_cms) %>% 
   mutate(Date = lubridate::date(DateTime)) %>% 
   group_by(Date) %>% 
   summarise_all('mean') %>% 
-  select(-DateTime)
+  dplyr::select(-DateTime)
 # subset to 2018-07-05
 discharge_wvwa_daily <- discharge_wvwa_daily[discharge_wvwa_daily$Date>as.Date('2018-04-20'),]
 # remove days when the weir was unplugged just prior to replacing the weir face in 2019
@@ -219,20 +210,19 @@ discharge_wvwa_daily <- discharge_wvwa_daily[discharge_wvwa_daily$Date!=as.Date(
 colnames(discharge_wvwa_daily) <- c('Date', 'flow_cms_wvwa')
 
 # download the latest diana weir file
-download.file('https://github.com/CareyLabVT/SCCData/raw/diana-data/FCRweir.csv','./SCCData/diana-data/FCRweir.csv')
 dianaheader<-read.csv(paste0(folder, "/SCCData/diana-data/FCRweir.csv"), skip=1, as.is=T) #get header minus wonky Campbell rows
 dianadata<-read.csv(paste0(folder, "/SCCData/diana-data/FCRweir.csv"), skip=4, header=F) #get data minus wonky Campbell rows
 names(dianadata)<-names(dianaheader) #combine the names to deal with Campbell logger formatting
 dianadata$TIMESTAMP <- as.POSIXct(dianadata$TIMESTAMP, format = "%Y-%m-%d %H:%M:%S")
 colnames(dianadata)[colnames(dianadata)=="Lvl_psi"] <- "diana_psi_corr"
-dianadata <- dianadata %>% select("TIMESTAMP", "diana_psi_corr")
+dianadata <- dianadata %>% dplyr::select("TIMESTAMP", "diana_psi_corr")
 
 # the old weir equations are taken directly from MEL's Inlow Aggregation script
 dianadata_pre <- dianadata[dianadata$TIMESTAMP< as.POSIXct('2019-06-06 09:30:00'),]
 dianadata_pre <- dianadata_pre %>% mutate(diana_flow1 = (diana_psi_corr )*0.70324961490205 - 0.1603375 + 0.03048) %>% 
   mutate(diana_flow_cfs = (0.62 * (2/3) * (1.1) * 4.43 * (diana_flow1 ^ 1.5) * 35.3147)) %>% 
   mutate(flow_cms = diana_flow_cfs*0.028316847   )%>% 
-  select(TIMESTAMP, diana_psi_corr, flow_cms)
+  dplyr::select(TIMESTAMP, diana_psi_corr, flow_cms)
 
 # q = 2.391 * H^2.5
 # where H = head in meters above the notch
@@ -242,17 +232,17 @@ dianadata_pre <- dianadata_pre %>% mutate(diana_flow1 = (diana_psi_corr )*0.7032
 dianadata_post <- dianadata[dianadata$TIMESTAMP > as.POSIXct('2019-06-07 00:00:00'),]
 dianadata_post <- dianadata_post %>%  mutate(head = (0.149*diana_psi_corr)/0.293) %>% 
   mutate(flow_cms = 2.391* (head^2.5)) %>% 
-  select(TIMESTAMP, diana_psi_corr, flow_cms)
+  dplyr::select(TIMESTAMP, diana_psi_corr, flow_cms)
 
 dianadata <- rbind(dianadata_pre, dianadata_post)                                                   
 
 # calculate daily values
 discharge_diana_daily <- dianadata %>% 
-  select(TIMESTAMP, flow_cms) %>% 
+  dplyr::select(TIMESTAMP, flow_cms) %>% 
   mutate(Date = lubridate::date(TIMESTAMP))%>% 
   group_by(Date) %>% 
   summarise_all('mean') %>% 
-  select(-TIMESTAMP)
+  dplyr::select(-TIMESTAMP)
 
 # convert diana into wvwa units (equation taken from 'thesis/r scripts/lm_wvwa_diana_pressuredata.R' on 10-08-2019)
 discharge_diana_daily_wvwaunits <- discharge_diana_daily %>% 
@@ -263,7 +253,7 @@ discharge_diana_daily_wvwaunits <- discharge_diana_daily_wvwaunits[discharge_dia
 discharge_diana_daily_wvwaunits <- discharge_diana_daily_wvwaunits[discharge_diana_daily_wvwaunits$Date!='2019-06-05',]
 discharge_diana_daily_wvwaunits <- discharge_diana_daily_wvwaunits[discharge_diana_daily_wvwaunits$Date!='2019-06-06',]
 
-discharge_diana_daily_wvwaunits <- discharge_diana_daily_wvwaunits %>% select(-flow_cms)
+discharge_diana_daily_wvwaunits <- discharge_diana_daily_wvwaunits %>% dplyr::select(-flow_cms)
 colnames(discharge_diana_daily_wvwaunits) <- c('Date', 'flow_cms_diana')
 plot(discharge_diana_daily_wvwaunits$Date, discharge_diana_daily_wvwaunits$flow_cms_diana)
 
@@ -277,7 +267,7 @@ abline(h=0)
 
 # select wvwa data when it is available and use diana converted to wvwa units when it is not
 discharge_daily <- discharge_daily %>% mutate(mean_flow = if_else(is.na(flow_cms_wvwa), flow_cms_diana, flow_cms_wvwa))
-discharge <- discharge_daily %>% select(Date, mean_flow)
+discharge <- discharge_daily %>% dplyr::select(Date, mean_flow)
 
 data <- left_join(chl_hist_join, discharge)
 data <- left_join(data, sw_all)
@@ -291,6 +281,6 @@ plot(data_assimilate$Date, data_assimilate$Chla_sqrt)
 #get rid of na's
 data_assimilate <- na.omit(data_assimilate)
 
-write.csv(data_assimilate,paste0(folder, '/training_datasets/data_arima_updated.csv'), row.names = FALSE)
+write.csv(data_assimilate,paste0(folder, '/training_datasets/data_arima_7day.csv'), row.names = FALSE)
 
           

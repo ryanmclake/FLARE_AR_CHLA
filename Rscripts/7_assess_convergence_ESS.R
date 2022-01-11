@@ -16,7 +16,7 @@ timestep_interval <- 1 # the interval in between timesteps, e.g. 4day would be 4
 max_timestep <- 14 #maximum number of timesteps that can be propagated to the max time horizon (e.g., daily is 14, weekly is 2)
 max_horizon <- 14 # maximum number of days that are propagated in this forecast (e.g. daily timestep has max_horizon = 14)
 
-data <- read.csv(paste0(folder, '/training_datasets/data_arima_', timestep, '_through_2020.csv'))
+data <- read.csv(paste0(folder, '/training_datasets/data_arima_', timestep, '.csv'))
 data$Date <- as.Date(data$Date)
 data <- data[data$Date<forecast_start_day,]
 
@@ -106,7 +106,7 @@ samples_daily = coda.samples(model = j.model,
 ###########################################################################################################################################################################
 # for weekly
 timestep <- '7day' # character definition of the timestep
-data <- read.csv(paste0(folder, '/training_datasets/data_arima_', timestep, '_through_2020.csv'))
+data <- read.csv(paste0(folder, '/training_datasets/data_arima_', timestep, '.csv'))
 data$Date <- as.Date(data$Date)
 data <- data[data$Date<forecast_start_day,]
 
@@ -157,7 +157,7 @@ samples_weekly = coda.samples(model = j.model,
 ###########################################################################################################################################################################
 # for fortnightly
 timestep <- '14day' # character definition of the timestep
-data <- read.csv(paste0(folder, '/training_datasets/data_arima_', timestep, '_through_2020.csv'))
+data <- read.csv(paste0(folder, '/training_datasets/data_arima_', timestep, '.csv'))
 data$Date <- as.Date(data$Date)
 data <- data[data$Date<forecast_start_day,]
 

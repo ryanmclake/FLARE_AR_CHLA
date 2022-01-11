@@ -11,7 +11,7 @@ sim_name <- sim_name
 
 
 # training dataset May-Oct 2013-2016
-train <- read.csv('./training_datasets/data_arima_updated.csv')
+train <- read.csv('./training_datasets/data_arima_WW.csv')
 train$Date <- as.Date(train$Date)
 train <- train %>% mutate(Chla = Chla_sqrt^2) %>% 
   mutate(Chla_EXO = ((Chla - 0.255)/0.605))
