@@ -490,9 +490,7 @@ run_arima <- function(
 ###### data assimilation  ###############################################################################################
 #########################################################################################################################
   if(site_id=='fcre'){
-    train_data <- paste0(folder, '/training_datasets/data_arima_updated.csv')
-    #train_data <- paste0(folder, '/training_datasets/data_arima_', timestep, '_through_2020.csv')
-    # should be through 2021???
+    train_data <- paste0(folder, '/training_datasets/data_arima_', timestep, '.csv')
   }else if(site_id=='bvre'){
     train_data <- paste0(folder, '/training_datasets/data_arima_7day_BVR.csv')
   }
