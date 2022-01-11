@@ -22,7 +22,7 @@ temp_oxy_chla_qaqc(data_file = temp_obs_fname_wdir,
                    maintenance_file = paste0(folder, '/SCCData/mia-data/CAT_MaintenanceLog.txt'), 
                    output_file = cleaned_temp_oxy_chla_file)
 
-full_time <- seq(as.Date('2018-08-15'), as.Date('2020-08-29'), by = 'day')
+full_time <- seq(as.Date('2018-08-15'), as.Date(Sys.Date()), by = 'day')
 
 chla_obs <- extract_chla_chain_dailyavg(fname = paste0(folder, '/ARIMA_working/Catwalk_postQAQC.csv'),
                                         full_time = full_time,
@@ -34,8 +34,9 @@ chla_obs <- extract_chla_chain_dailyavg(fname = paste0(folder, '/ARIMA_working/C
 
 obs_out <- matrix(NA, nrow = length(full_time), ncol = 2)
 obs_out <- as.data.frame(obs_out)
-obs_out[,1] <- seq(as.Date('2018-08-15'), as.Date('2020-08-29'), by = 'day')
+obs_out[,1] <- full_time
 obs_out[,2] <- chla_obs[[1]][,1]
 colnames(obs_out) <- c('Date', 'chla_ugL')
+obs_out <- na.omit(obs_out)
 
-write.csv(obs_out, paste0(folder, '/obs_chl_15Aug18_29Aug20.csv'), row.names = FALSE)
+write.csv(obs_out, paste0(folder, '/obs_chl_exo.csv'), row.names = FALSE)
