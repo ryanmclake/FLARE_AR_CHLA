@@ -23,7 +23,7 @@ plot(train$Date, train$Chla_EXO, xlab = 'Date', ylab = 'Chl-a (ug/L)')
 
 
 # chl over the forecast period
-stuff <- read.csv('./obs_chl_15Aug18_29Aug20.csv')
+stuff <- read.csv('./obs_chl_exo.csv')
 stuff$Date <- as.Date(stuff$Date, "%Y-%m-%d")
 stuff <- stuff[order(stuff$Date),]
 

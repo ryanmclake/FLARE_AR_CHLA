@@ -97,7 +97,7 @@ for (i in 1:max_timestep) {
   temp <- left_join(temp, temp_null, by = 'forecast_run_day')
   temp <- na.omit(temp)
   
-  obs <- read_csv(paste0(folder, '/obs_chl_15Aug18_29Aug20.csv'))
+  obs <- read_csv(paste0(folder, '/obs_chl_exo.csv'))
   obs$forecast_date <- lubridate::as_date(obs$Date)
   temp <- left_join(temp, obs, by = "forecast_date") %>% select(-Date)
   
