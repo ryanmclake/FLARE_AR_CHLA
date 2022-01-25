@@ -1,0 +1,2 @@
+"forecast_date","forecast_mean_chl","forecast_median_chl","forecast_sd_chl","forecast_CI95_upper","forecast_CI95_lower","forecast_max","forecast_min","forecast_variance","obs_chl_EXO","forecast_run_day","day_in_future","par1","par2","par3","par4","par5"
+2019-04-07,4.77309547257038,4.75188117571197,0.0878612939202498,5.85849248588931,3.79879874828565,6.37682576947344,3.45871552397954,0.00520584834033053,3.3625,2019-03-24,14,2.27840136979598,0.116134915420124,-4.40835840802614,-0.00270947201959481,0.455881879899238
