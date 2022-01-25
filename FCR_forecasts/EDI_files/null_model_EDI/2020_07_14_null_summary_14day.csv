@@ -1,0 +1,2 @@
+"mean","upper_CI","lower_CI","date","forecast_run_day","day_in_future","timestep","chla_ugL","chla_sqrt","residual"
+4.2761025799339,12.0180704566425,0.447613150395549,2020-07-28,2020-07-14,14,1,4.395,2.09642552932366,0.118897420066102

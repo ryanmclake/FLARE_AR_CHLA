@@ -1,0 +1,2 @@
+"mean","upper_CI","lower_CI","date","forecast_run_day","day_in_future","timestep","chla_ugL","chla_sqrt","residual"
+4.02619325258939,12.7049679174565,0.201306897653503,2019-10-26,2019-10-12,14,1,6.99791666666667,2.64535756877339,2.97172341407728
