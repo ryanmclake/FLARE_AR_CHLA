@@ -134,7 +134,7 @@ file.copy(from = paste0(old_folder, "/", names), to = paste0(new_folder, "/", ne
 #####################################################################################################
 # parameter output files
 
-new_folder <- './FCR_forecasts/parameter_output_EDI'
+new_folder <- './FCR_forecasts/EDI_files/parameter_output_EDI'
 old_folder <- './FCR_forecasts/1day/Mar2021_UC'
 dir.create(new_folder)
 names <- list.files(path = old_folder, pattern = '*parameters.csv')
@@ -161,8 +161,8 @@ file.copy(from = paste0(old_folder, "/", names), to = paste0(new_folder, "/", ne
 
 ###########################################################################################################
 # null model files
-new_folder <- './FCR_forecasts/null_model_EDI'
-old_folder <- './FCR_forecasts/1day/null_daily'
+new_folder <- './FCR_forecasts/EDI_files/null_model_EDI'
+old_folder <- './FCR_forecasts/1day/null_daily_01Mar21'
 dir.create(new_folder)
 names <- list.files(path = old_folder, pattern = '*null_summary.csv')
 newNames <- sub("null_summary.csv", "null_summary_1day.csv", names)
@@ -173,13 +173,13 @@ file.remove(list.files(path = new_folder, full.names = TRUE))
 file.copy(from = paste0(old_folder, "/", names), to = paste0(new_folder, "/", newNames))
 
 # do again for 7day null
-old_folder <- './FCR_forecasts/7day/null_weekly'
+old_folder <- './FCR_forecasts/7day/null_weekly_01Mar21'
 names <- list.files(path = old_folder, pattern = '*null_summary.csv')
 newNames <- sub("null_summary.csv", "null_summary_7day.csv", names)
 file.copy(from = paste0(old_folder, "/", names), to = paste0(new_folder, "/", newNames))
 
 # do again for 14day null
-old_folder <- './FCR_forecasts/14day/null_fortnightly'
+old_folder <- './FCR_forecasts/14day/null_fortnightly_01Mar21'
 names <- list.files(path = old_folder, pattern = '*null_summary.csv')
 newNames <- sub("null_summary.csv", "null_summary_14day.csv", names)
 file.copy(from = paste0(old_folder, "/", names), to = paste0(new_folder, "/", newNames))
