@@ -30,7 +30,7 @@ After cloning this repository, you will open the `RUN_FIRST_initialize_repo.R` s
 4. Choose a `forecast_start_day`
 5. Run the entire `automated_forecast_ARIMA.R` script. This will continue running forecasts unless a NOAA forecast is unavailable to drive the forecast\
 
-# A bit more about the Rscripts and running forecasts
+# A bit more about the Rscripts and running forecasts associated with the manuscrtip for resubmission with Ecological Applications in Feb 2022
 * Scripts are numbered to indicate the order in which they should be run. Scripts which are not numbered are functions which are called within the numbered scripts.
 * Scripts 1-5 perform actions to set up dataframes in order to run the forecasts
 * Scripts 6a and 6b will automatically run forecasts starting the date that you specify. `6a1_automated_forecast_ARIMA.R` will run the daily forecasts over the forecast time period, `6a2_automated_forecast_ARIMA.R` for weekly, and `6a3_automated_forecast_ARIMA.R` for fortnightly. The `6b*.R` scripts similarly run daily, weekly, and fortnightly null forecasts. 
