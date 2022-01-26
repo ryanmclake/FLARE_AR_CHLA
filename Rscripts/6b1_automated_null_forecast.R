@@ -2,10 +2,10 @@
 ### CHLA Forecasting in Falling Creek Reservoir
 ###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-### STEP 07b ---- >
+### STEP 06b ---- >
 # Forecast with null persistence (i.e. Random walk) model
 
-forecast_start_day <- forecast_start_day
+forecast_start_day <-"2019-01-02 00:00:00" # day the forecast initialized
 
 #set up ensembles
 n_ds_members <- 1

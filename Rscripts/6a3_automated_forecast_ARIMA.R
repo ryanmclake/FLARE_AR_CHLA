@@ -21,12 +21,12 @@ folder <- getwd()
 data_location <- paste0(getwd(),"/","SCCData")
 
 
-timestep <- '7day' # character definition of the timestep
-timestep_numeric <- 7
-timestep_interval <- 7 # the interval in between timesteps, e.g. 4day would be 4; daily would be 1; weekly would be 7
-max_timestep <- 2 #maximum number of timesteps that can be propagated to the max time horizon (e.g., daily is 14, weekly is 2)
+timestep <- '14day' # character definition of the timestep
+timestep_numeric <- 14
+timestep_interval <- 14 # the interval in between timesteps, e.g. 4day would be 4; daily would be 1; weekly would be 7
+max_timestep <- 1 #maximum number of timesteps that can be propagated to the max time horizon (e.g., daily is 14, weekly is 2)
 max_horizon <- 14 # maximum number of days that are propagated in this forecast (e.g. daily timestep has max_horizon = 14)
-sim_name <- 'TEST'
+sim_name <- 'Mar2021_UC'
 forecast_location <- paste0(folder, "/FCR_forecasts", '/', timestep, '/', sim_name)
 
 site_id <- 'bvre'
