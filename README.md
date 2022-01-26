@@ -4,12 +4,12 @@ Forecasts can be run every day and code is configured to be run with daily (1 da
 
 
 ## File are organized into the following folders: ##
-* `training_datasets`--for storing data files which are run as inputs to bayesian model fitting\
-* `sim_files`--for storing historical observational data published in the Environemtnal Data Initiative (EDI) at Falling Creek and Beaverdam Reservoir\
-* `SCCData`--for storing observed data hosted on Github (https://github.com/FLARE-forecast/FCRE-data) at Falling Creek Reservoir. At the end of each year, these data are published on EDI, but workflows are designed to work with data directly from GitHub. `mia-data` stores observed water quality data from FCR, `diana-data` stores observed discharge data from a weir at FCR, `carina-data` stores observed meteorological data from FCR, and `bvre-data` stores observed water quality data from Beaverdam Reservoir \
-* `Rscripts`--for storing R scripts needed for data management/QAQC, forecast creation, and analysis\
-* `FCR_forecasts`--for storing forecast output. organized into folders by timestep (e.g., '1day' for forecasts run on a daily timestep), and then by simulation name\
-* `ARIMA_working`--working folder for files created within a forecast run\
+* `training_datasets`--for storing data files which are run as inputs to bayesian model fitting
+* `sim_files`--for storing historical observational data published in the Environemtnal Data Initiative (EDI) at Falling Creek and Beaverdam Reservoir
+* `SCCData`--for storing observed data hosted on Github (https://github.com/FLARE-forecast/FCRE-data) at Falling Creek Reservoir. At the end of each year, these data are published on EDI, but workflows are designed to work with data directly from GitHub. `mia-data` stores observed water quality data from FCR, `diana-data` stores observed discharge data from a weir at FCR, `carina-data` stores observed meteorological data from FCR, and `bvre-data` stores observed water quality data from Beaverdam Reservoir 
+* `Rscripts`--for storing R scripts needed for data management/QAQC, forecast creation, and analysis
+* `FCR_forecasts`--for storing forecast output. organized into folders by timestep (e.g., '1day' for forecasts run on a daily timestep), and then by simulation name
+* `ARIMA_working`--working folder for files created within a forecast run
 * `historical_model_selection`--for storing files relevant for the selection of the autoregressive model which was chosen for this analysis. This analysis occured before the forecasts were developed in order to select a model using linear regression and AIC
 
 # Info about installing JAGS 
