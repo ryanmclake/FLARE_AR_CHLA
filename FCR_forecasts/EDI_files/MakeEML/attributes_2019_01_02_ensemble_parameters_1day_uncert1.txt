@@ -1,7 +1,0 @@
-attributeName	attributeDefinition	class	unit	dateTimeFormatString	missingValueCode	missingValueCodeExplanation
-V1	latent chl concentration used as initial conditions in forecast	numeric	dimensionless			
-V2	parameter value for the model intercept	numeric	dimensionless			
-V3	parameter value for the autoregressive chl driver	numeric	dimensionless			
-V4	parameter value for the discharge driver	numeric	dimensionless			
-V5	parameter value for the shortwave radiation driver	numeric	dimensionless			
-V6	standard deviation of the distribution of process error	numeric	dimensionless			
